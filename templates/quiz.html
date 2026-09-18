@@ -2,15 +2,23 @@
 
 {% block content %}
 <section class="section fade-in">
-    <h2 class="section-title">Ստուգիր Գիտելիքներդ</h2>
-    
-    <div id="quiz-container" class="quiz-box">
+    <div class="section-title">
+        <h2>Ստուգիր Գիտելիքներդ</h2>
+        <p>10 հարց՝ կիբեռանվտանգության վերաբերյալ</p>
+    </div>
+
+    <div class="quiz-card" id="quizContainer">
+        <div class="quiz-progress">
+            <div class="progress-bar"><div id="progressFill"></div></div>
+            <span id="progressText">1 / 10</span>
+        </div>
         <div id="quiz-ui">
             <h3 id="question-text">Բեռնվում է...</h3>
             <div id="options-container" class="options-grid"></div>
+            <p id="quiz-result" class="quiz-inline-result"></p>
         </div>
         <div id="result-ui" class="hidden">
-            <h3>Վիկտորինան ավարտվեց!</h3>
+            <h3>🎉 Վիկտորինան ավարտվեց!</h3>
             <p id="score-text"></p>
             <button onclick="location.reload()" class="btn btn-primary">Փորձել կրկին</button>
         </div>
