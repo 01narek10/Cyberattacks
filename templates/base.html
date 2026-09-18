@@ -8,11 +8,12 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">CyberDef</div>
+        <div class="logo">CyberDef 🛡️</div>
         <ul class="nav-links">
             <li><a href="{{ url_for('home') }}">Գլխավոր</a></li>
             <li><a href="{{ url_for('types') }}">Սպառնալիքներ</a></li>
             <li><a href="{{ url_for('hackers') }}">Հաքերներ</a></li>
+            <li><a href="{{ url_for('cases') }}">Քեյսեր</a></li>
             <li><a href="{{ url_for('quiz') }}">Թեստ</a></li>
         </ul>
         <button id="theme-toggle" class="btn-small">Մութ ռեժիմ</button>
@@ -23,7 +24,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 ԹԳՀԳ Նախագիծ | Ստեղծված է Flask-ով</p>
+        <p>&copy; 2026 ԹԳՀԳ Նախագիծ | Կիբեռանվտանգության Բազա</p>
     </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
