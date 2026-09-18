@@ -2,24 +2,72 @@
 
 {% block content %}
 <section class="section fade-in">
-    <h2 class="section-title">Հաքերների Տեսակները</h2>
-    
-    <div class="grid-cards">
+    <div class="section-title">
+        <h2>Հաքերների Տեսակները</h2>
+        <p>Ոչ բոլոր հաքերներն են չարագործ. նրանք բաժանվում են ըստ նպատակների և օրինականության</p>
+    </div>
+
+    <div class="grid grid-3">
         <div class="card hacker-black">
-            <div class="badge">Black Hat</div>
-            <h3>Չարամիտ Հաքերներ</h3>
-            <p>Նրանք կոտրում են համակարգերը օրենքի խախտումով։ Նպատակը ֆինանսական շահն է, տվյալների վաճառքը կամ պարզապես վնաս հասցնելը։</p>
+            <span class="card-tag red">Black Hat</span>
+            <h3>🎩 Չարամիտ Հաքերներ</h3>
+            <p>Գործում են օրենքից դուրս։ Կոտրում են համակարգերը ֆինանսական շահի, տվյալների վաճառքի կամ պարզապես վնաս հասցնելու համար։</p>
         </div>
         <div class="card hacker-white">
-            <div class="badge">White Hat</div>
-            <h3>Էթիկական Հաքերներ</h3>
-            <p>Աշխատում են օրինական դաշտում։ Ընկերությունները վարձում են նրանց՝ իրենց համակարգերի խոցելիությունները գտնելու և շտկելու համար։</p>
+            <span class="card-tag green">White Hat</span>
+            <h3>🎩 Էթիկական Հաքերներ</h3>
+            <p>Աշխատում են օրինական դաշտում։ Ընկերությունները վարձում են նրանց՝ խոցելիությունները գտնելու և շտկելու համար։</p>
         </div>
         <div class="card hacker-grey">
-            <div class="badge">Grey Hat</div>
-            <h3>Մոխրագույն Հաքերներ</h3>
-            <p>Գործում են երկուսի արանքում։ Կարող են առանց թույլտվության կոտրել համակարգը, բայց ոչ չար նպատակով։ Հաճախ գտնում են խնդիրը և տեղեկացնում տիրոջը։</p>
+            <span class="card-tag gray">Grey Hat</span>
+            <h3>🎩 Մոխրագույն Հաքերներ</h3>
+            <p>Գործում են երկուսի արանքում։ Կարող են կոտրել առանց թույլտվության, բայց առանց չարամիտ նպատակի։</p>
         </div>
+        <div class="card hacker-activist">
+            <span class="card-tag orange">Hacktivist</span>
+            <h3>✊ Հաքտիվիստներ</h3>
+            <p>Հարձակումներ են իրականացնում քաղաքական կամ սոցիալական պատճառներով։ Օրինակ՝ Anonymous-ը։</p>
+        </div>
+        <div class="card hacker-state">
+            <span class="card-tag blue">State-Sponsored</span>
+            <h3>🏛️ Պետական Հաքերներ</h3>
+            <p>Պետությունների կողմից ֆինանսավորվող խմբեր՝ լրտեսության և կիբեռպատերազմի համար։ Օրինակ՝ APT28, Lazarus։</p>
+        </div>
+        <div class="card hacker-script">
+            <span class="card-tag purple">Script Kiddies</span>
+            <h3>👶 Սկրիպտ Քիդիներ</h3>
+            <p>Սկսնակներ, որոնք օգտագործում են ուրիշների գրած գործիքները՝ առանց խորը գիտելիքների։</p>
+        </div>
+    </div>
+</section>
+
+<section class="section bg-darker">
+    <div class="section-title">
+        <h2>🖼️ Հայտնի Հաքերային Խմբեր</h2>
+    </div>
+    <div class="grid grid-2">
+        <figure class="media-card">
+            <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=900&q=80" alt="Anonymous">
+            <figcaption>Anonymous — ամենահայտնի hacktivist խումբը</figcaption>
+        </figure>
+        <div class="content-block">
+            <h3>Հայտնի Խմբեր</h3>
+            <ul class="styled-list">
+                <li><strong>Anonymous:</strong> Հակտիվիստական կոլեկտիվ, որը հարձակվում է կառավարությունների և կորպորացիաների վրա։</li>
+                <li><strong>Lazarus Group:</strong> Հյուսիսային Կորեայի հետ կապված, մեղադրվում է բանկերի կողոպուտի մեջ։</li>
+                <li><strong>APT28 (Fancy Bear):</strong> Ռուսական հետախուզության հետ կապված խումբ։</li>
+                <li><strong>REvil:</strong> Ransomware-as-a-Service մոդելով աշխատող հանցախումբ։</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title">
+        <h2>🎥 Ուսումնական Վիդեո</h2>
+    </div>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/3Kq1MIfTWCE" title="Hackers" allowfullscreen></iframe>
     </div>
 </section>
 {% endblock %}
