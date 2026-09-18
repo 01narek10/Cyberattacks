@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section fade-in">
+    <h2 class="section-title">Հաքերների Տեսակները</h2>
+    
+    <div class="grid-cards">
+        <div class="card hacker-black">
+            <div class="badge">Black Hat</div>
+            <h3>Չարամիտ Հաքերներ</h3>
+            <p>Նրանք կոտրում են համակարգերը օրենքի խախտումով։ Նպատակը ֆինանսական շահն է, տվյալների վաճառքը կամ պարզապես վնաս հասցնելը։</p>
+        </div>
+        <div class="card hacker-white">
+            <div class="badge">White Hat</div>
+            <h3>Էթիկական Հաքերներ</h3>
+            <p>Աշխատում են օրինական դաշտում։ Ընկերությունները վարձում են նրանց՝ իրենց համակարգերի խոցելիությունները գտնելու և շտկելու համար։</p>
+        </div>
+        <div class="card hacker-grey">
+            <div class="badge">Grey Hat</div>
+            <h3>Մոխրագույն Հաքերներ</h3>
+            <p>Գործում են երկուսի արանքում։ Կարող են առանց թույլտվության կոտրել համակարգը, բայց ոչ չար նպատակով։ Հաճախ գտնում են խնդիրը և տեղեկացնում տիրոջը։</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
