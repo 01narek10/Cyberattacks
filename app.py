@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# Վիկտորինայի հարցերի բազա
+# Վիկտորինայի ընդլայնված հարցերի բազա
 QUIZ_QUESTIONS = [
     {
         "id": 1,
@@ -27,6 +27,31 @@ QUIZ_QUESTIONS = [
         "question": "DDoS հարձակման նպատակը ո՞րն է:",
         "options": ["Գաղտնաբառեր գողանալը", "Սերվերը ծանրաբեռնելն ու խափանելը", "Տվյալների բազան ջնջելը"],
         "answer": 1
+    },
+    {
+        "id": 5,
+        "question": "Ո՞րն է ամենաանվտանգ գաղտնաբառի ստեղծման սկզբունքը:",
+        "options": ["Քո ծննդյան թիվը", "Տառերի, թվերի և սիմվոլների համադրություն", "Պարզ բառ, որը հեշտ է հիշել"],
+        "answer": 1
+    }
+]
+
+# Իրական կիբեռմիջադեպերի քեյսեր
+CYBER_CASES = [
+    {
+        "title": "WannaCry (2017)",
+        "type": "Ransomware",
+        "description": "Համաշխարհային մասշտաբի հարձակում, որը վարակեց հարյուր հազարավոր համակարգեր ավելի քան 150 երկրում՝ արգելափակելով հիվանդանոցների և պետական հաստատությունների աշխատանքը։"
+    },
+    {
+        "title": "Sony Pictures (2014)",
+        "type": "Data Breach & Hacktivism",
+        "description": "Հսկայական ծավալի գաղտնի տվյալների արտահոսք, ներառյալ չթողարկված ֆիլմեր, աշխատակիցների անձնական նամակագրություն և ֆինանսական փաստաթղթեր։"
+    },
+    {
+        "title": "Twitter (X) Crypto Scam (2020)",
+        "type": "Social Engineering",
+        "description": "Հաքերները կոտրել էին հայտնի մարդկանց (Բեյք Սթիվ, Իլոն Մասկ, Բիլ Գեյթս) հաշիվները՝ տեղադրելով կեղծ կրիպտոարժույթային հղումներ, որոնց միջոցով հազարավոր դոլարներ գողացան։"
     }
 ]
 
@@ -42,11 +67,14 @@ def types():
 def hackers():
     return render_template('hackers.html', title="Հաքերներ")
 
+@app.route('/cases')
+def cases():
+    return render_template('cases.html', title="Իրական Քեյսեր", cyber_cases=CYBER_CASES)
+
 @app.route('/quiz')
 def quiz():
-    return render_template('quiz.html', title="Վիկտորինա")
+    return render_template('quiz.html', title="Թեստ")
 
-# API էնդփոյնթ (endpoint) վիկտորինայի տվյալները JS-ին ուղարկելու համար
 @app.route('/api/questions')
 def get_questions():
     return jsonify(QUIZ_QUESTIONS)
