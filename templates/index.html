@@ -1,32 +1,286 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Կիբեռանվտանգություն | ԹԳՀԳ Նախագիծ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <!-- 3D Model Viewer Script -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body>
 
-{% block content %}
-<header class="hero slide-in">
+  <!-- Navigation Bar -->
+  <header class="header">
+    <nav class="navbar">
+      <a href="#" class="logo">Cyber<span>Shield</span></a>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#about" class="nav-link">Կիբեռհանցագործություն</a></li>
+        <li><a href="#hackers" class="nav-link">Հաքերներ</a></li>
+        <li><a href="#phishing" class="nav-link">Ֆիշինգ</a></li>
+        <li><a href="#models3d" class="nav-link">3D Մոդելներ</a></li>
+        <li><a href="#videos" class="nav-link">Վիդեոներ</a></li>
+        <li><a href="#defense" class="nav-link">Պաշտպանություն</a></li>
+        <li><a href="#quiz" class="nav-link">Թեստ</a></li>
+      </ul>
+      <button id="theme-toggle" class="btn-small">Մութ / Լույս</button>
+      <div class="hamburger" id="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
     <div class="hero-content">
-        <h1>Պաշտպանիր Քեզ Թվային Աշխարհում</h1>
-        <p>Ժամանակակից կիբեռանվտանգության, հաքերային մեթոդների և ֆիշինգի դեմ պայքարի համապարփակ ուղեցույց։</p>
-        <div class="hero-btns">
-            <a href="{{ url_for('types') }}" class="btn btn-primary">Ուսումնասիրել սպառնալիքները</a>
-            <a href="{{ url_for('quiz') }}" class="btn btn-secondary">Ստուգել գիտելիքները</a>
-        </div>
+      <span class="badge">ԹԳՀԳ Քննական Նախագիծ</span>
+      <h1>Թվային աշխարհի սպառնալիքները․ <span>Կիբեռհանցագործություն</span></h1>
+      <p>Իմացեք, թե ինչպես են գործում կիբեռհանցագործները, ինչ է ֆիշինգը և ինչպես պաշտպանել անձնական տվյալները համացանցում։</p>
+      <div class="hero-buttons">
+        <a href="#phishing" class="btn btn-primary">Ուսումնասիրել Ֆիշինգը</a>
+        <a href="#quiz" class="btn btn-outline">Անցնել Թեստը</a>
+      </div>
     </div>
-</header>
-<section class="section">
-    <h2 class="section-title">Ինչո՞ւ է սա կարեւոր</h2>
-    <p class="section-subtitle">Թվային դարաշրջանում տվյալների պաշտպանությունը յուրաքանչյուրի առաջնային խնդիրն է:</p>
-    <div class="grid-cards">
-        <div class="card">
-            <h3>🔒 Գաղտնիություն</h3>
-            <p>Անձնական տվյալների, լուսանկարների և հաղորդագրությունների պաշտպանություն անօրինական մուտքից։</p>
-        </div>
-        <div class="card">
-            <h3>💳 Ֆինանսական անվտանգություն</h3>
-            <p>Բանկային քարտերի և հաշիվների պաշտպանություն ֆիշինգային հարձակումներից և շորթումից։</p>
-        </div>
-        <div class="card">
-            <h3>⚡ Կայունություն</h3>
-            <p>Համակարգերի անխափան աշխատանքի ապահովում վնասակար ծրագրերից և վիրուսներից։</p>
-        </div>
+    <div class="hero-visual">
+      <div class="cyber-glow-sphere"></div>
     </div>
-</section>
-{% endblock %}
+  </section>
+
+  <main class="container">
+
+    <!-- Section 1: Cybercrime Definition -->
+    <section id="about" class="section">
+      <div class="section-title">
+        <h2>1. Ի՞նչ է Կիբեռհանցագործությունը</h2>
+        <p>Համակարգչային ցանցերի միջոցով իրականացվող ապօրինի գործողություններ</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="content-block">
+          <h3>Սահմանում և Հիմնական Սպառնալիքները</h3>
+          <p>Կիբեռհանցագործությունը (Cybercrime) տեխնոլոգիաների օգտագործմամբ կատարվող հանցագործություն է, որի թիրախը կարող են լինել անհատները, ընկերությունները կամ պետական համակարգերը։</p>
+          
+          <ul class="styled-list">
+            <li><strong>Malware (Վնասակար ծրագրեր):</strong> Վիրուսներ, որոնք վնասում կամ գողանում են տվյալները։</li>
+            <li><strong>Ransomware (Փրկագնային ծրագրեր):</strong> Կոդավորում են ֆայլերը և գումար պահանջում վերականգնման համար։</li>
+            <li><strong>DDoS Հարձակումներ:</strong> Սերվերի վրա մեծ քանակությամբ կեղծ հարցումների ուղարկում՝ կայքը խափանելու համար։</li>
+            <li><strong>Data Breach (Տվյալների արտահոսք):</strong> Գաղտնի տեղեկատվության ապօրինի ներբեռնում։</li>
+          </ul>
+        </div>
+
+        <figure class="media-card">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80" alt="Կիբեռանվտանգություն" loading="lazy">
+          <figcaption>Կիբեռհարձակումների մոնիտորինգի կենտրոն</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Section 2: Hackers -->
+    <section id="hackers" class="section">
+      <div class="section-title">
+        <h2>2. Ո՞վքեր են Կիբեռհանցագործները</h2>
+        <p>Հաքերների դասակարգումն ըստ նպատակների և գործողությունների</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card border-red">
+          <span class="card-tag red">Black Hat</span>
+          <h3>Չարամիտ Հաքերներ</h3>
+          <p>Գործում են օրենքից դուրս․ կոտրում են համակարգերը անձնական շահի, ֆինանսական օգուտի կամ վնաս հասցնելու համար։</p>
+        </div>
+
+        <div class="card border-green">
+          <span class="card-tag green">White Hat</span>
+          <h3>Էթիկական Հաքերներ</h3>
+          <p>Օրինական մասնագետներ, որոնք ստուգում են համակարգերի խոցելիությունը և օգնում պաշտպանել դրանք։</p>
+        </div>
+
+        <div class="card border-gray">
+          <span class="card-tag gray">Grey Hat</span>
+          <h3>Մոխրագույն Գլխարկներ</h3>
+          <p>Գործում են սահմանագծում․ կարող են կոտրել համակարգը առանց թույլտվության, բայց առանց չարամիտ նպատակի։</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Phishing -->
+    <section id="phishing" class="section">
+      <div class="section-title">
+        <h2>3. Ֆիշինգ (Phishing)</h2>
+        <p>Սոցիալական ինժեներիայի ամենատարածված ձևը</p>
+      </div>
+
+      <div class="grid grid-2">
+        <figure class="media-card">
+          <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" alt="Ֆիշինգային հարձակում" loading="lazy">
+          <figcaption>Կեղծ կայքերի միջոցով տվյալների կորզում</figcaption>
+        </figure>
+
+        <div class="content-block">
+          <h3>Ֆիշինգի Տեսակները</h3>
+          <p>Ֆիշինգը խաբեություն է, երբ հանցագործը ներկայանում է որպես վստահելի աղբյուր (բանկ, սոցցանց)՝ գաղտնաբառեր կամ քարտի տվյալներ գողանալու համար։</p>
+          
+          <ul class="styled-list">
+            <li><strong>Email Phishing:</strong> Զանգվածային կեղծ էլ․ նամակներ։</li>
+            <li><strong>Spear Phishing:</strong> Թիրախավորված հարձակում конкреտ անձի վրա։</li>
+            <li><strong>Smishing (SMS Phishing):</strong> Խաբեություն SMS հաղորդագրություններով։</li>
+            <li><strong>Vishing (Voice Phishing):</strong> Խաբեություն հեռախոսազանգերի միջոցով։</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: 3D Models -->
+    <section id="models3d" class="section">
+      <div class="section-title">
+        <h2>4. Ինտերակտիվ 3D Մոդելներ</h2>
+        <p>Սարքավորումներ և կիբեռ-ինտերֆեյսներ</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="model-card">
+          <h3>Ամպային Սերվեր (Cloud Server)</h3>
+          <p>Տվյալների պահպանման համակարգ, որը հաճախ դառնում է կիբեռհարձակումների թիրախ։</p>
+          <div class="model-wrapper">
+            <model-viewer 
+              src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
+              alt="3D Server Model" 
+              auto-rotate 
+              camera-controls 
+              shadow-intensity="1">
+            </model-viewer>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <h3>Ապահով Սարքավորում</h3>
+          <p>Անվտանգության համակարգերի ապարատային պաշտպանություն։</p>
+          <div class="model-wrapper">
+            <model-viewer 
+              src="https://modelviewer.dev/shared-assets/models/NeilArmstrong.glb" 
+              alt="3D Hardware Model" 
+              auto-rotate 
+              camera-controls 
+              shadow-intensity="1">
+            </model-viewer>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Videos -->
+    <section id="videos" class="section">
+      <div class="section-title">
+        <h2>5. Ուսումնական Վիդեոներ</h2>
+        <p>Տեսանյութեր կիբեռանվտանգության և ֆիշինգից պաշտպանվելու մասին</p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="media-card">
+          <h3>Ինչպես է աշխատում Ֆիշինգը</h3>
+          <p class="mb-1">Տեսանյութում բացատրվում է կեղծ նամակների ճանաչման մեխանիզմը։</p>
+          <div class="video-container">
+            <iframe 
+              src="https://www.youtube.com/embed/Y7zNlEMDmI4" 
+              title="Phishing Explained" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+
+        <div class="media-card">
+          <h3>Կիբեռհիգիենայի Կանոնները</h3>
+          <p class="mb-1">Ինչպես ապահով պահել գաղտնաբառերն ու հաշիվները։</p>
+          <div class="video-container">
+            <iframe 
+              src="https://www.youtube.com/embed/inWWhr5tnEA" 
+              title="Cyber Hygiene" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Rules -->
+    <section id="defense" class="section">
+      <div class="section-title">
+        <h2>6. Պաշտպանության 5 Ոսկե Կանոնները</h2>
+        <p>Ինչպես չդառնալ կիբեռհանցագործների զոհ</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Երկփուլանի Վավերացում (2FA)</h4>
+            <p>Միացրեք 2FA-ն բոլոր հաշիվներում (Google, սոցցանցեր, բանկեր)։</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Ուժեղ Գաղտնաբառեր</h4>
+            <p>Օգտագործեք տարբերվող և բարդ գաղտնաբառեր։ Օգտվեք Password Manager-ներից։</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Ստուգեք Հղումները (URL)</h4>
+            <p>Ուշադրություն դարձրեք կայքի հասցեին (օրինակ՝ paypa1.com՝ paypal.com-ի փոխարեն)։</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Թարմացրեք Ծրագրակազմը</h4>
+            <p>Միշտ թարմացրեք օպերացիոն համակարգը՝ անվտանգության ճեղքերը փակելու համար։</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Պահուստային Պատճենում (Backup)</h4>
+            <p>Կարևոր ֆայլերը պահեք արտաքին կրիչների կամ Cloud տիրույթում։</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Quiz -->
+    <section id="quiz" class="section">
+      <div class="section-title">
+        <h2>7. Ստուգիր Գիտելիքներդ</h2>
+        <p>Ինտերակտիվ թեստ ֆիշինգի վերաբերյալ</p>
+      </div>
+
+      <div class="quiz-card" id="quizContainer">
+        <h3 id="quizQuestion">Ի՞նչ պետք է անել, եթե ստացել եք անհայտ հղումով էլ․ նամակ բանկի անունից։</h3>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="checkAnswer(this, false)">Անմիջապես սեղմել հղմանը</button>
+          <button class="quiz-btn" onclick="checkAnswer(this, true)">Ստուգել ուղարկողի հասցեն և չսեղմել</button>
+          <button class="quiz-btn" onclick="checkAnswer(this, false)">Մուտքագրել բանկային քարտի տվյալները</button>
+          <button class="quiz-btn" onclick="checkAnswer(this, false)">Ուղարկել նամակը ընկերներին</button>
+        </div>
+        <div id="quizFeedback" class="quiz-feedback"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2026 CyberShield — ԹԳՀԳ Նախագծային Աշխատանք</p>
+      <p>Թեման՝ Կիբեռհանցագործություն, Կիբեռհանցագործներ, Ֆիշինգ</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
