@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section fade-in">
+    <h2 class="section-title">Իրական Կիբեռմիջադեպեր (Case Studies)</h2>
+    <p class="section-subtitle">Պատմության ամենաաղմկահարույց և խոշոր կիբեռհարձակումները։</p>
+    
+    <div class="grid-cards">
+        {% for c in cyber_cases %}
+        <div class="card case-card">
+            <span class="case-badge">{{ c.type }}</span>
+            <h3>{{ c.title }}</h3>
+            <p>{{ c.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
