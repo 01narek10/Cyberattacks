@@ -3,28 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} | CyberDef</title>
+    <title>{{ title }} | CyberShield</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">CyberDef 🛡️</div>
-        <ul class="nav-links">
-            <li><a href="{{ url_for('home') }}">Գլխավոր</a></li>
-            <li><a href="{{ url_for('types') }}">Սպառնալիքներ</a></li>
-            <li><a href="{{ url_for('hackers') }}">Հաքերներ</a></li>
-            <li><a href="{{ url_for('cases') }}">Քեյսեր</a></li>
-            <li><a href="{{ url_for('quiz') }}">Թեստ</a></li>
-        </ul>
-        <button id="theme-toggle" class="btn-small">Մութ ռեժիմ</button>
-    </nav>
+    <header class="header">
+        <nav class="navbar">
+            <a href="{{ url_for('home') }}" class="logo">Cyber<span>Shield</span></a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{{ url_for('home') }}" class="nav-link">Գլխավոր</a></li>
+                <li><a href="{{ url_for('types') }}" class="nav-link">Սպառնալիքներ</a></li>
+                <li><a href="{{ url_for('hackers') }}" class="nav-link">Հաքերներ</a></li>
+                <li><a href="{{ url_for('phishing') }}" class="nav-link">Ֆիշինգ</a></li>
+                <li><a href="{{ url_for('cases') }}" class="nav-link">Քեյսեր</a></li>
+                <li><a href="{{ url_for('defense') }}" class="nav-link">Պաշտպանություն</a></li>
+                <li><a href="{{ url_for('quiz') }}" class="nav-link">Թեստ</a></li>
+            </ul>
+            <button id="theme-toggle" class="btn-small">🌙</button>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+        </nav>
+    </header>
 
-    <main class="container">
+    <main class="container-main">
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <p>&copy; 2026 ԹԳՀԳ Նախագիծ | Կիբեռանվտանգության Բազա</p>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>CyberShield</h4>
+                <p>ԹԳՀԳ քննական նախագիծ՝ նվիրված կիբեռանվտանգությանը, ֆիշինգին և հաքերների աշխարհին։</p>
+            </div>
+            <div class="footer-col">
+                <h4>Բաժիններ</h4>
+                <ul>
+                    <li><a href="{{ url_for('types') }}">Սպառնալիքներ</a></li>
+                    <li><a href="{{ url_for('hackers') }}">Հաքերներ</a></li>
+                    <li><a href="{{ url_for('phishing') }}">Ֆիշինգ</a></li>
+                    <li><a href="{{ url_for('quiz') }}">Թեստ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Կապ</h4>
+                <p>info@cybershield.am</p>
+                <p>Երևան, Հայաստան</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CyberShield | ԹԳՀԳ Նախագծային Աշխատանք</p>
+        </div>
     </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
