@@ -1,21 +1,37 @@
-// Dark Mode Logic
-const themeBtn = document.getElementById('theme-toggle');
-const body = document.body;
+/* ==========================================================
+   CyberShield — Interactive Scripts
+   ========================================================== */
 
-if (localStorage.getItem('theme') === 'dark') {
-    body.classList.add('dark-mode');
+// ---------- Theme Toggle (Dark / Light) ----------
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        themeBtn.textContent = '☀️';
+    }
+    themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        themeBtn.textContent = isLight ? '☀️' : '🌙';
+    });
 }
 
-themeBtn.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-});
+// ---------- Mobile Menu ----------
+const hamburger = document.getElementById('hamburger');
+const navMenu = document.getElementById('navMenu');
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => navMenu.classList.remove('active'));
+    });
+}
 
-// Quiz Logic
-const quizContainer = document.getElementById('quiz-container');
+// ---------- Quiz Logic (Multi-question) ----------
+const quizContainer = document.getElementById('quizContainer');
 if (quizContainer) {
     let questions = [];
-    let currentQuestionIndex = 0;
+    let currentIndex = 0;
     let score = 0;
 
     const questionText = document.getElementById('question-text');
@@ -23,56 +39,66 @@ if (quizContainer) {
     const quizUi = document.getElementById('quiz-ui');
     const resultUi = document.getElementById('result-ui');
     const scoreText = document.getElementById('score-text');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const inlineResult = document.getElementById('quiz-result');
 
-    // Fetch questions from Flask API
     fetch('/api/questions')
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
             questions = data;
             loadQuestion();
         })
-        .catch(err => console.error("Error loading questions:", err));
+        .catch(err => console.error('Quiz load error:', err));
 
     function loadQuestion() {
         optionsContainer.innerHTML = '';
-        const currentQ = questions[currentQuestionIndex];
-        questionText.textContent = `${currentQuestionIndex + 1}. ${currentQ.question}`;
+        inlineResult.textContent = '';
+        const q = questions[currentIndex];
+        questionText.textContent = `${currentIndex + 1}. ${q.question}`;
 
-        currentQ.options.forEach((opt, index) => {
+        q.options.forEach((opt, i) => {
             const btn = document.createElement('button');
-            btn.classList.add('option-btn');
+            btn.className = 'option-btn';
             btn.textContent = opt;
-            btn.onclick = () => checkAnswer(index, currentQ.answer, btn);
+            btn.onclick = () => checkAnswer(i, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
+
+        progressFill.style.width = ((currentIndex) / questions.length) * 100 + '%';
+        progressText.textContent = `${currentIndex + 1} / ${questions.length}`;
     }
 
-    function checkAnswer(selectedIndex, correctIndex, btnElement) {
-        // Disable all buttons after choice
+    function checkAnswer(selected, correct, btnEl) {
         const allBtns = optionsContainer.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.style.pointerEvents = 'none');
+        allBtns.forEach(b => b.disabled = true);
 
-        if (selectedIndex === correctIndex) {
-            btnElement.classList.add('correct');
+        if (selected === correct) {
+            btnEl.classList.add('correct');
             score++;
+            inlineResult.textContent = '✅ Ճիշտ է։';
+            inlineResult.style.color = 'var(--accent-green)';
         } else {
-            btnElement.classList.add('wrong');
-            allBtns[correctIndex].classList.add('correct');
+            btnEl.classList.add('wrong');
+            allBtns[correct].classList.add('correct');
+            inlineResult.textContent = '❌ Սխալ է։';
+            inlineResult.style.color = 'var(--accent-red)';
         }
 
         setTimeout(() => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
+            currentIndex++;
+            if (currentIndex < questions.length) {
                 loadQuestion();
             } else {
                 showResults();
             }
-        }, 1500);
+        }, 1300);
     }
 
     function showResults() {
         quizUi.classList.add('hidden');
         resultUi.classList.remove('hidden');
-        scoreText.textContent = `Դուք ճիշտ պատասխանեցիք ${score} հարցի ${questions.length}-ից:`;
+        progressFill.style.width = '100%';
+        scoreText.textContent = `Դուք ճիշտ պատասխանեցիք ${score} հարցի ${questions.length}-ից։ (${Math.round((score / questions.length) * 100)}%)`;
     }
 }
