@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Կիբեռանվտանգություն | Նախագիծ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">CyberDef</div>
+        <ul class="nav-links">
+            <li><a href="#about">Կիբեռհանցագործություն</a></li>
+            <li><a href="#hackers">Հաքերներ</a></li>
+            <li><a href="#phishing">Ֆիշինգ</a></li>
+            <li><a href="#quiz">Թեստ</a></li>
+        </ul>
+        <button id="theme-toggle">Մութ ռեժիմ</button>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Պաշտպանիր Քեզ Թվային Աշխարհում</h1>
+            <p>Իմացիր ամեն ինչ կիբեռհանցագործությունների, ֆիշինգի և հաքերների մասին:</p>
+            <a href="#about" class="btn">Սկսել ուսումնասիրությունը</a>
+        </div>
+    </header>
+
+    <section id="about" class="section">
+        <h2>Ի՞նչ է Կիբեռհանցագործությունը</h2>
+        <p>Համակարգիչների կամ ցանցերի միջոցով կատարվող ապօրինի գործողություններն են։</p>
+        <div class="cards">
+            <div class="card">
+                <h3>Վնասակար ծրագրեր (Malware)</h3>
+                <p>Վիրուսներ, որոնք գաղտնի ներթափանցում են համակարգ և ոչնչացնում տվյալները։</p>
+            </div>
+            <div class="card">
+                <h3>Ransomware</h3>
+                <p>Ծրագրեր, որոնք կոդավորում են տվյալները և պահանջում փրկագին։</p>
+            </div>
+            <div class="card">
+                <h3>DDoS Հարձակում</h3>
+                <p>Սերվերների ծանրաբեռնում մեծ քանակությամբ հարցումներով՝ խափանման նպատակով։</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="hackers" class="section bg-darker">
+        <h2>Հաքերների Տեսակները</h2>
+        <div class="cards">
+            <div class="card hacker-black">
+                <h3>Black Hat</h3>
+                <p>Չարամիտ հաքերներ, որոնք կոտրում են համակարգերը անձնական շահի կամ գումար շորթելու նպատակով։</p>
+            </div>
+            <div class="card hacker-white">
+                <h3>White Hat</h3>
+                <p>Էթիկական հաքերներ, որոնք օրինական ճանապարհով փնտրում են համակարգի խոցելիությունները այն պաշտպանելու համար։</p>
+            </div>
+            <div class="card hacker-grey">
+                <h3>Grey Hat</h3>
+                <p>Գործում են սահմանագծում։ Գտնում են խոցելիությունը առանց թույլտվության, բայց տեղեկացնում են տիրոջը։</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="phishing" class="section">
+        <h2>Ինչպե՞ս է աշխատում Ֆիշինգը</h2>
+        <p>Խաբեություն, որի միջոցով հանցագործը ներկայանում է որպես վստահելի աղբյուր՝ գաղտնաբառեր կորզելու համար։</p>
+        <ul class="phishing-tips">
+            <li><strong>Մի սեղմիր կասկածելի հղումներին.</strong> Ստուգիր URL-ը (օրինակ՝ `paypa1.com` փոխարեն `paypal.com`)։</li>
+            <li><strong>Զգույշ եղիր շտապողականությունից.</strong> Եթե նամակը պահանջում է անհապաղ գործողություն, դա կասկածելի է։</li>
+            <li><strong>Մի ներբեռնիր անհայտ ֆայլեր.</strong> Հատկապես `.exe` կամ `.zip` ֆորմատի։</li>
+        </ul>
+    </section>
+
+    <section id="quiz" class="section bg-darker">
+        <h2>Ստուգիր գիտելիքներդ</h2>
+        <div id="quiz-container" class="quiz-box">
+            <p id="question-text">Ի՞նչ է White Hat հաքերը։</p>
+            <div class="answers">
+                <button class="answer-btn" onclick="checkAnswer(false)">Ահաբեկիչ, որը կոտրում է բանկերը</button>
+                <button class="answer-btn" onclick="checkAnswer(true)">Էթիկական հաքեր, որը պաշտպանում է համակարգերը</button>
+                <button class="answer-btn" onclick="checkAnswer(false)">Վիրուս ստեղծող ծրագրավորող</button>
+            </div>
+            <p id="quiz-result"></p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 ԹԳՀԳ Նախագիծ | Կիբեռհանցագործություններ</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
