@@ -3,30 +3,20 @@
 {% block content %}
 <section class="quiz-hero lb-hero">
     <div class="quiz-hero-content">
-        <span class="badge">Փառքի Սրահ</span>
-        <h1>🏆 Լիդերբորդ</h1>
-        <p>Լավագույն խաղացողները բոլոր բարդության մակարդակներից</p>
+        <span class="badge">{{ t.lb_badge }}</span>
+        <h1>🏆 {{ t.lb_title }}</h1>
+        <p>{{ t.lb_subtitle }}</p>
     </div>
 </section>
 
 <section class="lb-section">
-    <!-- ========== ՖԻԼՏՐԵՐ ========== -->
     <div class="lb-filters">
-        <button class="lb-filter active" data-filter="all">
-            <span class="filter-dot all"></span> Բոլորը
-        </button>
-        <button class="lb-filter" data-filter="easy">
-            <span class="filter-dot easy"></span> Հեշտ
-        </button>
-        <button class="lb-filter" data-filter="medium">
-            <span class="filter-dot medium"></span> Միջին
-        </button>
-        <button class="lb-filter" data-filter="hard">
-            <span class="filter-dot hard"></span> Բարդ
-        </button>
+        <button class="lb-filter active" data-filter="all"><span class="filter-dot all"></span>{{ t.lb_all }}</button>
+        <button class="lb-filter" data-filter="easy"><span class="filter-dot easy"></span>{{ t.lb_easy }}</button>
+        <button class="lb-filter" data-filter="medium"><span class="filter-dot medium"></span>{{ t.lb_medium }}</button>
+        <button class="lb-filter" data-filter="hard"><span class="filter-dot hard"></span>{{ t.lb_hard }}</button>
     </div>
 
-    <!-- ========== ՊՈԴԻՈՒՄ (TOP 3) ========== -->
     <div id="podium" class="podium hidden">
         <div class="podium-item second" id="podium-2">
             <div class="podium-rank">🥈</div>
@@ -52,23 +42,22 @@
         </div>
     </div>
 
-    <!-- ========== ԱՂՅՈՒՍԱԿ ========== -->
     <div class="lb-table-wrapper">
         <div id="leaderboard-loading" class="lb-loading">
             <div class="spinner"></div>
-            <p>Բեռնվում է...</p>
+            <p>{{ t.lb_loading }}</p>
         </div>
 
         <table id="leaderboard-table" class="lb-table hidden">
             <thead>
                 <tr>
                     <th class="th-rank">#</th>
-                    <th>Խաղացող</th>
-                    <th class="th-diff">Մակարդակ</th>
-                    <th class="th-score">Միավոր</th>
-                    <th class="th-correct">Ճիշտ</th>
-                    <th class="th-time">Ժամանակ</th>
-                    <th class="th-date">Ամսաթիվ</th>
+                    <th>{{ t.lb_player }}</th>
+                    <th class="th-diff">{{ t.lb_level }}</th>
+                    <th class="th-score">{{ t.lb_score }}</th>
+                    <th class="th-correct">{{ t.lb_correct }}</th>
+                    <th class="th-time">{{ t.lb_time }}</th>
+                    <th class="th-date">{{ t.lb_date }}</th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body"></tbody>
@@ -76,146 +65,10 @@
 
         <div id="leaderboard-empty" class="lb-empty hidden">
             <div class="empty-emoji">😴</div>
-            <h3>Դեռևս արդյունքներ չկան</h3>
-            <p>Եղիր առաջինը ով կգրանցի իր անունը լիդերբորդում</p>
-            <a href="{{ url_for('quiz') }}" class="btn-primary-lg">
-                <span>🚀</span> Սկսել Թեստը
-            </a>
+            <h3>{{ t.lb_empty }}</h3>
+            <p>{{ t.lb_empty_desc }}</p>
+            <a href="{{ url_for('quiz') }}" class="btn-primary-lg"><span>🚀</span> {{ t.lb_start_quiz }}</a>
         </div>
     </div>
 </section>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        loadLeaderboard('all');
-
-        document.querySelectorAll('.lb-filter').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.lb-filter').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                loadLeaderboard(btn.dataset.filter);
-            });
-        });
-    });
-
-    function loadLeaderboard(filter) {
-        const body = document.getElementById('leaderboard-body');
-        const loading = document.getElementById('leaderboard-loading');
-        const table = document.getElementById('leaderboard-table');
-        const empty = document.getElementById('leaderboard-empty');
-        const podium = document.getElementById('podium');
-
-        loading.classList.remove('hidden');
-        table.classList.add('hidden');
-        empty.classList.add('hidden');
-        podium.classList.add('hidden');
-
-        fetch('/api/leaderboard')
-            .then(res => res.json())
-            .then(data => {
-                loading.classList.add('hidden');
-                let filtered = data;
-                if (filter !== 'all') {
-                    filtered = data.filter(e => e.difficulty === filter);
-                }
-
-                if (filtered.length === 0) {
-                    empty.classList.remove('hidden');
-                    return;
-                }
-
-                // Պոդիում (միայն Top 3)
-                if (filtered.length >= 1) {
-                    podium.classList.remove('hidden');
-                    renderPodium(filtered);
-                }
-
-                // Աղյուսակ
-                table.classList.remove('hidden');
-                body.innerHTML = filtered.map((e, i) => {
-                    const rankClass = i < 3 ? `rank-${i+1}` : '';
-                    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
-                    return `
-                        <tr class="${rankClass}">
-                            <td class="td-rank"><span class="rank-circle">${medal}</span></td>
-                            <td class="td-name">
-                                <div class="name-cell">
-                                    <span class="mini-avatar" style="background: ${getAvatarColor(e.name)}">${e.name.charAt(0).toUpperCase()}</span>
-                                    <strong>${escapeHtml(e.name)}</strong>
-                                </div>
-                            </td>
-                            <td><span class="diff-pill diff-${e.difficulty}">${e.difficulty_label}</span></td>
-                            <td class="td-score"><strong>${e.score}</strong></td>
-                            <td class="td-correct">${e.correct}/${e.total}</td>
-                            <td class="td-time">${e.time}վ</td>
-                            <td class="td-date">${formatDate(e.date)}</td>
-                        </tr>
-                    `;
-                }).join('');
-            })
-            .catch(err => {
-                console.error('Սխալ:', err);
-                loading.classList.add('hidden');
-                empty.classList.remove('hidden');
-            });
-    }
-
-    function renderPodium(list) {
-        const top3 = list.slice(0, 3);
-
-        // 1-ին տեղ (կենտրոն)
-        if (top3[0]) {
-            const p1 = document.getElementById('podium-1');
-            p1.querySelector('.podium-avatar').textContent = top3[0].name.charAt(0).toUpperCase();
-            p1.querySelector('.podium-avatar').style.background = getAvatarColor(top3[0].name);
-            p1.querySelector('.podium-name').textContent = top3[0].name;
-            p1.querySelector('.podium-score').textContent = top3[0].score + ' միավոր';
-        }
-
-        // 2-րդ տեղ (ձախ)
-        if (top3[1]) {
-            const p2 = document.getElementById('podium-2');
-            p2.querySelector('.podium-avatar').textContent = top3[1].name.charAt(0).toUpperCase();
-            p2.querySelector('.podium-avatar').style.background = getAvatarColor(top3[1].name);
-            p2.querySelector('.podium-name').textContent = top3[1].name;
-            p2.querySelector('.podium-score').textContent = top3[1].score + ' միավոր';
-        } else {
-            document.getElementById('podium-2').style.visibility = 'hidden';
-        }
-
-        // 3-րդ տեղ (աջ)
-        if (top3[2]) {
-            const p3 = document.getElementById('podium-3');
-            p3.querySelector('.podium-avatar').textContent = top3[2].name.charAt(0).toUpperCase();
-            p3.querySelector('.podium-avatar').style.background = getAvatarColor(top3[2].name);
-            p3.querySelector('.podium-name').textContent = top3[2].name;
-            p3.querySelector('.podium-score').textContent = top3[2].score + ' միավոր';
-        } else {
-            document.getElementById('podium-3').style.visibility = 'hidden';
-        }
-    }
-
-    function getAvatarColor(name) {
-        const colors = ['#00f0ff', '#7000ff', '#00ff66', '#ff9900', '#ff0055', '#ec4899', '#3b82f6', '#a855f7'];
-        const idx = name.charCodeAt(0) % colors.length;
-        return colors[idx];
-    }
-
-    function formatDate(dateStr) {
-        // "2026-01-15 14:30" → "15.01.26"
-        try {
-            const [d, t] = dateStr.split(' ');
-            const [y, m, day] = d.split('-');
-            return `${day}.${m}.${y.slice(2)}`;
-        } catch (e) {
-            return dateStr;
-        }
-    }
-
-    function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-</script>
 {% endblock %}
