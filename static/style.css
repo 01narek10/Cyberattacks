@@ -1,10 +1,10 @@
 /* ==========================================================================
-   ԿԻԲԵՌՎԱՀԱՆ — Կիբեռհանցագործության Ուսումնական Հարթակ
-   Ժամանակակից Մութ/Լուսավոր Թեմա Նեոնային Կիբեռ Էսթետիկայով
+   ԿԻԲԵՌՎԱՀԱՆ — Ամբողջական ոճաթերթ
+   Ժամանակակից մութ/լուսավոր թեմա նեոնային կիբեռ էսթետիկայով
    ========================================================================== */
 
 /* ==========================================================================
-   1. CSS ՓՈՓՈԽԱԿԱՆՆԵՐ ԵՎ ԹԵՄԱՅԻ ԿԱՐԳԱՎՈՐՈՒՄ
+   1. ՓՈՓՈԽԱԿԱՆՆԵՐ ԵՎ ԹԵՄԱ
    ========================================================================== */
 :root {
     --primary-color: #00f0ff;
@@ -17,14 +17,12 @@
     --accent-blue: #3b82f6;
     --accent-purple: #a855f7;
     --accent-yellow: #facc15;
-    --accent-pink: #ec4899;
 
     --bg-dark: #0a0e17;
     --bg-darker: #05070c;
     --bg-card: #111827;
     --bg-card-hover: #1f293d;
     --glass-border: rgba(0, 240, 255, 0.15);
-    --glass-bg: rgba(17, 24, 39, 0.7);
 
     --text-main: #f1f5f9;
     --text-muted: #94a3b8;
@@ -33,13 +31,13 @@
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-code: 'Fira Code', monospace;
 
-    --border-radius-sm: 8px;
-    --border-radius-md: 14px;
-    --border-radius-lg: 24px;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 24px;
 
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.35s ease;
-    --transition-slow: 0.6s ease;
+    --t-fast: 0.2s ease;
+    --t-normal: 0.35s ease;
+    --t-slow: 0.6s ease;
 
     --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.5);
@@ -54,7 +52,6 @@ body.light-mode {
     --bg-card: #ffffff;
     --bg-card-hover: #f1f5f9;
     --glass-border: rgba(37, 99, 235, 0.2);
-    --glass-bg: rgba(255, 255, 255, 0.8);
     --primary-color: #2563eb;
     --primary-hover: #1e40af;
     --text-main: #0f172a;
@@ -63,7 +60,7 @@ body.light-mode {
 }
 
 /* ==========================================================================
-   2. ԺԱՄԱՆԱԿԱԿԻՑ ՎԵՐԱԿԱՐԳԱՎՈՐՈՒՄ ԵՎ ՀԻՄՆԱԿԱՆ ՈՃԵՐ
+   2. ՎԵՐԱԿԱՐԳԱՎՈՐՈՒՄ
    ========================================================================== */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -82,10 +79,15 @@ body {
     color: var(--text-main);
     line-height: 1.7;
     overflow-x: hidden;
-    transition: background-color var(--transition-normal), color var(--transition-normal);
+    transition: background-color var(--t-normal), color var(--t-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
+main { flex: 1; }
 
 img, video, iframe, model-viewer {
     max-width: 100%;
@@ -95,10 +97,12 @@ img, video, iframe, model-viewer {
 a {
     color: inherit;
     text-decoration: none;
-    transition: color var(--transition-fast);
+    transition: color var(--t-fast);
 }
 
 ul, ol { list-style: none; }
+button { font-family: inherit; }
+input, button, textarea { font-family: inherit; }
 
 /* ==========================================================================
    3. ՏԻՊՈԳՐԱՖԻԱ
@@ -115,7 +119,6 @@ h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); }
 h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
 h4 { font-size: 1.15rem; }
 h5 { font-size: 1.05rem; }
-h6 { font-size: 0.95rem; }
 
 p {
     color: var(--text-muted);
@@ -123,16 +126,16 @@ p {
 }
 
 p:last-child { margin-bottom: 0; }
-
 strong { color: var(--text-main); font-weight: 700; }
 
 /* ==========================================================================
-   4. ԴԱՍԱՎՈՐՈՒՄ ԵՎ ԿՈՆՏԵՅՆԵՐՆԵՐ
+   4. ԴԱՍԱՎՈՐՈՒՄ
    ========================================================================== */
 .container-main {
     max-width: 1240px;
     margin: 0 auto;
     padding: 0 1.5rem;
+    width: 100%;
 }
 
 .section {
@@ -141,7 +144,6 @@ strong { color: var(--text-main); font-weight: 700; }
 }
 
 .section:last-of-type { border-bottom: none; }
-
 .bg-darker { background: var(--bg-darker); }
 
 .grid {
@@ -154,7 +156,7 @@ strong { color: var(--text-main); font-weight: 700; }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
 
 /* ==========================================================================
-   5. ՆԱՎԻԳԱՑԻՈՆ ԳԼԽԱՄԱՍ
+   5. ՆԱՎԻԳԱՑԻԱ
    ========================================================================== */
 .header {
     position: sticky;
@@ -178,6 +180,7 @@ body.light-mode .header {
     max-width: 1240px;
     margin: 0 auto;
     gap: 1rem;
+    width: 100%;
 }
 
 .logo {
@@ -195,7 +198,7 @@ body.light-mode .header {
 
 .nav-menu {
     display: flex;
-    gap: 1.6rem;
+    gap: 1.5rem;
     align-items: center;
 }
 
@@ -216,14 +219,11 @@ body.light-mode .header {
     width: 0;
     height: 2px;
     background: var(--primary-color);
-    transition: width var(--transition-fast);
+    transition: width var(--t-fast);
     box-shadow: 0 0 10px var(--primary-glow);
 }
 
-.nav-link:hover {
-    color: var(--primary-color);
-}
-
+.nav-link:hover { color: var(--primary-color); }
 .nav-link:hover::after { width: 100%; }
 
 .btn-small {
@@ -231,11 +231,11 @@ body.light-mode .header {
     background: var(--primary-color);
     color: var(--bg-darker);
     border: none;
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-weight: 700;
     font-size: 1rem;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
 }
 
 .btn-small:hover {
@@ -248,6 +248,9 @@ body.light-mode .header {
     cursor: pointer;
     flex-direction: column;
     gap: 5px;
+    background: transparent;
+    border: none;
+    padding: 5px;
 }
 
 .bar {
@@ -255,21 +258,70 @@ body.light-mode .header {
     height: 3px;
     background-color: var(--text-main);
     border-radius: 2px;
-    transition: var(--transition-fast);
+    transition: var(--t-fast);
 }
 
 /* ==========================================================================
-   6. ՀԵՐՈՍԻ ԲԱԺԻՆ
+   6. ԿՈՃԱԿՆԵՐ
    ========================================================================== */
-.hero {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
+.btn {
+    display: inline-flex;
     align-items: center;
-    min-height: 85vh;
-    padding: 4rem 2rem;
-    max-width: 1240px;
-    margin: 0 auto;
-    gap: 3rem;
+    justify-content: center;
+    padding: 0.9rem 1.8rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: none;
+    transition: all var(--t-fast);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--bg-darker);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px var(--primary-glow);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-outline:hover {
+    border-color: var(--primary-color);
+    background: rgba(0, 240, 255, 0.08);
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
+   7. ԲԱԺԻՆՆԵՐԻ ՎԵՐՆԱԳՐԵՐ
+   ========================================================================== */
+.section-title {
+    text-align: center;
+    max-width: 750px;
+    margin: 0 auto 3.5rem;
+}
+
+.section-title h2 {
+    margin-bottom: 0.6rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-title p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
 }
 
 .badge {
@@ -282,7 +334,20 @@ body.light-mode .header {
     font-size: 0.85rem;
     font-family: var(--font-code);
     margin-bottom: 1.2rem;
-    animation: pulseBorder 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   8. ՀԵՐՈՍԻ ԲԱԺԻՆ
+   ========================================================================== */
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    min-height: 85vh;
+    padding: 4rem 2rem;
+    max-width: 1240px;
+    margin: 0 auto;
+    gap: 3rem;
 }
 
 .hero-content h1 span {
@@ -350,77 +415,14 @@ body.light-mode .header {
 }
 
 /* ==========================================================================
-   7. ԿՈՃԱԿՆԵՐ
-   ========================================================================== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.9rem 1.8rem;
-    font-weight: 600;
-    font-size: 1rem;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    border: none;
-    transition: all var(--transition-fast);
-    text-decoration: none;
-}
-
-.btn-primary {
-    background: var(--primary-color);
-    color: var(--bg-darker);
-    box-shadow: var(--shadow-glow);
-}
-
-.btn-primary:hover {
-    background: var(--primary-hover);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px var(--primary-glow);
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--text-main);
-    border: 1px solid var(--glass-border);
-}
-
-.btn-outline:hover {
-    border-color: var(--primary-color);
-    background: rgba(0, 240, 255, 0.08);
-    color: var(--primary-color);
-}
-
-/* ==========================================================================
-   8. ԲԱԺՆԻ ՎԵՐՆԱԳՐԵՐ
-   ========================================================================== */
-.section-title {
-    text-align: center;
-    max-width: 750px;
-    margin: 0 auto 3.5rem;
-}
-
-.section-title h2 {
-    margin-bottom: 0.6rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.section-title p {
-    color: var(--text-muted);
-    font-size: 1.05rem;
-}
-
-/* ==========================================================================
    9. ՔԱՐՏԵՐ ԵՎ ԲՈՎԱՆԴԱԿՈՒԹՅԱՆ ԲԼՈԿՆԵՐ
    ========================================================================== */
 .card, .content-block {
     background: var(--bg-card);
     padding: 2rem;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
-    transition: all var(--transition-normal);
+    transition: all var(--t-normal);
 }
 
 .card:hover {
@@ -429,15 +431,12 @@ body.light-mode .header {
     box-shadow: 0 15px 40px rgba(0, 240, 255, 0.15);
 }
 
-.feature-card {
-    text-align: center;
-}
+.feature-card { text-align: center; }
 
 .feature-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
     display: inline-block;
-    animation: bounceIn 0.8s ease;
 }
 
 .threat-card {
@@ -450,25 +449,14 @@ body.light-mode .header {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    transition: transform var(--transition-normal);
+    transition: transform var(--t-normal);
 }
 
-.threat-card:hover img {
-    transform: scale(1.08);
-}
-
-.threat-card h3, .threat-card p {
-    padding: 0 1.8rem;
-}
-
-.threat-card h3 {
-    padding-top: 1.5rem;
-    margin-bottom: 0.8rem;
-}
-
+.threat-card:hover img { transform: scale(1.08); }
+.threat-card h3, .threat-card p { padding: 0 1.8rem; }
+.threat-card h3 { padding-top: 1.5rem; margin-bottom: 0.8rem; }
 .threat-card p { padding-bottom: 1.8rem; }
 
-/* Հաքերների քարտեր */
 .hacker-black { border-top: 4px solid var(--accent-red); }
 .hacker-white { border-top: 4px solid var(--accent-green); }
 .hacker-grey { border-top: 4px solid var(--text-dim); }
@@ -494,10 +482,7 @@ body.light-mode .header {
 .card-tag.blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
 .card-tag.purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
 
-/* Քեյսերի քարտեր */
-.case-card {
-    border-left: 4px solid var(--accent-orange);
-}
+.case-card { border-left: 4px solid var(--accent-orange); }
 
 .case-header {
     display: flex;
@@ -525,9 +510,7 @@ body.light-mode .header {
 /* ==========================================================================
    10. ՈՃԱՎՈՐՎԱԾ ՑԱՆԿԵՐ
    ========================================================================== */
-.styled-list {
-    margin-top: 1.2rem;
-}
+.styled-list { margin-top: 1.2rem; }
 
 .styled-list li {
     position: relative;
@@ -551,10 +534,10 @@ body.light-mode .header {
    ========================================================================== */
 .media-card {
     background: var(--bg-card);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     padding: 1.2rem;
     border: 1px solid var(--glass-border);
-    transition: all var(--transition-normal);
+    transition: all var(--t-normal);
 }
 
 .media-card:hover {
@@ -566,8 +549,8 @@ body.light-mode .header {
     width: 100%;
     height: 280px;
     object-fit: cover;
-    border-radius: var(--border-radius-sm);
-    transition: transform var(--transition-normal);
+    border-radius: var(--radius-sm);
+    transition: transform var(--t-normal);
 }
 
 .media-card:hover img { transform: scale(1.03); }
@@ -581,14 +564,14 @@ figcaption {
 }
 
 /* ==========================================================================
-   12. ՎԻԴԵՈՅԻ ՀԱՐՄԱՐՎՈՂ ՓԱԹԵԹ
+   12. ՎԻԴԵՈ
    ========================================================================== */
 .video-container {
     position: relative;
     padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     background: #000;
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-md);
@@ -602,14 +585,14 @@ figcaption {
 }
 
 /* ==========================================================================
-   13. ԵՌՉԱՓ ՄՈԴԵԼԻ ԴԻՏԱՐԿԻՉ
+   13. 3D ՄՈԴԵԼ
    ========================================================================== */
 .model-card {
     background: var(--bg-card);
     padding: 1.8rem;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
-    transition: all var(--transition-normal);
+    transition: all var(--t-normal);
 }
 
 .model-card:hover {
@@ -620,7 +603,7 @@ figcaption {
 .model-wrapper {
     height: 340px;
     background: linear-gradient(135deg, var(--bg-darker), var(--bg-card));
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--radius-sm);
     margin-top: 1rem;
     overflow: hidden;
 }
@@ -649,10 +632,10 @@ model-viewer {
     align-items: flex-start;
     background: var(--bg-card);
     padding: 1.5rem;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
     border-left: 3px solid var(--primary-color);
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
 }
 
 .timeline-step:hover {
@@ -676,15 +659,8 @@ model-viewer {
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
-.step-content h4 {
-    margin-bottom: 0.4rem;
-    color: var(--text-main);
-}
-
-.step-content p {
-    margin-bottom: 0;
-    font-size: 0.95rem;
-}
+.step-content h4 { margin-bottom: 0.4rem; color: var(--text-main); }
+.step-content p { margin-bottom: 0; font-size: 0.95rem; }
 
 /* ==========================================================================
    15. ԱՂՅՈՒՍԱԿՆԵՐ
@@ -692,7 +668,7 @@ model-viewer {
 .table-responsive {
     width: 100%;
     overflow-x: auto;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
 }
 
@@ -718,125 +694,11 @@ model-viewer {
 }
 
 .custom-table tr:last-child td { border-bottom: none; }
-
-.custom-table tr:hover {
-    background: var(--bg-card-hover);
-}
-
-.custom-table td {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-}
+.custom-table tr:hover { background: var(--bg-card-hover); }
+.custom-table td { color: var(--text-muted); font-size: 0.95rem; }
 
 /* ==========================================================================
-   16. ՎԻԿՏՈՐԻՆԱՅԻ ՄԻՋԱՎԱՅՐԵՐ
-   ========================================================================== */
-.quiz-card {
-    background: var(--bg-card);
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 2.5rem;
-    border-radius: var(--border-radius-md);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-md);
-}
-
-.quiz-progress {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.progress-bar {
-    flex: 1;
-    height: 8px;
-    background: var(--bg-darker);
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-#progressFill {
-    height: 100%;
-    width: 10%;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-green));
-    border-radius: 999px;
-    transition: width var(--transition-normal);
-    box-shadow: 0 0 12px var(--primary-glow);
-}
-
-#progressText {
-    font-family: var(--font-code);
-    font-size: 0.9rem;
-    color: var(--text-dim);
-    min-width: 60px;
-}
-
-.options-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
-    margin-top: 1.5rem;
-}
-
-.option-btn {
-    padding: 1.1rem 1.4rem;
-    text-align: left;
-    background: var(--bg-dark);
-    color: var(--text-main);
-    border: 2px solid var(--glass-border);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-size: 1rem;
-    font-family: var(--font-main);
-    transition: all var(--transition-fast);
-}
-
-.option-btn:hover:not(:disabled) {
-    border-color: var(--primary-color);
-    background: rgba(0, 240, 255, 0.08);
-    transform: translateX(5px);
-}
-
-.option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
-
-.option-btn.correct {
-    background: rgba(0, 255, 102, 0.18);
-    border-color: var(--accent-green);
-    color: var(--accent-green);
-    font-weight: 600;
-}
-
-.option-btn.wrong {
-    background: rgba(255, 0, 85, 0.18);
-    border-color: var(--accent-red);
-    color: var(--accent-red);
-    font-weight: 600;
-}
-
-.quiz-inline-result {
-    margin-top: 1.2rem;
-    font-weight: 600;
-    text-align: center;
-    min-height: 1.5rem;
-}
-
-#result-ui {
-    text-align: center;
-    padding: 2rem 0;
-}
-
-#score-text {
-    font-size: 1.3rem;
-    margin: 1.5rem 0;
-    color: var(--text-main);
-    font-weight: 600;
-}
-
-.hidden { display: none !important; }
-
-/* ==========================================================================
-   17. ՍՏՈՐԱԳԻՐ
+   16. ՍՏՈՐԱԳԻՐ
    ========================================================================== */
 .footer {
     background: var(--bg-darker);
@@ -883,7 +745,7 @@ model-viewer {
 }
 
 /* ==========================================================================
-   18. ՀԱՏՈՒԿ ՈԼՈՐՄԱՆ ՁՈՂ
+   17. ՈԼՈՐՄԱՆ ՁՈՂ
    ========================================================================== */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-darker); }
@@ -891,9 +753,7 @@ model-viewer {
     background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
     border-radius: 5px;
 }
-::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-hover);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--primary-hover); }
 
 ::selection {
     background: var(--primary-color);
@@ -901,7 +761,7 @@ model-viewer {
 }
 
 /* ==========================================================================
-   19. ԱՆԻՄԱՑԻԱՆԵՐ ԵՎ ՀԻՄՆԱԿԱՆ ԿԱԴՐԵՐ
+   18. ԱՆԻՄԱՑԻԱՆԵՐ
    ========================================================================== */
 @keyframes floatCyber {
     0% { transform: translateY(0) rotate(0deg); }
@@ -919,11 +779,6 @@ model-viewer {
     to { transform: rotate(360deg); }
 }
 
-@keyframes pulseBorder {
-    0%, 100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
-    50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); }
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -935,23 +790,9 @@ model-viewer {
     100% { transform: scale(1); }
 }
 
-@keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-40px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideInRight {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes typewriter {
-    from { width: 0; }
-    to { width: 100%; }
-}
-
-@keyframes blink {
-    50% { border-color: transparent; }
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
 }
 
 @keyframes shimmer {
@@ -963,1046 +804,21 @@ model-viewer {
     to { transform: rotate(360deg); }
 }
 
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+@keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); }
 }
 
 .fade-in { animation: fadeIn 0.9s ease forwards; }
-.slide-in { animation: fadeIn 1s ease forwards; }
 
 /* ==========================================================================
-   20. ՀԱՐՄԱՐՎՈՂ ԴԻԶԱՅՆ — ՄԵԴԻԱ ՀԱՐՑՈՒՄՆԵՐ
-   ========================================================================== */
-@media (max-width: 1024px) {
-    .grid-4 { grid-template-columns: repeat(2, 1fr); }
-    .footer-content { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 900px) {
-    .grid-3 { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px) {
-    .hamburger { display: flex; }
-
-    .nav-menu {
-        position: fixed;
-        top: 65px;
-        left: -100%;
-        flex-direction: column;
-        gap: 0;
-        width: 100%;
-        background: var(--bg-darker);
-        border-bottom: 1px solid var(--glass-border);
-        padding: 1.5rem 0;
-        transition: left 0.3s ease;
-        z-index: 999;
-    }
-
-    .nav-menu.active { left: 0; }
-    .nav-menu li { padding: 0.7rem 0; text-align: center; }
-
-    .hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding: 3rem 1rem;
-        min-height: auto;
-    }
-
-    .hero-visual { order: -1; margin-bottom: 2rem; }
-    .cyber-glow-sphere { width: 200px; height: 200px; }
-    .hero-buttons { justify-content: center; }
-    .hero-stats { justify-content: center; flex-wrap: wrap; gap: 1.5rem; }
-
-    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-
-    .footer-content { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
-
-    .timeline-step { flex-direction: column; align-items: flex-start; }
-    .timeline-step:hover { transform: translateY(-3px); }
-
-    .section { padding: 3.5rem 0; }
-    .quiz-card { padding: 1.8rem; }
-    .options-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 480px) {
-    .navbar { padding: 0.9rem 1rem; }
-    .logo { font-size: 1.3rem; }
-    .container-main { padding: 0 1rem; }
-    .hero-content h1 { font-size: 1.9rem; }
-    .section-title h2 { font-size: 1.6rem; }
-    .card, .content-block { padding: 1.5rem; }
-    .hero-stats { flex-direction: column; gap: 1rem; }
-}
-
-/* ==========================================================================
-   21. ՕԳՏԱԿԱՐ ԴԱՍԵՐ
-   ========================================================================== */
-.text-center { text-align: center; }
-.text-primary { color: var(--primary-color); }
-.text-muted { color: var(--text-muted); }
-.mt-1 { margin-top: 1rem; }
-.mt-2 { margin-top: 2rem; }
-.mb-1 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 2rem; }
-.p-2 { padding: 2rem; }
-.rounded { border-radius: var(--border-radius-md); }
-.glow { box-shadow: var(--shadow-glow); }
-
-/* ==========================================================================
-   22. ՏՊԱԳՐՄԱՆ ՈՃԵՐ
-   ========================================================================== */
-@media print {
-    .header, .footer, .hero-visual, .btn, #theme-toggle, .hamburger {
-        display: none !important;
-    }
-    body { background: #fff; color: #000; }
-    .card, .content-block { border: 1px solid #ccc; box-shadow: none; }
-}
-
-/* ==========================================================================
-   23. ՄՈԴԱԼ ՊԱՏՈՒՀԱՆՆԵՐ
-   ========================================================================== */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--transition-normal), visibility var(--transition-normal);
-}
-
-.modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-window {
-    background: var(--bg-card);
-    border: 1px solid var(--primary-color);
-    border-radius: var(--border-radius-md);
-    padding: 2rem;
-    max-width: 600px;
-    width: 90%;
-    box-shadow: var(--shadow-glow-strong);
-    transform: scale(0.85);
-    transition: transform var(--transition-normal);
-}
-
-.modal-overlay.active .modal-window {
-    transform: scale(1);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--glass-border);
-}
-
-.modal-close {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: color var(--transition-fast);
-}
-
-.modal-close:hover { color: var(--accent-red); }
-
-/* ==========================================================================
-   24. ՀՈՒՇՈՒՅԹՆԵՐ (TOOLTIPS)
-   ========================================================================== */
-.tooltip {
-    position: relative;
-    cursor: help;
-    border-bottom: 1px dotted var(--primary-color);
-}
-
-.tooltip::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-darker);
-    color: var(--text-main);
-    padding: 0.5rem 0.9rem;
-    border-radius: var(--border-radius-sm);
-    font-size: 0.85rem;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all var(--transition-fast);
-    border: 1px solid var(--primary-color);
-    box-shadow: var(--shadow-glow);
-    z-index: 100;
-}
-
-.tooltip:hover::after {
-    opacity: 1;
-    visibility: visible;
-    bottom: 135%;
-}
-
-/* ==========================================================================
-   25. ԲԵՌՆՄԱՆ ՇՐՋԱՆԱԿՆԵՐ
-   ========================================================================== */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--glass-border);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 2rem auto;
-}
-
-.spinner-small {
-    width: 20px;
-    height: 20px;
-    border-width: 2px;
-}
-
-/* ==========================================================================
-   26. ԱԿՈՐԴԵՈՆ
-   ========================================================================== */
-.accordion {
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-md);
-    overflow: hidden;
-    margin-bottom: 0.8rem;
-}
-
-.accordion-header {
-    background: var(--bg-card);
-    padding: 1.2rem 1.5rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all var(--transition-fast);
-}
-
-.accordion-header:hover {
-    background: var(--bg-card-hover);
-    color: var(--primary-color);
-}
-
-.accordion-header::after {
-    content: '+';
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    transition: transform var(--transition-fast);
-}
-
-.accordion.active .accordion-header::after {
-    transform: rotate(45deg);
-}
-
-.accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height var(--transition-normal);
-    background: var(--bg-dark);
-}
-
-.accordion.active .accordion-content {
-    max-height: 500px;
-}
-
-.accordion-content-inner {
-    padding: 1.5rem;
-}
-
-/* ==========================================================================
-   27. ՆԵՐՔԻՆ ՆԱՎԻԳԱՑԻԱ (TABS)
-   ========================================================================== */
-.tabs {
-    display: flex;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--glass-border);
-    margin-bottom: 2rem;
-    overflow-x: auto;
-}
-
-.tab {
-    padding: 0.8rem 1.5rem;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-weight: 600;
-    position: relative;
-    transition: all var(--transition-fast);
-    white-space: nowrap;
-}
-
-.tab:hover { color: var(--text-main); }
-
-.tab.active {
-    color: var(--primary-color);
-}
-
-.tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: var(--primary-color);
-    box-shadow: 0 0 15px var(--primary-glow);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-    animation: fadeIn 0.5s ease;
-}
-
-/* ==========================================================================
-   28. ՇՐՋԱՆԱԿԱՅԻՆ ԱՌԱՋԸՆԹԱՑ
-   ========================================================================== */
-.progress-circle {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin: 0 auto;
-}
-
-.progress-circle svg {
-    transform: rotate(-90deg);
-    width: 100%;
-    height: 100%;
-}
-
-.progress-circle circle {
-    fill: none;
-    stroke-width: 8;
-}
-
-.progress-circle .bg-circle {
-    stroke: var(--bg-darker);
-}
-
-.progress-circle .fg-circle {
-    stroke: var(--primary-color);
-    stroke-linecap: round;
-    transition: stroke-dashoffset var(--transition-slow);
-    filter: drop-shadow(0 0 8px var(--primary-glow));
-}
-
-.progress-circle .progress-value {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--font-code);
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--primary-color);
-}
-
-/* ==========================================================================
-   29. ԶԳՈՒՇԱՑՈՒՄՆԵՐ (ALERTS)
-   ========================================================================== */
-.alert {
-    padding: 1rem 1.5rem;
-    border-radius: var(--border-radius-sm);
-    border-left: 4px solid;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-}
-
-.alert-icon {
-    font-size: 1.3rem;
-    flex-shrink: 0;
-}
-
-.alert-success {
-    background: rgba(0, 255, 102, 0.1);
-    border-color: var(--accent-green);
-    color: var(--accent-green);
-}
-
-.alert-danger {
-    background: rgba(255, 0, 85, 0.1);
-    border-color: var(--accent-red);
-    color: var(--accent-red);
-}
-
-.alert-warning {
-    background: rgba(255, 153, 0, 0.1);
-    border-color: var(--accent-orange);
-    color: var(--accent-orange);
-}
-
-.alert-info {
-    background: rgba(0, 240, 255, 0.1);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-/* ==========================================================================
-   30. ՀԱՑԻ ՓՈՇԻԿՆԵՐ
-   ========================================================================== */
-.breadcrumbs {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-    color: var(--text-dim);
-}
-
-.breadcrumbs a {
-    color: var(--text-muted);
-}
-
-.breadcrumbs a:hover { color: var(--primary-color); }
-
-.breadcrumbs span::before {
-    content: '›';
-    margin: 0 0.5rem;
-    color: var(--text-dim);
-}
-
-/* ==========================================================================
-   31. ԷՋԱՏՐՈՒՄ
-   ========================================================================== */
-.pagination {
-    display: flex;
-    gap: 0.4rem;
-    justify-content: center;
-    margin: 2rem 0;
-}
-
-.page-btn {
-    min-width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-    color: var(--text-muted);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.page-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.page-btn.active {
-    background: var(--primary-color);
-    color: var(--bg-darker);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-glow);
-}
-
-/* ==========================================================================
-   32. ՔԱՐՏԵՐԻ ՇՐՋՄԱՆ ԷՖԵԿՏ
-   ========================================================================== */
-.flip-card {
-    perspective: 1000px;
-    height: 300px;
-}
-
-.flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.7s;
-    transform-style: preserve-3d;
-}
-
-.flip-card:hover .flip-card-inner {
-    transform: rotateY(180deg);
-}
-
-.flip-card-front, .flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: var(--border-radius-md);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.flip-card-front {
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-}
-
-.flip-card-back {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: var(--bg-darker);
-    transform: rotateY(180deg);
-}
-
-/* ==========================================================================
-   33. ՄԱՍՆԻԿՆԵՐԻ ԷՖԵԿՏ
-   ========================================================================== */
-.particles {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    opacity: 0.6;
-    animation: floatUp 8s linear infinite;
-    box-shadow: 0 0 10px var(--primary-glow);
-}
-
-.particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-.particle:nth-child(2) { left: 30%; animation-delay: 1s; }
-.particle:nth-child(3) { left: 50%; animation-delay: 2s; }
-.particle:nth-child(4) { left: 70%; animation-delay: 3s; }
-.particle:nth-child(5) { left: 90%; animation-delay: 4s; }
-
-@keyframes floatUp {
-    0% { transform: translateY(100vh); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.6; }
-    100% { transform: translateY(-10vh); opacity: 0; }
-}
-
-/* ==========================================================================
-   34. ԳՐԱՌՄԱՆ ՄԵՔԵՆԱՅԻ ԷՖԵԿՏ
-   ========================================================================== */
-.typewriter {
-    display: inline-block;
-    overflow: hidden;
-    border-right: 3px solid var(--primary-color);
-    white-space: nowrap;
-    animation: typewriter 3s steps(40) 1s forwards, blink 0.8s step-end infinite;
-    max-width: fit-content;
-}
-
-/* ==========================================================================
-   35. ՆԵՈՆԱՅԻՆ ԿՈՃԱԿՆԵՐ
-   ========================================================================== */
-.btn-neon {
-    position: relative;
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    overflow: hidden;
-    z-index: 1;
-}
-
-.btn-neon::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--primary-color);
-    transform: translateX(-100%);
-    transition: transform var(--transition-fast);
-    z-index: -1;
-}
-
-.btn-neon:hover::before {
-    transform: translateX(0);
-}
-
-.btn-neon:hover {
-    color: var(--bg-darker);
-    box-shadow: 0 0 30px var(--primary-glow), inset 0 0 20px rgba(0, 240, 255, 0.3);
-}
-
-.btn-neon-pink {
-    border-color: var(--accent-pink);
-    color: var(--accent-pink);
-}
-
-.btn-neon-pink::before {
-    background: var(--accent-pink);
-}
-
-.btn-neon-pink:hover {
-    color: var(--bg-darker);
-    box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
-}
-
-.btn-neon-green {
-    border-color: var(--accent-green);
-    color: var(--accent-green);
-}
-
-.btn-neon-green::before {
-    background: var(--accent-green);
-}
-
-.btn-neon-green:hover {
-    color: var(--bg-darker);
-    box-shadow: 0 0 30px rgba(0, 255, 102, 0.6);
-}
-
-/* ==========================================================================
-   36. ԱՊԱԿԻ ՔԱՐՏԵՐ (GLASSMORPHISM)
-   ========================================================================== */
-.glass-card {
-    background: rgba(17, 24, 39, 0.55);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--border-radius-md);
-    padding: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all var(--transition-normal);
-}
-
-.glass-card:hover {
-    background: rgba(17, 24, 39, 0.75);
-    border-color: var(--primary-color);
-    transform: translateY(-5px);
-}
-
-body.light-mode .glass-card {
-    background: rgba(255, 255, 255, 0.55);
-    border-color: rgba(37, 99, 235, 0.15);
-}
-
-/* ==========================================================================
-   37. ՆԵՈՒՄՈՐՖԻԶՄԻ ՏԱՐՐԵՐ
-   ========================================================================== */
-.neu-element {
-    background: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    box-shadow:
-        8px 8px 16px rgba(0, 0, 0, 0.4),
-        -8px -8px 16px rgba(255, 255, 255, 0.03);
-    padding: 2rem;
-    transition: all var(--transition-normal);
-}
-
-.neu-element:active {
-    box-shadow:
-        inset 8px 8px 16px rgba(0, 0, 0, 0.4),
-        inset -8px -8px 16px rgba(255, 255, 255, 0.03);
-}
-
-/* ==========================================================================
-   38. ՊԱՏԿԵՐԱՍՐԱՀԻ ՑԱՆՑ
-   ========================================================================== */
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-}
-
-.gallery-item {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--border-radius-md);
-    aspect-ratio: 1 / 1;
-    cursor: pointer;
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-slow);
-}
-
-.gallery-item:hover img {
-    transform: scale(1.15);
-}
-
-.gallery-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0, 240, 255, 0.85), transparent);
-    display: flex;
-    align-items: flex-end;
-    padding: 1.5rem;
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-}
-
-.gallery-item:hover .gallery-overlay {
-    opacity: 1;
-}
-
-.gallery-overlay h4 {
-    color: var(--bg-darker);
-    font-weight: 800;
-}
-
-/* ==========================================================================
-   39. ՀԱՄԵՄԱՏԱԿԱՆ ԱՂՅՈՒՍԱԿՆԵՐ
-   ========================================================================== */
-.comparison-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: var(--border-radius-md);
-    overflow: hidden;
-    border: 1px solid var(--glass-border);
-}
-
-.comparison-table th {
-    padding: 1.2rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: var(--bg-darker);
-    font-weight: 800;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-}
-
-.comparison-table td {
-    padding: 1.2rem;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--glass-border);
-    color: var(--text-muted);
-}
-
-.comparison-table tr:hover td {
-    background: var(--bg-card-hover);
-    color: var(--text-main);
-}
-
-.comparison-table .yes {
-    color: var(--accent-green);
-    font-weight: 700;
-}
-
-.comparison-table .no {
-    color: var(--accent-red);
-    font-weight: 700;
-}
-
-/* ==========================================================================
-   40. ՀՈՐԻԶՈՆԱԿԱՆ ԺԱՄԱՆԱԿԱԳԾԱՅԻՆ ՓՈՒԼԵՐ
-   ========================================================================== */
-.timeline-horizontal {
-    display: flex;
-    gap: 0;
-    position: relative;
-    padding: 3rem 0;
-    overflow-x: auto;
-}
-
-.timeline-horizontal::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    transform: translateY(-50%);
-}
-
-.timeline-horizontal .step {
-    flex: 1;
-    min-width: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-}
-
-.timeline-horizontal .step-dot {
-    width: 24px;
-    height: 24px;
-    background: var(--primary-color);
-    border: 4px solid var(--bg-dark);
-    border-radius: 50%;
-    box-shadow: 0 0 20px var(--primary-glow);
-    margin-bottom: 1rem;
-}
-
-.timeline-horizontal .step-label {
-    background: var(--bg-card);
-    padding: 0.8rem 1.2rem;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--glass-border);
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-align: center;
-}
-
-/* ==========================================================================
-   41. ՎԻՃԱԿԱԳՐՈՒԹՅԱՆ ՀԱՇՎԻՉՆԵՐ
-   ========================================================================== */
-.counters {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin: 3rem 0;
-}
-
-.counter-item {
-    text-align: center;
-    padding: 2rem;
-    background: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    border: 1px solid var(--glass-border);
-    transition: all var(--transition-normal);
-}
-
-.counter-item:hover {
-    border-color: var(--primary-color);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 240, 255, 0.15);
-}
-
-.counter-value {
-    font-size: 3rem;
-    font-weight: 800;
-    font-family: var(--font-code);
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: block;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-}
-
-.counter-label {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-/* ==========================================================================
-   42. ՎԿԱՅԱԿԱՆՆԵՐԻ ԲԼՈԿՆԵՐ
-   ========================================================================== */
-.testimonial {
-    background: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 2rem;
-    border-left: 4px solid var(--primary-color);
-    position: relative;
-}
-
-.testimonial::before {
-    content: '"';
-    position: absolute;
-    top: -20px;
-    left: 20px;
-    font-size: 5rem;
-    color: var(--primary-color);
-    opacity: 0.3;
-    font-family: Georgia, serif;
-}
-
-.testimonial-text {
-    font-style: italic;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
-}
-
-.testimonial-author {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.testimonial-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    color: var(--bg-darker);
-}
-
-.testimonial-info strong {
-    display: block;
-    color: var(--text-main);
-    margin-bottom: 0.2rem;
-}
-
-.testimonial-info span {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-}
-
-/* ==========================================================================
-   43. ԿՈԴԻ ԲԼՈԿՆԵՐ
-   ========================================================================== */
-.code-block {
-    background: var(--bg-darker);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-sm);
-    padding: 1.5rem;
-    font-family: var(--font-code);
-    font-size: 0.9rem;
-    color: var(--text-main);
-    overflow-x: auto;
-    position: relative;
-    line-height: 1.7;
-}
-
-.code-block::before {
-    content: attr(data-lang);
-    position: absolute;
-    top: 0.5rem;
-    right: 0.8rem;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-.code-block .keyword { color: var(--accent-purple); }
-.code-block .string { color: var(--accent-green); }
-.code-block .comment { color: var(--text-dim); font-style: italic; }
-.code-block .number { color: var(--accent-orange); }
-
-/* ==========================================================================
-   44. ՊԻՏԱԿՆԵՐԻ ԱՄՓՈՓ
-   ========================================================================== */
-.tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    justify-content: center;
-}
-
-.tag {
-    padding: 0.4rem 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-    border-radius: 999px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.tag:hover {
-    background: var(--primary-color);
-    color: var(--bg-darker);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
-}
-
-.tag-large { font-size: 1.1rem; padding: 0.6rem 1.4rem; }
-.tag-small { font-size: 0.8rem; padding: 0.3rem 0.8rem; }
-
-/* ==========================================================================
-   45. ԺԱՊԱՎԵՆԱՅԻՆ ԿՐՈՆՆԵՐ
-   ========================================================================== */
-.ribbon {
-    position: absolute;
-    top: 15px;
-    right: -5px;
-    background: var(--accent-red);
-    color: white;
-    padding: 0.4rem 1rem;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    box-shadow: var(--shadow-sm);
-}
-
-.ribbon::before {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    right: 0;
-    border: 5px solid transparent;
-    border-top-color: rgba(200, 0, 50, 1);
-    border-right-color: rgba(200, 0, 50, 1);
-}
-
-.ribbon-new { background: var(--accent-green); }
-.ribbon-new::before { border-top-color: rgba(0, 180, 70, 1); border-right-color: rgba(0, 180, 70, 1); }
-
-.ribbon-hot { background: var(--accent-orange); }
-.ribbon-hot::before { border-top-color: rgba(200, 100, 0, 1); border-right-color: rgba(200, 100, 0, 1); }
-
-/* ==========================================================================
-   46. ԱՌԱՋԱԴԻՄԱՅԻՆ ՀՈՒՇՈՒՅԹՆԵՐ
-   ========================================================================== */
-[data-tooltip-adv] {
-    position: relative;
-}
-
-[data-tooltip-adv]::before,
-[data-tooltip-adv]::after {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    transition: all var(--transition-fast);
-    z-index: 100;
-}
-
-[data-tooltip-adv]::before {
-    content: attr(data-tooltip-adv);
-    bottom: 120%;
-    left: 50%;
-    transform: translateX
-
-/* ==========================================================================
-   ՆՈՐ ԴԻԶԱՅՆ — ԹԵՍՏ ԵՎ ԼԻԴԵՐԲՈՐԴ
-   ========================================================================== */
-
-/* ==========================================================================
-   1. ԹԵՍՏԻ ՀԵՐՈՍԻ ԲԱԺԻՆ
+   19. ԹԵՍՏ — ՀԵՐՈՍ
    ========================================================================== */
 .quiz-hero {
-    padding: 5rem 1.5rem 3rem;
+    padding: 4rem 1.5rem 2.5rem;
     text-align: center;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(0, 240, 255, 0.08), transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(112, 0, 255, 0.08), transparent 50%);
     position: relative;
     overflow: hidden;
-}
-
-.quiz-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
 }
 
 .quiz-hero-content {
@@ -2013,8 +829,8 @@ body.light-mode .glass-card {
 }
 
 .quiz-hero h1 {
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    margin: 1rem 0 1rem;
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    margin: 0.8rem 0 0.8rem;
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -2023,7 +839,7 @@ body.light-mode .glass-card {
 
 .quiz-hero p {
     color: var(--text-muted);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
 }
 
 .lb-hero h1 {
@@ -2037,16 +853,17 @@ body.light-mode .glass-card {
 .lb-section {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 5rem;
+    padding: 1rem 1.5rem 5rem;
+    width: 100%;
 }
 
 /* ==========================================================================
-   2. ՍԿԶԲՆԱԿԱՆ ՊԱՆԵԼ
+   20. ԹԵՍՏ — ՍԿԶԲՆԱԿԱՆ ՊԱՆԵԼ
    ========================================================================== */
 .start-panel {
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     padding: 3rem;
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.6s ease;
@@ -2058,7 +875,7 @@ body.light-mode .glass-card {
 }
 
 .panel-header h2 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     margin-bottom: 0.5rem;
     color: var(--text-main);
 }
@@ -2069,7 +886,7 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   3. ԲԱՐԴՈՒԹՅԱՆ ՔԱՐՏԵՐ — ՆՈՐ
+   21. ԹԵՍՏ — ԲԱՐԴՈՒԹՅԱՆ ՔԱՐՏԵՐ
    ========================================================================== */
 .difficulty-grid {
     display: grid;
@@ -2081,15 +898,15 @@ body.light-mode .glass-card {
 .difficulty-card {
     background: var(--bg-dark);
     border: 2px solid var(--glass-border);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    transition: all var(--t-normal);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1rem;
 }
 
 .difficulty-card::before {
@@ -2100,7 +917,7 @@ body.light-mode .glass-card {
     right: 0;
     height: 3px;
     background: var(--glass-border);
-    transition: background var(--transition-normal);
+    transition: background var(--t-normal);
 }
 
 .difficulty-card:hover {
@@ -2117,11 +934,13 @@ body.light-mode .glass-card {
     background: rgba(0, 255, 102, 0.06);
     box-shadow: 0 12px 30px rgba(0, 255, 102, 0.15);
 }
+
 .difficulty-card.medium.selected {
     border-color: var(--accent-orange);
     background: rgba(255, 153, 0, 0.06);
     box-shadow: 0 12px 30px rgba(255, 153, 0, 0.15);
 }
+
 .difficulty-card.hard.selected {
     border-color: var(--accent-red);
     background: rgba(255, 0, 85, 0.06);
@@ -2133,8 +952,8 @@ body.light-mode .glass-card {
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: var(--primary-color);
     color: var(--bg-darker);
@@ -2142,7 +961,7 @@ body.light-mode .glass-card {
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     animation: bounceIn 0.4s ease;
 }
 
@@ -2157,7 +976,7 @@ body.light-mode .glass-card {
 }
 
 .diff-icon {
-    font-size: 2rem;
+    font-size: 1.8rem;
     width: 48px;
     height: 48px;
     display: flex;
@@ -2165,23 +984,24 @@ body.light-mode .glass-card {
     justify-content: center;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
+    flex-shrink: 0;
 }
 
 .diff-name h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.15rem;
+    font-size: 1.15rem;
+    margin-bottom: 0.1rem;
     color: var(--text-main);
 }
 
 .diff-name span {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--text-dim);
 }
 
 .diff-stats {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.5rem;
     padding: 1rem 0;
     border-top: 1px solid var(--glass-border);
     border-bottom: 1px solid var(--glass-border);
@@ -2195,13 +1015,13 @@ body.light-mode .glass-card {
 
 .diff-stat strong {
     font-family: var(--font-code);
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: var(--primary-color);
 }
 
 .diff-stat span {
     color: var(--text-dim);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
 }
 
 .diff-select-btn {
@@ -2209,11 +1029,11 @@ body.light-mode .glass-card {
     background: transparent;
     border: 1px solid var(--glass-border);
     color: var(--text-main);
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--radius-sm);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
     font-family: var(--font-main);
 }
 
@@ -2228,11 +1048,13 @@ body.light-mode .glass-card {
     color: var(--bg-darker);
     border-color: var(--accent-green);
 }
+
 .difficulty-card.medium.selected .diff-select-btn {
     background: var(--accent-orange);
     color: var(--bg-darker);
     border-color: var(--accent-orange);
 }
+
 .difficulty-card.hard.selected .diff-select-btn {
     background: var(--accent-red);
     color: var(--bg-darker);
@@ -2240,15 +1062,15 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   4. ԱՆՈՒՆԻ ՊԱՆԵԼ — ՆՈՐ
+   22. ԹԵՍՏ — ԱՆՈՒՆԻ ՊԱՆԵԼ
    ========================================================================== */
 .name-panel {
     background: var(--bg-dark);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     padding: 1.5rem 2rem;
     margin-bottom: 1.5rem;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
 }
 
 .name-panel:focus-within {
@@ -2266,20 +1088,18 @@ body.light-mode .glass-card {
     font-size: 0.95rem;
 }
 
-.label-icon {
-    font-size: 1.1rem;
-}
+.label-icon { font-size: 1.1rem; }
 
 .name-panel input {
     width: 100%;
     padding: 0.9rem 1.1rem;
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--radius-sm);
     color: var(--text-main);
     font-size: 1rem;
     font-family: var(--font-main);
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
 }
 
 .name-panel input:focus {
@@ -2288,9 +1108,7 @@ body.light-mode .glass-card {
     background: var(--bg-dark);
 }
 
-.name-panel input::placeholder {
-    color: var(--text-dim);
-}
+.name-panel input::placeholder { color: var(--text-dim); }
 
 .input-hint {
     margin: 0.6rem 0 0;
@@ -2299,7 +1117,7 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   5. ՍԿՍԵԼ ԿՈՃԱԿ — ՆՈՐ
+   23. ԹԵՍՏ — ՍԿՍԵԼ ԿՈՃԱԿ
    ========================================================================== */
 .start-quiz-btn {
     width: 100%;
@@ -2307,49 +1125,22 @@ body.light-mode .glass-card {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: var(--bg-darker);
     border: none;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     font-weight: 800;
     font-size: 1.1rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.7rem;
     font-family: var(--font-main);
     box-shadow: 0 8px 25px rgba(0, 240, 255, 0.25);
-    position: relative;
-    overflow: hidden;
-}
-
-.start-quiz-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-    opacity: 0;
-    transition: opacity var(--transition-normal);
 }
 
 .start-quiz-btn:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 15px 40px rgba(0, 240, 255, 0.4);
-}
-
-.start-quiz-btn:hover:not(:disabled)::before { opacity: 1; }
-
-.start-quiz-btn span,
-.start-quiz-btn svg {
-    position: relative;
-    z-index: 1;
-}
-
-.start-quiz-btn svg {
-    transition: transform var(--transition-fast);
-}
-
-.start-quiz-btn:hover:not(:disabled) svg {
-    transform: translateX(5px);
 }
 
 .start-quiz-btn:disabled {
@@ -2361,12 +1152,12 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   6. ԽԱՂԻ ՊԱՆԵԼ — ՆՈՐ
+   24. ԹԵՍՏ — ԽԱՂԻ ՊԱՆԵԼ
    ========================================================================== */
 .game-panel {
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     padding: 2.5rem;
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.5s ease;
@@ -2455,7 +1246,7 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   7. ԺԱՄԱՉԱՓԻ ՇՐՋԱՆԱԿ — ՆՈՐ
+   25. ԹԵՍՏ — ԺԱՄԱՉԱՓԻ ՇՐՋԱՆԱԿ
    ========================================================================== */
 .timer-circle {
     position: relative;
@@ -2485,7 +1276,7 @@ body.light-mode .glass-card {
     stroke: var(--primary-color);
     stroke-width: 4;
     stroke-linecap: round;
-    transition: stroke-dashoffset 0.5s linear, stroke var(--transition-fast);
+    transition: stroke-dashoffset 0.9s linear, stroke var(--t-fast);
     filter: drop-shadow(0 0 6px var(--primary-glow));
 }
 
@@ -2495,21 +1286,28 @@ body.light-mode .glass-card {
     font-weight: 800;
     font-size: 1.05rem;
     color: var(--primary-color);
-    transition: color var(--transition-fast);
+    transition: color var(--t-fast);
 }
 
-.timer-circle.warning .timer-fg { stroke: var(--accent-orange); filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.6)); }
+.timer-circle.warning .timer-fg {
+    stroke: var(--accent-orange);
+    filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.6));
+}
 .timer-circle.warning #timer-number { color: var(--accent-orange); }
 
-.timer-circle.danger .timer-fg { stroke: var(--accent-red); filter: drop-shadow(0 0 8px rgba(255, 0, 85, 0.8)); }
-.timer-circle.danger #timer-number { color: var(--accent-red); animation: heartbeat 0.8s ease-in-out infinite; }
+.timer-circle.danger .timer-fg {
+    stroke: var(--accent-red);
+    filter: drop-shadow(0 0 8px rgba(255, 0, 85, 0.8));
+}
+.timer-circle.danger #timer-number {
+    color: var(--accent-red);
+    animation: heartbeat 0.8s ease-in-out infinite;
+}
 
 /* ==========================================================================
-   8. ԱՌԱՋԸՆԹԱՑԻ ԳԾԻ — ՆՈՐ
+   26. ԹԵՍՏ — ԱՌԱՋԸՆԹԱՑ
    ========================================================================== */
-.game-progress {
-    margin-bottom: 2rem;
-}
+.game-progress { margin-bottom: 2rem; }
 
 .game-progress-info {
     display: flex;
@@ -2544,7 +1342,7 @@ body.light-mode .glass-card {
     width: 0%;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border-radius: 999px;
-    transition: width var(--transition-normal);
+    transition: width var(--t-normal);
     box-shadow: 0 0 15px var(--primary-glow);
     position: relative;
 }
@@ -2557,20 +1355,18 @@ body.light-mode .glass-card {
     width: 30px;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
-    animation: shimmer 2s infinite;
 }
 
 /* ==========================================================================
-   9. ՀԱՐՑԻ ՔԱՐՏ — ՆՈՐ
+   27. ԹԵՍՏ — ՀԱՐՑԻ ՔԱՐՏ
    ========================================================================== */
 .question-card {
     background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(112, 0, 255, 0.05));
     border: 1px solid var(--glass-border);
     border-left: 4px solid var(--primary-color);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     padding: 1.8rem 2rem;
     margin-bottom: 1.5rem;
-    position: relative;
 }
 
 .question-label {
@@ -2587,14 +1383,14 @@ body.light-mode .glass-card {
 }
 
 .question-card h3 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     line-height: 1.5;
     color: var(--text-main);
     margin: 0;
 }
 
 /* ==========================================================================
-   10. ՊԱՏԱՍԽԱՆՆԵՐԻ ՑԱՆԿ — ՆՈՐ
+   28. ԹԵՍՏ — ՊԱՏԱՍԽԱՆՆԵՐ
    ========================================================================== */
 .options-list {
     display: flex;
@@ -2610,14 +1406,13 @@ body.light-mode .glass-card {
     padding: 1.1rem 1.3rem;
     background: var(--bg-dark);
     border: 2px solid var(--glass-border);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     cursor: pointer;
     color: var(--text-main);
     font-family: var(--font-main);
     font-size: 1rem;
     text-align: left;
-    transition: all var(--transition-fast);
-    position: relative;
+    transition: all var(--t-fast);
     width: 100%;
 }
 
@@ -2641,7 +1436,7 @@ body.light-mode .glass-card {
     font-size: 0.9rem;
     color: var(--text-muted);
     flex-shrink: 0;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
 }
 
 .option-item:hover .option-letter {
@@ -2650,10 +1445,7 @@ body.light-mode .glass-card {
     border-color: var(--primary-color);
 }
 
-.option-text {
-    flex: 1;
-    line-height: 1.4;
-}
+.option-text { flex: 1; line-height: 1.4; }
 
 .option-check {
     width: 24px;
@@ -2661,10 +1453,10 @@ body.light-mode .glass-card {
     border-radius: 50%;
     border: 2px solid var(--glass-border);
     flex-shrink: 0;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
+    position: relative;
 }
 
-/* Ճիշտ պատասխան */
 .option-item.correct {
     background: rgba(0, 255, 102, 0.1);
     border-color: var(--accent-green);
@@ -2679,7 +1471,6 @@ body.light-mode .glass-card {
 .option-item.correct .option-check {
     background: var(--accent-green);
     border-color: var(--accent-green);
-    position: relative;
 }
 
 .option-item.correct .option-check::after {
@@ -2694,7 +1485,6 @@ body.light-mode .glass-card {
     font-size: 0.85rem;
 }
 
-/* Սխալ պատասխան */
 .option-item.wrong {
     background: rgba(255, 0, 85, 0.1);
     border-color: var(--accent-red);
@@ -2709,7 +1499,6 @@ body.light-mode .glass-card {
 .option-item.wrong .option-check {
     background: var(--accent-red);
     border-color: var(--accent-red);
-    position: relative;
 }
 
 .option-item.wrong .option-check::after {
@@ -2725,15 +1514,15 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   11. ՊԱՏԱՍԽԱՆԻ ՀԵՏԱԴԱՐՁ ԿԱՊ — ՆՈՐ
+   29. ԹԵՍՏ — ՀԵՏԱԴԱՐՁ ԿԱՊ
    ========================================================================== */
 .answer-feedback {
     text-align: center;
     padding: 1rem;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     font-weight: 600;
     min-height: 0;
-    transition: all var(--transition-normal);
+    transition: all var(--t-normal);
 }
 
 .answer-feedback.success {
@@ -2748,17 +1537,15 @@ body.light-mode .glass-card {
     border: 1px solid var(--accent-red);
 }
 
-.answer-feedback strong {
-    font-family: var(--font-code);
-}
+.answer-feedback strong { font-family: var(--font-code); }
 
 /* ==========================================================================
-   12. ԱՐԴՅՈՒՆՔԻ ՊԱՆԵԼ — ՆՈՐ
+   30. ԹԵՍՏ — ԱՐԴՅՈՒՆՔ
    ========================================================================== */
 .result-panel {
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     padding: 3rem;
     text-align: center;
     box-shadow: var(--shadow-lg);
@@ -2793,7 +1580,7 @@ body.light-mode .glass-card {
 }
 
 .trophy-emoji {
-    font-size: 6rem;
+    font-size: 5.5rem;
     position: relative;
     z-index: 1;
     animation: bounceIn 0.8s ease;
@@ -2823,9 +1610,8 @@ body.light-mode .glass-card {
     padding: 1.5rem 3rem;
     background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(112, 0, 255, 0.1));
     border: 2px solid var(--primary-color);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     margin-bottom: 2.5rem;
-    position: relative;
     box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
 }
 
@@ -2857,13 +1643,13 @@ body.light-mode .glass-card {
 .stat-box {
     background: var(--bg-dark);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     padding: 1.3rem 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.6rem;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
 }
 
 .stat-box:hover {
@@ -2876,9 +1662,7 @@ body.light-mode .glass-card {
     background: rgba(255, 153, 0, 0.05);
 }
 
-.stat-icon {
-    font-size: 1.6rem;
-}
+.stat-icon { font-size: 1.6rem; }
 
 .stat-content {
     display: flex;
@@ -2893,9 +1677,7 @@ body.light-mode .glass-card {
     margin-bottom: 0.2rem;
 }
 
-.stat-box.highlight .stat-content strong {
-    color: var(--accent-orange);
-}
+.stat-box.highlight .stat-content strong { color: var(--accent-orange); }
 
 .stat-content span {
     font-size: 0.75rem;
@@ -2920,11 +1702,11 @@ body.light-mode .glass-card {
     justify-content: center;
     gap: 0.6rem;
     padding: 1rem 2rem;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
     font-family: var(--font-main);
     text-decoration: none;
     border: none;
@@ -2954,15 +1736,15 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   13. ԼԻԴԵՐԲՈՐԴԻ ՖԻԼՏՐԵՐ — ՆՈՐ
+   31. ԼԻԴԵՐԲՈՐԴ — ՖԻԼՏՐԵՐ
    ========================================================================== */
 .lb-filters {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.4rem;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 3rem;
-    padding: 0.5rem;
+    margin-bottom: 2.5rem;
+    padding: 0.4rem;
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
     border-radius: 999px;
@@ -2974,16 +1756,16 @@ body.light-mode .glass-card {
 .lb-filter {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.7rem 1.4rem;
+    gap: 0.5rem;
+    padding: 0.65rem 1.3rem;
     background: transparent;
     border: none;
     border-radius: 999px;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--t-fast);
     font-family: var(--font-main);
 }
 
@@ -3010,12 +1792,10 @@ body.light-mode .glass-card {
 .filter-dot.medium { background: var(--accent-orange); }
 .filter-dot.hard { background: var(--accent-red); }
 
-.lb-filter.active .filter-dot {
-    background: var(--bg-darker);
-}
+.lb-filter.active .filter-dot { background: var(--bg-darker); }
 
 /* ==========================================================================
-   14. ՊՈԴԻՈՒՄ — ՆՈՐ
+   32. ԼԻԴԵՐԲՈՐԴ — ՊՈԴԻՈՒՄ
    ========================================================================== */
 .podium {
     display: flex;
@@ -3023,7 +1803,7 @@ body.light-mode .glass-card {
     justify-content: center;
     gap: 1rem;
     margin-bottom: 3rem;
-    padding: 2rem 1rem 0;
+    padding: 3rem 1rem 0;
     animation: fadeIn 0.6s ease;
 }
 
@@ -3031,7 +1811,7 @@ body.light-mode .glass-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     position: relative;
     flex: 1;
     max-width: 180px;
@@ -3039,14 +1819,14 @@ body.light-mode .glass-card {
 
 .podium-crown {
     position: absolute;
-    top: -40px;
+    top: -55px;
     font-size: 2rem;
     animation: floatCyber 2s ease-in-out infinite alternate;
     filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.8));
 }
 
 .podium-rank {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin-bottom: 0.3rem;
 }
 
@@ -3131,12 +1911,12 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   15. ԼԻԴԵՐԲՈՐԴԻ ԱՂՅՈՒՍԱԿ — ՆՈՐ
+   33. ԼԻԴԵՐԲՈՐԴ — ԱՂՅՈՒՍԱԿ
    ========================================================================== */
 .lb-table-wrapper {
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
     animation: fadeIn 0.6s ease;
@@ -3150,6 +1930,15 @@ body.light-mode .glass-card {
     padding: 5rem 2rem;
     gap: 1rem;
     color: var(--text-muted);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
 }
 
 .lb-table {
@@ -3188,15 +1977,9 @@ body.light-mode .glass-card {
 
 .lb-table tbody tr:last-child td { border-bottom: none; }
 
-.lb-table tbody tr {
-    transition: background var(--transition-fast);
-}
+.lb-table tbody tr { transition: background var(--t-fast); }
+.lb-table tbody tr:hover { background: var(--bg-card-hover); }
 
-.lb-table tbody tr:hover {
-    background: var(--bg-card-hover);
-}
-
-/* Թոփ 3 տողերի առանձնացում */
 .lb-table tbody tr.rank-1 {
     background: linear-gradient(90deg, rgba(250, 204, 21, 0.08), transparent 60%);
 }
@@ -3279,7 +2062,7 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   16. ԴԱՏԱՐԿՈՒԹՅՈՒՆ
+   34. ԼԻԴԵՐԲՈՐԴ — ԴԱՏԱՐԿՈՒԹՅՈՒՆ
    ========================================================================== */
 .lb-empty {
     text-align: center;
@@ -3307,9 +2090,28 @@ body.light-mode .glass-card {
 }
 
 /* ==========================================================================
-   17. ՀԱՐՄԱՐՎՈՂ ԴԻԶԱՅՆ — ՆՈՐ
+   35. ՕԳՏԱԿԱՐ ԴԱՍԵՐ
    ========================================================================== */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.text-primary { color: var(--primary-color); }
+.text-muted { color: var(--text-muted); }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* ==========================================================================
+   36. ՀԱՐՄԱՐՎՈՂ ԴԻԶԱՅՆ
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .footer-content { grid-template-columns: 1fr 1fr; }
+}
+
 @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+
     .difficulty-grid {
         grid-template-columns: 1fr;
     }
@@ -3320,13 +2122,54 @@ body.light-mode .glass-card {
 }
 
 @media (max-width: 768px) {
-    .start-panel,
-    .game-panel,
-    .result-panel {
-        padding: 1.8rem 1.3rem;
+    .hamburger { display: flex; }
+
+    .nav-menu {
+        position: fixed;
+        top: 65px;
+        left: -100%;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        background: var(--bg-darker);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1.5rem 0;
+        transition: left 0.3s ease;
+        z-index: 999;
     }
 
-    .panel-header h2 { font-size: 1.4rem; }
+    .nav-menu.active { left: 0; }
+    .nav-menu li { padding: 0.7rem 0; text-align: center; }
+
+    .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 3rem 1rem;
+        min-height: auto;
+    }
+
+    .hero-visual { order: -1; margin-bottom: 2rem; }
+    .cyber-glow-sphere { width: 200px; height: 200px; }
+    .hero-buttons { justify-content: center; }
+    .hero-stats { justify-content: center; flex-wrap: wrap; gap: 1.5rem; }
+
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+
+    .footer-content { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+
+    .timeline-step { flex-direction: column; align-items: flex-start; }
+    .timeline-step:hover { transform: translateY(-3px); }
+
+    .section { padding: 3.5rem 0; }
+
+    .quiz-section,
+    .lb-section { padding: 1rem 1rem 3rem; }
+
+    .start-panel,
+    .game-panel,
+    .result-panel { padding: 1.8rem 1.3rem; }
+
+    .panel-header h2 { font-size: 1.35rem; }
 
     .game-topbar {
         flex-direction: column;
@@ -3339,20 +2182,23 @@ body.light-mode .glass-card {
     }
 
     .question-card { padding: 1.3rem 1.2rem; }
-    .question-card h3 { font-size: 1.1rem; }
+    .question-card h3 { font-size: 1.05rem; }
 
     .option-item {
         padding: 1rem;
         font-size: 0.95rem;
+        gap: 0.7rem;
     }
+
+    .option-letter { width: 30px; height: 30px; font-size: 0.85rem; }
 
     .result-score-big { padding: 1rem 2rem; }
     .result-score-big span { font-size: 2.5rem; }
 
-    /* Լիդերբորդ */
+    /* Պոդիում */
     .podium {
         gap: 0.5rem;
-        padding: 1rem 0 0;
+        padding: 2rem 0 0;
     }
 
     .podium-avatar { width: 50px; height: 50px; font-size: 1.2rem; }
@@ -3362,7 +2208,9 @@ body.light-mode .glass-card {
     .podium-item.first .podium-base { height: 100px; }
     .podium-item.second .podium-base { height: 70px; }
     .podium-item.third .podium-base { height: 55px; }
+    .podium-crown { font-size: 1.5rem; top: -40px; }
 
+    /* Աղյուսակ */
     .lb-table th,
     .lb-table td {
         padding: 0.7rem 0.6rem;
@@ -3372,10 +2220,7 @@ body.light-mode .glass-card {
     .lb-table th.th-date,
     .lb-table td.td-date,
     .lb-table th.th-time,
-    .lb-table td.td-time {
-        display: none;
-    }
-
+    .lb-table td.td-time,
     .lb-table th.th-correct,
     .lb-table td.td-correct {
         display: none;
@@ -3389,18 +2234,27 @@ body.light-mode .glass-card {
 }
 
 @media (max-width: 480px) {
-    .result-actions {
-        flex-direction: column;
-    }
+    .navbar { padding: 0.9rem 1rem; }
+    .logo { font-size: 1.3rem; }
+    .container-main { padding: 0 1rem; }
+    .hero-content h1 { font-size: 1.9rem; }
+    .section-title h2 { font-size: 1.6rem; }
+    .card, .content-block { padding: 1.5rem; }
+    .hero-stats { flex-direction: column; gap: 1rem; }
 
-    .btn-primary-lg,
-    .btn-outline-lg {
-        width: 100%;
-    }
+    .result-actions { flex-direction: column; }
+    .btn-primary-lg, .btn-outline-lg { width: 100%; }
 
-    .podium-crown { font-size: 1.4rem; top: -30px; }
+    .lb-filter { font-size: 0.8rem; padding: 0.45rem 0.85rem; }
 }
-    .date-cell { display: none; }
 
-    .quiz-topbar { flex-direction: column; align-items: flex-start; }
+/* ==========================================================================
+   37. ՏՊԱԳՐՄԱՆ ՈՃԵՐ
+   ========================================================================== */
+@media print {
+    .header, .footer, .hero-visual, .btn, #theme-toggle, .hamburger {
+        display: none !important;
+    }
+    body { background: #fff; color: #000; }
+    .card, .content-block { border: 1px solid #ccc; box-shadow: none; }
 }
