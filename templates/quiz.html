@@ -3,18 +3,18 @@
 {% block content %}
 <section class="quiz-hero">
     <div class="quiz-hero-content">
-        <span class="badge">Ինտերակտիվ Թեստ</span>
-        <h1>Ստուգիր Գիտելիքներդ</h1>
-        <p>Ընտրիր բարդության մակարդակը, մուտքագրիր անունդ և մրցիր լավագույնների հետ</p>
+        <span class="badge">{{ t.quiz_badge }}</span>
+        <h1>{{ t.quiz_title }}</h1>
+        <p>{{ t.quiz_subtitle }}</p>
     </div>
 </section>
 
 <section class="quiz-section">
-    <!-- ========== ՍԿԶԲՆԱԿԱՆ ԷԿՐԱՆ ========== -->
+    <!-- ՍԿԶԲՆԱԿԱՆ ԷԿՐԱՆ -->
     <div id="start-screen" class="start-panel">
         <div class="panel-header">
-            <h2>Ընտրիր Բարդության Մակարդակը</h2>
-            <p>Ամեն մակարդակ ունի իր ժամանակը, միավորները և հարցաքանակը</p>
+            <h2>{{ t.quiz_select_diff }}</h2>
+            <p>{{ t.quiz_select_diff_desc }}</p>
         </div>
 
         <div class="difficulty-grid">
@@ -22,110 +22,83 @@
                 <div class="diff-header">
                     <div class="diff-icon">🟢</div>
                     <div class="diff-name">
-                        <h3>Հեշտ</h3>
-                        <span>Սկսնակների Համար</span>
+                        <h3>{{ t.quiz_easy }}</h3>
+                        <span>{{ t.quiz_easy_desc }}</span>
                     </div>
                 </div>
                 <div class="diff-stats">
-                    <div class="diff-stat">
-                        <strong>8</strong>
-                        <span>Հարց</span>
-                    </div>
-                    <div class="diff-stat">
-                        <strong>30վ</strong>
-                        <span>Մեկ Հարց</span>
-                    </div>
-                    <div class="diff-stat">
-                        <strong>10</strong>
-                        <span>Միավոր</span>
-                    </div>
+                    <div class="diff-stat"><strong>8</strong><span>{{ t.quiz_questions }}</span></div>
+                    <div class="diff-stat"><strong>30վ</strong><span>{{ t.quiz_seconds }}</span></div>
+                    <div class="diff-stat"><strong>10</strong><span>{{ t.quiz_points }}</span></div>
                 </div>
-                <button class="diff-select-btn">Ընտրել</button>
+                <button class="diff-select-btn">{{ t.quiz_select }}</button>
             </div>
 
             <div class="difficulty-card medium" data-difficulty="medium">
                 <div class="diff-header">
                     <div class="diff-icon">🟡</div>
                     <div class="diff-name">
-                        <h3>Միջին</h3>
-                        <span>Փորձառուների Համար</span>
+                        <h3>{{ t.quiz_medium }}</h3>
+                        <span>{{ t.quiz_medium_desc }}</span>
                     </div>
                 </div>
                 <div class="diff-stats">
-                    <div class="diff-stat">
-                        <strong>10</strong>
-                        <span>Հարց</span>
-                    </div>
-                    <div class="diff-stat">
-                        <strong>25վ</strong>
-                        <span>Մեկ Հարց</span>
-                    </div>
-                    <div class="diff-stat">
-                        <strong>20</strong>
-                        <span>Միավոր</span>
-                    </div>
+                    <div class="diff-stat"><strong>10</strong><span>{{ t.quiz_questions }}</span></div>
+                    <div class="diff-stat"><strong>25վ</strong><span>{{ t.quiz_seconds }}</span></div>
+                    <div class="diff-stat"><strong>20</strong><span>{{ t.quiz_points }}</span></div>
                 </div>
-                <button class="diff-select-btn">Ընտրել</button>
+                <button class="diff-select-btn">{{ t.quiz_select }}</button>
             </div>
 
             <div class="difficulty-card hard" data-difficulty="hard">
                 <div class="diff-header">
                     <div class="diff-icon">🔴</div>
                     <div class="diff-name">
-                        <h3>Բարդ</h3>
-                        <span>Մասնագետների Համար</span>
+                        <h3>{{ t.quiz_hard }}</h3>
+                        <span>{{ t.quiz_hard_desc }}</span>
                     </div>
                 </div>
                 <div class="diff-stats">
-                    <div class="diff-stat">
-                        <strong>12</strong>
-                        <span>Հարց</span>
-                    </div>
-                    <div class="diff-stat">
-                        <strong>20վ</strong>
-                        <span>Մեկ Հարց</span>
-                    </div>
-                    <div class="diff-stat">
-                        <strong>30</strong>
-                        <span>Միավոր</span>
-                    </div>
+                    <div class="diff-stat"><strong>12</strong><span>{{ t.quiz_questions }}</span></div>
+                    <div class="diff-stat"><strong>20վ</strong><span>{{ t.quiz_seconds }}</span></div>
+                    <div class="diff-stat"><strong>30</strong><span>{{ t.quiz_points }}</span></div>
                 </div>
-                <button class="diff-select-btn">Ընտրել</button>
+                <button class="diff-select-btn">{{ t.quiz_select }}</button>
             </div>
         </div>
 
         <div class="name-panel">
             <label for="player-name">
                 <span class="label-icon">👤</span>
-                Մուտքագրիր անունդ
+                {{ t.quiz_enter_name }}
             </label>
-            <input type="text" id="player-name" maxlength="20" placeholder="Օրինակ՝ Անի կամ Արամ" autocomplete="off">
-            <p class="input-hint">Անունը կհայտնվի լիդերբորդում</p>
+            <input type="text" id="player-name" maxlength="20" placeholder="{{ t.quiz_name_placeholder }}" autocomplete="off">
+            <p class="input-hint">{{ t.quiz_name_hint }}</p>
         </div>
 
         <button id="start-btn" class="start-quiz-btn" disabled>
-            <span>Սկսել Թեստը</span>
+            <span>{{ t.quiz_start }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
     </div>
 
-    <!-- ========== ԽԱՂԻ ԷԿՐԱՆ ========== -->
+    <!-- ԽԱՂԻ ԷԿՐԱՆ -->
     <div id="game-screen" class="game-panel hidden">
         <div class="game-topbar">
             <div class="game-info-left">
-                <span class="quiz-badge" id="current-difficulty">Հեշտ</span>
+                <span class="quiz-badge" id="current-difficulty">—</span>
                 <span class="player-chip">
                     <span class="player-avatar" id="player-avatar">A</span>
-                    <span id="display-name">Անուն</span>
+                    <span id="display-name">—</span>
                 </span>
             </div>
             <div class="game-info-right">
                 <div class="live-stat">
-                    <span class="live-stat-label">Միավոր</span>
+                    <span class="live-stat-label">{{ t.quiz_score }}</span>
                     <strong id="live-score">0</strong>
                 </div>
                 <div class="live-stat">
-                    <span class="live-stat-label">Ճիշտ</span>
+                    <span class="live-stat-label">{{ t.quiz_correct }}</span>
                     <strong id="live-correct">0</strong>
                 </div>
                 <div class="timer-circle" id="timer-display">
@@ -140,37 +113,36 @@
 
         <div class="game-progress">
             <div class="game-progress-info">
-                <span>Հարց <strong id="progress-current">1</strong> / <span id="progress-total">8</span></span>
-                <span id="progress-percent">12%</span>
+                <span>1 / 8</span>
+                <span id="progress-percent">0%</span>
             </div>
             <div class="game-progress-bar">
                 <div id="progressFill"></div>
             </div>
         </div>
 
-        <div class="question-card">
-            <span class="question-label">ՀԱՐՑ</span>
-            <h3 id="question-text">Բեռնվում է...</h3>
+        <div class="question-card" id="question-card">
+            <span class="question-label">{{ t.quiz_question }}</span>
+            <h3 id="question-text">{{ t.quiz_loading }}</h3>
         </div>
 
         <div id="options-container" class="options-list"></div>
-
         <div id="quiz-result" class="answer-feedback"></div>
     </div>
 
-    <!-- ========== ԱՐԴՅՈՒՆՔԻ ԷԿՐԱՆ ========== -->
+    <!-- ԱՐԴՅՈՒՆՔԻ ԷԿՐԱՆ -->
     <div id="result-screen" class="result-panel hidden">
         <div class="result-trophy">
             <div class="trophy-glow"></div>
             <div class="trophy-emoji" id="result-emoji">🏆</div>
         </div>
 
-        <h2 id="result-title">Հիանալի է։</h2>
-        <p id="result-subtitle" class="result-subtitle">Դու հավաքեցիր բարձր միավոր</p>
+        <h2 id="result-title">—</h2>
+        <p id="result-subtitle" class="result-subtitle">—</p>
 
         <div class="result-score-big">
             <span id="stat-score">0</span>
-            <small>միավոր</small>
+            <small>{{ t.quiz_score_unit }}</small>
         </div>
 
         <div class="result-stats-grid">
@@ -178,31 +150,31 @@
                 <div class="stat-icon">✅</div>
                 <div class="stat-content">
                     <strong id="stat-correct">0</strong>
-                    <span>Ճիշտ Պատասխան</span>
+                    <span>{{ t.quiz_stat_correct }}</span>
                 </div>
             </div>
             <div class="stat-box">
                 <div class="stat-icon">⏱️</div>
                 <div class="stat-content">
                     <strong id="stat-time">0վ</strong>
-                    <span>Ծախսված Ժամանակ</span>
+                    <span>{{ t.quiz_stat_time }}</span>
                 </div>
             </div>
             <div class="stat-box highlight">
                 <div class="stat-icon">🏅</div>
                 <div class="stat-content">
                     <strong id="stat-rank">—</strong>
-                    <span>Տեղ Լիդերբորդում</span>
+                    <span>{{ t.quiz_stat_rank }}</span>
                 </div>
             </div>
         </div>
 
         <div class="result-actions">
             <button id="restart-btn" class="btn-primary-lg">
-                <span>🔄</span> Կրկին Փորձել
+                <span>🔄</span> {{ t.quiz_restart }}
             </button>
             <a href="{{ url_for('leaderboard') }}" class="btn-outline-lg">
-                <span>🏆</span> Տեսնել Լիդերբորդը
+                <span>🏆</span> {{ t.quiz_view_lb }}
             </a>
         </div>
     </div>
