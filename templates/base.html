@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hy">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,23 +7,33 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&family=Noto+Sans+Armenian:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
         <nav class="navbar">
             <a href="{{ url_for('home') }}" class="logo">Կիբեռ<span>Վահան</span></a>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="{{ url_for('home') }}" class="nav-link">Գլխավոր</a></li>
-                <li><a href="{{ url_for('types') }}" class="nav-link">Սպառնալիքներ</a></li>
-                <li><a href="{{ url_for('hackers') }}" class="nav-link">Հաքերներ</a></li>
-                <li><a href="{{ url_for('phishing') }}" class="nav-link">Ֆիշինգ</a></li>
-                <li><a href="{{ url_for('cases') }}" class="nav-link">Քեյսեր</a></li>
-                <li><a href="{{ url_for('defense') }}" class="nav-link">Պաշտպանություն</a></li>
-                <li><a href="{{ url_for('quiz') }}" class="nav-link">Թեստ</a></li>
-                <li><a href="{{ url_for('leaderboard') }}" class="nav-link">🏆 Լիդերբորդ</a></li>
+                <li><a href="{{ url_for('home') }}" class="nav-link">{{ t.nav_home }}</a></li>
+                <li><a href="{{ url_for('types') }}" class="nav-link">{{ t.nav_threats }}</a></li>
+                <li><a href="{{ url_for('hackers') }}" class="nav-link">{{ t.nav_hackers }}</a></li>
+                <li><a href="{{ url_for('phishing') }}" class="nav-link">{{ t.nav_phishing }}</a></li>
+                <li><a href="{{ url_for('cases') }}" class="nav-link">{{ t.nav_cases }}</a></li>
+                <li><a href="{{ url_for('defense') }}" class="nav-link">{{ t.nav_defense }}</a></li>
+                <li><a href="{{ url_for('quiz') }}" class="nav-link">{{ t.nav_quiz }}</a></li>
+                <li><a href="{{ url_for('leaderboard') }}" class="nav-link">🏆 {{ t.nav_leaderboard }}</a></li>
             </ul>
-            <button id="theme-toggle" class="btn-small">🌙</button>
+
+            <div class="nav-actions">
+                <div class="lang-switcher">
+                    <a href="{{ url_for('set_language', lang='hy') }}" class="lang-btn {% if lang == 'hy' %}active{% endif %}" title="Հայերեն">🇦🇲</a>
+                    <a href="{{ url_for('set_language', lang='en') }}" class="lang-btn {% if lang == 'en' %}active{% endif %}" title="English">🇬🇧</a>
+                    <a href="{{ url_for('set_language', lang='ru') }}" class="lang-btn {% if lang == 'ru' %}active{% endif %}" title="Русский">🇷🇺</a>
+                </div>
+                <button id="sound-toggle" class="btn-small icon-btn" title="{{ t.nav_sound_on }}">🔊</button>
+                <button id="theme-toggle" class="btn-small icon-btn" title="{{ t.nav_theme }}">🌙</button>
+            </div>
+
             <div class="hamburger" id="hamburger">
                 <span class="bar"></span><span class="bar"></span><span class="bar"></span>
             </div>
@@ -38,29 +48,61 @@
         <div class="footer-content">
             <div class="footer-col">
                 <h4>ԿիբեռՎահան</h4>
-                <p>Նախագիծ՝ նվիրված կիբեռանվտանգությանը, ֆիշինգին և հաքերների աշխարհին։</p>
+                <p>{{ t.footer_about }}</p>
             </div>
             <div class="footer-col">
-                <h4>Բաժիններ</h4>
+                <h4>{{ t.footer_sections }}</h4>
                 <ul>
-                    <li><a href="{{ url_for('types') }}">Սպառնալիքներ</a></li>
-                    <li><a href="{{ url_for('hackers') }}">Հաքերներ</a></li>
-                    <li><a href="{{ url_for('phishing') }}">Ֆիշինգ</a></li>
-                    <li><a href="{{ url_for('quiz') }}">Թեստ</a></li>
-                    <li><a href="{{ url_for('leaderboard') }}">Լիդերբորդ</a></li>
+                    <li><a href="{{ url_for('types') }}">{{ t.nav_threats }}</a></li>
+                    <li><a href="{{ url_for('hackers') }}">{{ t.nav_hackers }}</a></li>
+                    <li><a href="{{ url_for('phishing') }}">{{ t.nav_phishing }}</a></li>
+                    <li><a href="{{ url_for('quiz') }}">{{ t.nav_quiz }}</a></li>
+                    <li><a href="{{ url_for('leaderboard') }}">{{ t.nav_leaderboard }}</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>Կապ</h4>
+                <h4>{{ t.footer_contact }}</h4>
                 <p>info@kibervahan.am</p>
                 <p>Երևան, Հայաստան</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 ԿիբեռՎահան | ԹԳՀԳ նախագծային աշխատանք</p>
+            <p>{{ t.footer_copyright }}</p>
         </div>
     </footer>
 
+    <!-- Թարգմանությունները JS-ին փոխանցելը -->
+    <script>
+        window.TRANSLATIONS = {
+            lang: "{{ lang }}",
+            quiz_correct_msg: "{{ t.quiz_correct_msg }}",
+            quiz_wrong_msg: "{{ t.quiz_wrong_msg }}",
+            quiz_time_up: "{{ t.quiz_time_up }}",
+            quiz_points_added: "{{ t.quiz_points_added }}",
+            quiz_score_unit: "{{ t.quiz_score_unit }}",
+            quiz_stat_correct: "{{ t.quiz_stat_correct }}",
+            quiz_stat_time: "{{ t.quiz_stat_time }}",
+            quiz_stat_rank: "{{ t.quiz_stat_rank }}",
+            quiz_excellent: "{{ t.quiz_excellent }}",
+            quiz_excellent_sub: "{{ t.quiz_excellent_sub }}",
+            quiz_great: "{{ t.quiz_great }}",
+            quiz_great_sub: "{{ t.quiz_great_sub }}",
+            quiz_good: "{{ t.quiz_good }}",
+            quiz_good_sub: "{{ t.quiz_good_sub }}",
+            quiz_learn: "{{ t.quiz_learn }}",
+            quiz_learn_sub: "{{ t.quiz_learn_sub }}",
+            lb_player: "{{ t.lb_player }}",
+            lb_level: "{{ t.lb_level }}",
+            lb_score: "{{ t.lb_score }}",
+            lb_correct: "{{ t.lb_correct }}",
+            lb_time: "{{ t.lb_time }}",
+            lb_date: "{{ t.lb_date }}",
+            lb_loading: "{{ t.lb_loading }}",
+            lb_empty: "{{ t.lb_empty }}",
+            lb_empty_desc: "{{ t.lb_empty_desc }}",
+            lb_start_quiz: "{{ t.lb_start_quiz }}",
+        };
+    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
