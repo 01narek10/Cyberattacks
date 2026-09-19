@@ -32,7 +32,6 @@ if (hamburger && navMenu) {
 // ==========================================================
 const startScreen = document.getElementById('start-screen');
 if (startScreen) {
-    // Փոփոխականներ
     let selectedDifficulty = null;
     let playerName = '';
     let questions = [];
@@ -45,41 +44,48 @@ if (startScreen) {
     let timeRemaining = 0;
     let levelConfig = {};
 
-    // DOM տարրեր
+    // DOM
     const gameScreen = document.getElementById('game-screen');
     const resultScreen = document.getElementById('result-screen');
     const playerNameInput = document.getElementById('player-name');
     const startBtn = document.getElementById('start-btn');
     const displayName = document.getElementById('display-name');
+    const playerAvatar = document.getElementById('player-avatar');
     const currentDiffBadge = document.getElementById('current-difficulty');
     const questionText = document.getElementById('question-text');
     const optionsContainer = document.getElementById('options-container');
     const inlineResult = document.getElementById('quiz-result');
     const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
+    const progressCurrent = document.getElementById('progress-current');
+    const progressTotal = document.getElementById('progress-total');
+    const progressPercent = document.getElementById('progress-percent');
     const timerDisplay = document.getElementById('timer-display');
+    const timerNumber = document.getElementById('timer-number');
+    const timerCircle = document.getElementById('timer-circle');
     const liveScore = document.getElementById('live-score');
     const liveCorrect = document.getElementById('live-correct');
-    const scoreText = document.getElementById('score-text');
     const resultEmoji = document.getElementById('result-emoji');
     const resultTitle = document.getElementById('result-title');
+    const resultSubtitle = document.getElementById('result-subtitle');
     const statScore = document.getElementById('stat-score');
     const statCorrect = document.getElementById('stat-correct');
     const statTime = document.getElementById('stat-time');
     const statRank = document.getElementById('stat-rank');
     const restartBtn = document.getElementById('restart-btn');
 
-    // ---------- Բարդության ընտրություն ----------
-    document.querySelectorAll('.difficulty-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedDifficulty = btn.dataset.difficulty;
+    const CIRCLE_LENGTH = 2 * Math.PI * 19; // շրջանագծի երկարությունը
+
+    // ---------- Բարդության քարտի ընտրություն ----------
+    document.querySelectorAll('.difficulty-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedDifficulty = card.dataset.difficulty;
             checkStartReady();
         });
     });
 
-    // ---------- Անուն գրելը ----------
+    // ---------- Անունի մուտքագրում ----------
     playerNameInput.addEventListener('input', () => {
         playerName = playerNameInput.value.trim();
         checkStartReady();
@@ -89,7 +95,7 @@ if (startScreen) {
         startBtn.disabled = !(selectedDifficulty && playerName.length >= 2);
     }
 
-    // ---------- Սկսել թեստը ----------
+    // ---------- Սկսել Թեստը ----------
     startBtn.addEventListener('click', () => {
         fetch(`/api/questions/${selectedDifficulty}`)
             .then(res => res.json())
@@ -113,19 +119,31 @@ if (startScreen) {
             });
     });
 
-    // ---------- Սկսել խաղը ----------
+    // ---------- Սկսել Խաղը ----------
     function startQuiz() {
         startScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
         displayName.textContent = playerName;
+        playerAvatar.textContent = playerName.charAt(0).toUpperCase();
+        playerAvatar.style.background = getAvatarColor(playerName);
+
         currentDiffBadge.textContent = levelConfig.label;
         currentDiffBadge.className = 'quiz-badge diff-' + levelConfig.difficulty;
 
+        progressTotal.textContent = questions.length;
         currentIndex = 0;
         score = 0;
         correctCount = 0;
         totalTimeSpent = 0;
+
+        // Թաքցնում ենք ավատարի գույնը
         loadQuestion();
+    }
+
+    function getAvatarColor(name) {
+        const colors = ['#00f0ff', '#7000ff', '#00ff66', '#ff9900', '#ff0055', '#ec4899', '#3b82f6', '#a855f7'];
+        const idx = (name.charCodeAt(0) || 0) % colors.length;
+        return colors[idx];
     }
 
     // ---------- Հարցի բեռնում ----------
@@ -133,21 +151,28 @@ if (startScreen) {
         clearInterval(timerInterval);
         optionsContainer.innerHTML = '';
         inlineResult.textContent = '';
+        inlineResult.className = 'answer-feedback';
         updateLiveStats();
 
         const q = questions[currentIndex];
-        questionText.textContent = `${currentIndex + 1}. ${q.question}`;
+        questionText.textContent = q.question;
 
         q.options.forEach((opt, i) => {
             const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.textContent = opt;
+            btn.className = 'option-item';
+            btn.innerHTML = `
+                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                <span class="option-text">${opt}</span>
+                <span class="option-check"></span>
+            `;
             btn.onclick = () => selectAnswer(i, btn);
             optionsContainer.appendChild(btn);
         });
 
-        progressFill.style.width = ((currentIndex) / questions.length) * 100 + '%';
-        progressText.textContent = `${currentIndex + 1} / ${questions.length}`;
+        progressCurrent.textContent = currentIndex + 1;
+        const pct = ((currentIndex) / questions.length) * 100;
+        progressFill.style.width = pct + '%';
+        progressPercent.textContent = Math.round(pct) + '%';
 
         // Ժամաչափ
         timeRemaining = levelConfig.time;
@@ -164,8 +189,23 @@ if (startScreen) {
     }
 
     function updateTimer() {
-        timerDisplay.textContent = `⏱ ${timeRemaining}`;
-        timerDisplay.classList.toggle('warning', timeRemaining <= 5);
+        timerNumber.textContent = timeRemaining;
+
+        // Շրջանագծի անիմացիա
+        const pct = timeRemaining / levelConfig.time;
+        timerCircle.style.strokeDasharray = CIRCLE_LENGTH;
+        timerCircle.style.strokeDashoffset = CIRCLE_LENGTH * (1 - pct);
+
+        // Գույների փոփոխում
+        if (timeRemaining <= 5) {
+            timerDisplay.classList.add('danger');
+            timerDisplay.classList.remove('warning');
+        } else if (timeRemaining <= levelConfig.time * 0.4) {
+            timerDisplay.classList.add('warning');
+            timerDisplay.classList.remove('danger');
+        } else {
+            timerDisplay.classList.remove('warning', 'danger');
+        }
     }
 
     function updateLiveStats() {
@@ -173,15 +213,12 @@ if (startScreen) {
         liveCorrect.textContent = correctCount;
     }
 
-    // ---------- Ժամանակը սպառվել է ----------
+    // ---------- Ժամանակը Սպառվել է ----------
     function timeUp() {
-        const allBtns = optionsContainer.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.disabled = true);
-        inlineResult.textContent = '⏰ Ժամանակը սպառվեց։';
-        inlineResult.style.color = 'var(--accent-orange)';
+        const allBtns = optionsContainer.querySelectorAll('.option-item');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
         totalTimeSpent += levelConfig.time;
 
-        // Ցույց ենք տալիս ճիշտ պատասխանը
         fetch('/api/check', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -196,20 +233,22 @@ if (startScreen) {
             if (data.correct_index !== undefined) {
                 allBtns[data.correct_index].classList.add('correct');
             }
+            inlineResult.className = 'answer-feedback error';
+            inlineResult.innerHTML = '⏰ Ժամանակը սպառվեց';
         })
         .finally(() => {
-            setTimeout(nextQuestion, 1400);
+            setTimeout(nextQuestion, 1600);
         });
     }
 
-    // ---------- Պատասխանի ընտրություն ----------
+    // ---------- Պատասխանի Ընտրություն ----------
     function selectAnswer(selected, btnEl) {
         clearInterval(timerInterval);
         const timeSpent = Math.min(levelConfig.time, (Date.now() - questionStartTime) / 1000);
         totalTimeSpent += timeSpent;
 
-        const allBtns = optionsContainer.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.disabled = true);
+        const allBtns = optionsContainer.querySelectorAll('.option-item');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
 
         fetch('/api/check', {
             method: 'POST',
@@ -226,22 +265,22 @@ if (startScreen) {
                 btnEl.classList.add('correct');
                 score += levelConfig.points;
                 correctCount++;
-                inlineResult.textContent = '✅ Ճիշտ է։ +' + levelConfig.points + ' միավոր';
-                inlineResult.style.color = 'var(--accent-green)';
+                inlineResult.className = 'answer-feedback success';
+                inlineResult.innerHTML = `✅ Ճիշտ է։ <strong>+${levelConfig.points} միավոր</strong>`;
             } else {
                 btnEl.classList.add('wrong');
                 allBtns[data.correct_index].classList.add('correct');
-                inlineResult.textContent = '❌ Սխալ է։';
-                inlineResult.style.color = 'var(--accent-red)';
+                inlineResult.className = 'answer-feedback error';
+                inlineResult.innerHTML = '❌ Սխալ է։';
             }
             updateLiveStats();
         })
         .finally(() => {
-            setTimeout(nextQuestion, 1400);
+            setTimeout(nextQuestion, 1600);
         });
     }
 
-    // ---------- Հաջորդ հարց ----------
+    // ---------- Հաջորդ Հարց ----------
     function nextQuestion() {
         currentIndex++;
         if (currentIndex < questions.length) {
@@ -259,25 +298,26 @@ if (startScreen) {
 
         statScore.textContent = score;
         statCorrect.textContent = `${correctCount} / ${questions.length}`;
-        statTime.textContent = Math.round(totalTimeSpent) + ' վրկ';
+        statTime.textContent = Math.round(totalTimeSpent) + 'վ';
 
-        // Գնահատական
         const pct = (correctCount / questions.length) * 100;
         if (pct >= 90) {
             resultEmoji.textContent = '🏆';
-            resultTitle.textContent = 'Հիանալի է, դու մասնագետ ես։';
+            resultTitle.textContent = 'Հիանալի է։';
+            resultSubtitle.textContent = 'Դու իսկական մասնագետ ես։';
         } else if (pct >= 70) {
             resultEmoji.textContent = '🎉';
             resultTitle.textContent = 'Շատ լավ է։';
+            resultSubtitle.textContent = 'Մի փոքր էլ ջանք ու դու կհասնես գագաթին։';
         } else if (pct >= 50) {
             resultEmoji.textContent = '👍';
-            resultTitle.textContent = 'Լավ է, բայց կարող ես ավելի լավ։';
+            resultTitle.textContent = 'Լավ է։';
+            resultSubtitle.textContent = 'Կարող ես ավելի լավ։ Փորձիր նորից։';
         } else {
             resultEmoji.textContent = '📚';
-            resultTitle.textContent = 'Փորձիր նորից, սովորիր ավելին։';
+            resultTitle.textContent = 'Շարունակիր Սովորել։';
+            resultSubtitle.textContent = 'Նայիր մյուս բաժինները և փորձիր նորից։';
         }
-
-        scoreText.textContent = `Դուք հավաքեցիք ${score} միավոր։`;
 
         // Ուղարկում ենք լիդերբորդին
         fetch('/api/leaderboard', {
@@ -306,13 +346,12 @@ if (startScreen) {
         });
     }
 
-    // ---------- Կրկին փորձել ----------
+    // ---------- Կրկին Փորձել ----------
     restartBtn.addEventListener('click', () => {
         resultScreen.classList.add('hidden');
         startScreen.classList.remove('hidden');
         selectedDifficulty = null;
-        playerName = playerNameInput.value.trim();
-        document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
+        document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
         checkStartReady();
     });
 }
