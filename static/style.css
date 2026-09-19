@@ -2258,3 +2258,159 @@ model-viewer {
     body { background: #fff; color: #000; }
     .card, .content-block { border: 1px solid #ccc; box-shadow: none; }
 }
+
+
+/* ==========================================================================
+   38. ԱՆԻՄԱՑԻԱՆԵՐ ՀԱՐՑԵՐԻ ԱՆՑՄԱՆ ՀԱՄԱՐ
+   ========================================================================== */
+.question-card.slide-out,
+.options-list.slide-out {
+    animation: slideOutLeft 0.25s ease forwards;
+}
+
+.question-card.slide-in,
+.options-list.slide-in {
+    animation: slideInRight 0.4s ease forwards;
+}
+
+@keyframes slideOutLeft {
+    to {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Պատասխանների զանգվածային ցուցադրում */
+.option-item {
+    animation: optionFadeIn 0.4s ease backwards;
+}
+
+.option-item:nth-child(1) { animation-delay: 0.05s; }
+.option-item:nth-child(2) { animation-delay: 0.1s; }
+.option-item:nth-child(3) { animation-delay: 0.15s; }
+.option-item:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes optionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Ճիշտ պատասխանի փայլ */
+.option-item.correct {
+    animation: correctPulse 0.6s ease;
+}
+
+@keyframes correctPulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.5); }
+    50% { box-shadow: 0 0 0 15px rgba(0, 255, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+}
+
+/* Սխալ պատասխանի ցնցում */
+.option-item.wrong {
+    animation: shakeX 0.5s ease;
+}
+
+@keyframes shakeX {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+/* ==========================================================================
+   39. ԼԵԶՎԻ ՓՈԽԱՐԿԻՉ ԵՎ ՁԱՅՆԻ ԿՈՃԱԿ
+   ========================================================================== */
+.nav-actions {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.lang-switcher {
+    display: flex;
+    gap: 0.2rem;
+    padding: 0.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+}
+
+.lang-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1rem;
+    transition: all var(--t-fast);
+    opacity: 0.5;
+    text-decoration: none;
+}
+
+.lang-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.lang-btn.active {
+    background: var(--primary-color);
+    opacity: 1;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.icon-btn {
+    min-width: 42px;
+    height: 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border-radius: 50% !important;
+}
+
+/* Բջջայինում nav-actions */
+@media (max-width: 768px) {
+    .nav-actions {
+        position: fixed;
+        top: 12px;
+        right: 60px;
+        z-index: 1001;
+    }
+
+    .lang-switcher {
+        padding: 0.15rem;
+    }
+
+    .lang-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+    }
+
+    .icon-btn {
+        min-width: 36px;
+        height: 36px;
+        font-size: 0.95rem;
+    }
+}
