@@ -4,23 +4,94 @@
 <section class="section fade-in">
     <div class="section-title">
         <h2>Ստուգիր Գիտելիքներդ</h2>
-        <p>10 հարց՝ կիբեռանվտանգության վերաբերյալ</p>
+        <p>Ընտրիր բարդության մակարդակը և մուտքագրիր անունդ</p>
     </div>
 
-    <div class="quiz-card" id="quizContainer">
+    <!-- ========== ԲԱՐԴՈՒԹՅԱՆ ԸՆՏՐՈՒԹՅՈՒՆ ========== -->
+    <div id="start-screen" class="quiz-card">
+        <h3 class="quiz-start-title">🎯 Ընտրիր Բարդության Մակարդակը</h3>
+
+        <div class="difficulty-grid">
+            <button class="difficulty-btn easy" data-difficulty="easy">
+                <div class="difficulty-icon">🟢</div>
+                <h4>Հեշտ</h4>
+                <p>8 հարց</p>
+                <span class="difficulty-meta">30 վրկ / հարց · 10 միավոր</span>
+            </button>
+            <button class="difficulty-btn medium" data-difficulty="medium">
+                <div class="difficulty-icon">🟡</div>
+                <h4>Միջին</h4>
+                <p>10 հարց</p>
+                <span class="difficulty-meta">25 վրկ / հարց · 20 միավոր</span>
+            </button>
+            <button class="difficulty-btn hard" data-difficulty="hard">
+                <div class="difficulty-icon">🔴</div>
+                <h4>Բարդ</h4>
+                <p>12 հարց</p>
+                <span class="difficulty-meta">20 վրկ / հարց · 30 միավոր</span>
+            </button>
+        </div>
+
+        <div class="name-input-wrapper">
+            <label for="player-name">Մուտքագրիր անունդ․</label>
+            <input type="text" id="player-name" maxlength="20" placeholder="Անուն..." autocomplete="off">
+        </div>
+
+        <p class="quiz-hint">💡 Ընտրիր մակարդակ, գրիր անունդ և սեղմիր «Սկսել»</p>
+
+        <button id="start-btn" class="btn btn-primary" disabled>Սկսել Թեստը</button>
+    </div>
+
+    <!-- ========== ԽԱՂԻ ԷԿՐԱՆ ========== -->
+    <div id="game-screen" class="quiz-card hidden">
+        <div class="quiz-topbar">
+            <div class="quiz-info">
+                <span class="quiz-badge" id="current-difficulty">Հեշտ</span>
+                <span class="quiz-player">👤 <span id="display-name">Անուն</span></span>
+            </div>
+            <div class="quiz-timer" id="timer-display">⏱ 30</div>
+        </div>
+
         <div class="quiz-progress">
             <div class="progress-bar"><div id="progressFill"></div></div>
-            <span id="progressText">1 / 10</span>
+            <span id="progressText">1 / 8</span>
         </div>
-        <div id="quiz-ui">
-            <h3 id="question-text">Բեռնվում է...</h3>
-            <div id="options-container" class="options-grid"></div>
-            <p id="quiz-result" class="quiz-inline-result"></p>
+
+        <h3 id="question-text">Բեռնվում է...</h3>
+        <div id="options-container" class="options-grid"></div>
+        <p id="quiz-result" class="quiz-inline-result"></p>
+        <div class="quiz-score-live">
+            <span>Միավոր․ <strong id="live-score">0</strong></span>
+            <span>Ճիշտ․ <strong id="live-correct">0</strong></span>
         </div>
-        <div id="result-ui" class="hidden">
-            <h3>🎉 Վիկտորինան ավարտվեց։</h3>
-            <p id="score-text"></p>
-            <button onclick="location.reload()" class="btn btn-primary">Փորձել կրկին</button>
+    </div>
+
+    <!-- ========== ԱՐԴՅՈՒՆՔԻ ԷԿՐԱՆ ========== -->
+    <div id="result-screen" class="quiz-card hidden">
+        <div class="result-emoji" id="result-emoji">🎉</div>
+        <h3 id="result-title">Հիանալի է։</h3>
+        <p id="score-text"></p>
+        <div class="result-stats">
+            <div class="result-stat">
+                <strong id="stat-score">0</strong>
+                <span>Միավոր</span>
+            </div>
+            <div class="result-stat">
+                <strong id="stat-correct">0</strong>
+                <span>Ճիշտ Պատասխան</span>
+            </div>
+            <div class="result-stat">
+                <strong id="stat-time">0 վրկ</strong>
+                <span>Ծախսված Ժամանակ</span>
+            </div>
+            <div class="result-stat">
+                <strong id="stat-rank">—</strong>
+                <span>Տեղ Լիդերբորդում</span>
+            </div>
+        </div>
+        <div class="result-actions">
+            <button id="restart-btn" class="btn btn-primary">Կրկին Փորձել</button>
+            <a href="{{ url_for('leaderboard') }}" class="btn btn-outline">Տեսնել Լիդերբորդը</a>
         </div>
     </div>
 </section>
