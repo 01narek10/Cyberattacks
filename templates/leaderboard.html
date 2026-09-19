@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section fade-in">
+    <div class="section-title">
+        <h2>🏆 Լիդերբորդ</h2>
+        <p>Լավագույն 10 արդյունքները բոլոր մակարդակներից</p>
+    </div>
+
+    <div class="leaderboard-filters">
+        <button class="filter-btn active" data-filter="all">Բոլորը</button>
+        <button class="filter-btn" data-filter="easy">🟢 Հեշտ</button>
+        <button class="filter-btn" data-filter="medium">🟡 Միջին</button>
+        <button class="filter-btn" data-filter="hard">🔴 Բարդ</button>
+    </div>
+
+    <div class="leaderboard-container">
+        <div id="leaderboard-loading" class="spinner"></div>
+        <table id="leaderboard-table" class="leaderboard-table hidden">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Անուն</th>
+                    <th>Մակարդակ</th>
+                    <th>Միավոր</th>
+                    <th>Ճիշտ</th>
+                    <th>Ժամանակ</th>
+                    <th>Ամսաթիվ</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+            </tbody>
+        </table>
+        <p id="leaderboard-empty" class="leaderboard-empty hidden">
+            😴 Դեռևս արդյունքներ չկան։ Եղիր առաջինը։
+            <a href="{{ url_for('quiz') }}" class="btn btn-primary">Սկսել Թեստը</a>
+        </p>
+    </div>
+</section>
+
+<script>
+    // Այս էջի համար առանձին սկրիպտ
+    document.addEventListener('DOMContentLoaded', () => {
+        loadLeaderboard('all');
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                loadLeaderboard(btn.dataset.filter);
+            });
+        });
+    });
+
+    function loadLeaderboard(filter) {
+        const body = document.getElementById('leaderboard-body');
+        const loading = document.getElementById('leaderboard-loading');
+        const table = document.getElementById('leaderboard-table');
+        const empty = document.getElementById('leaderboard-empty');
+
+        loading.classList.remove('hidden');
+        table.classList.add('hidden');
+        empty.classList.add('hidden');
+
+        fetch('/api/leaderboard')
+            .then(res => res.json())
+            .then(data => {
+                loading.classList.add('hidden');
+                let filtered = data;
+                if (filter !== 'all') {
+                    filtered = data.filter(e => e.difficulty === filter);
+                }
+
+                if (filtered.length === 0) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                table.classList.remove('hidden');
+                body.innerHTML = filtered.map((e, i) => {
+                    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+                    const diffClass = `diff-${e.difficulty}`;
+                    return `
+                        <tr>
+                            <td><span class="rank-badge">${medal}</span></td>
+                            <td><strong>${escapeHtml(e.name)}</strong></td>
+                            <td><span class="diff-tag ${diffClass}">${e.difficulty_label}</span></td>
+                            <td><strong class="score-cell">${e.score}</strong></td>
+                            <td>${e.correct}/${e.total}</td>
+                            <td>${e.time} վրկ</td>
+                            <td class="date-cell">${e.date}</td>
+                        </tr>
+                    `;
+                }).join('');
+            })
+            .catch(err => {
+                console.error('Սխալ:', err);
+                loading.classList.add('hidden');
+                empty.classList.remove('hidden');
+            });
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+</script>
+{% endblock %}
