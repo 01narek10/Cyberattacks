@@ -3,10 +3,22 @@ import sqlite3
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 
+# Փորձում ենք բեռնել psycopg2 (PostgreSQL-ի համար)
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    HAS_POSTGRES = True
+except ImportError:
+    HAS_POSTGRES = False
+
 app = Flask(__name__)
 app.secret_key = 'kibervahan-secret-key-2026'
 
-DB_PATH = 'leaderboard.db'
+# Տվյալների բազայի կարգավորում
+DATABASE_URL = os.environ.get('DATABASE_URL')
+USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
+SQLITE_PATH = 'leaderboard.db'
+
 
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
 TRANSLATIONS = {
@@ -29,14 +41,14 @@ TRANSLATIONS = {
         'quiz_questions': 'Հարց', 'quiz_seconds': 'Մեկ Հարց', 'quiz_points': 'Միավոր',
         'quiz_select': 'Ընտրել', 'quiz_enter_name': 'Մուտքագրիր անունդ',
         'quiz_name_placeholder': 'Օրինակ՝ Անի կամ Արամ',
-        'quiz_name_hint': 'Անունը կհայտնվի լիդերբորդում',
+        'quiz_name_hint': 'Անունը կհայտնվի առաջատարների աղյուսակում',
         'quiz_start': 'Սկսել Թեստը', 'quiz_score': 'Միավոր', 'quiz_correct': 'Ճիշտ',
         'quiz_question': 'ՀԱՐՑ', 'quiz_loading': 'Բեռնվում է...',
         'quiz_time_up': 'Ժամանակը սպառվեց', 'quiz_correct_msg': 'Ճիշտ է։',
         'quiz_wrong_msg': 'Սխալ է։', 'quiz_points_added': 'միավոր',
-        'quiz_restart': 'Կրկին Փորձել', 'quiz_view_lb': 'Տեսնել Լիդերբորդը',
+        'quiz_restart': 'Կրկին Փորձել', 'quiz_view_lb': 'Տեսնել Առաջատարներին',
         'quiz_stat_correct': 'Ճիշտ Պատասխան', 'quiz_stat_time': 'Ծախսված Ժամանակ',
-        'quiz_stat_rank': 'Տեղ Լիդերբորդում', 'quiz_score_unit': 'միավոր',
+        'quiz_stat_rank': 'Տեղ Աղյուսակում', 'quiz_score_unit': 'միավոր',
         'quiz_excellent': 'Հիանալի է։', 'quiz_excellent_sub': 'Դու իսկական մասնագետ ես։',
         'quiz_great': 'Շատ լավ է։', 'quiz_great_sub': 'Մի փոքր էլ ջանք ու դու կհասնես գագաթին։',
         'quiz_good': 'Լավ է։', 'quiz_good_sub': 'Կարող ես ավելի լավ։ Փորձիր նորից։',
@@ -47,7 +59,7 @@ TRANSLATIONS = {
         'lb_player': 'Խաղացող', 'lb_level': 'Մակարդակ', 'lb_score': 'Միավոր',
         'lb_correct': 'Ճիշտ', 'lb_time': 'Ժամանակ', 'lb_date': 'Ամսաթիվ',
         'lb_loading': 'Բեռնվում է...', 'lb_empty': 'Դեռևս արդյունքներ չկան',
-        'lb_empty_desc': 'Եղիր առաջինը ով կգրանցի իր անունը լիդերբորդում',
+        'lb_empty_desc': 'Եղիր առաջինը ով կգրանցի իր անունը աղյուսակում',
         'lb_start_quiz': 'Սկսել Թեստը',
     },
     'en': {
@@ -58,8 +70,7 @@ TRANSLATIONS = {
         'footer_sections': 'Sections', 'footer_contact': 'Contact',
         'footer_copyright': '© 2026 CyberShield | Educational Project',
         'nav_theme': 'Theme', 'nav_sound_on': 'Sound On', 'nav_sound_off': 'Sound Off',
-        'quiz_badge': 'Interactive Quiz',
-        'quiz_title': 'Test Your Knowledge',
+        'quiz_badge': 'Interactive Quiz', 'quiz_title': 'Test Your Knowledge',
         'quiz_subtitle': 'Choose a difficulty level, enter your name and compete with the best',
         'quiz_select_diff': 'Choose Difficulty Level',
         'quiz_select_diff_desc': 'Each level has its own time, points and questions',
@@ -98,8 +109,7 @@ TRANSLATIONS = {
         'footer_sections': 'Разделы', 'footer_contact': 'Контакты',
         'footer_copyright': '© 2026 КиберЩит | Учебный проект',
         'nav_theme': 'Тема', 'nav_sound_on': 'Звук включен', 'nav_sound_off': 'Звук выключен',
-        'quiz_badge': 'Интерактивный Тест',
-        'quiz_title': 'Проверь Свои Знания',
+        'quiz_badge': 'Интерактивный Тест', 'quiz_title': 'Проверь Свои Знания',
         'quiz_subtitle': 'Выбери уровень сложности, введи имя и соревнуйся с лучшими',
         'quiz_select_diff': 'Выбери Уровень Сложности',
         'quiz_select_diff_desc': 'У каждого уровня свое время, очки и количество вопросов',
@@ -133,32 +143,87 @@ TRANSLATIONS = {
 }
 
 
-# ============ SQLite ՏՎՅԱԼՆԵՐԻ ԲԱԶԱ ============
+# ============ ՏՎՅԱԼՆԵՐԻ ԲԱԶԱՅԻ ՖՈՒՆԿՑԻԱՆԵՐ ============
+def get_connection():
+    """Վերադարձնում է տվյալների բազայի կապը (Postgres կամ SQLite)"""
+    if USE_POSTGRES:
+        return psycopg2.connect(DATABASE_URL)
+    else:
+        conn = sqlite3.connect(SQLITE_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+
 def init_db():
     """Ստեղծել աղյուսակը եթե գոյություն չունի"""
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS leaderboard (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            score INTEGER NOT NULL,
-            difficulty TEXT NOT NULL,
-            difficulty_label TEXT,
-            correct INTEGER,
-            total INTEGER,
-            time REAL,
-            date TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    try:
+        conn = get_connection()
+        c = conn.cursor()
+
+        if USE_POSTGRES:
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS leaderboard (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(20) NOT NULL,
+                    score INTEGER NOT NULL,
+                    difficulty VARCHAR(20) NOT NULL,
+                    difficulty_label VARCHAR(50),
+                    correct INTEGER,
+                    total INTEGER,
+                    time REAL,
+                    date VARCHAR(30)
+                )
+            ''')
+        else:
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS leaderboard (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    score INTEGER NOT NULL,
+                    difficulty TEXT NOT NULL,
+                    difficulty_label TEXT,
+                    correct INTEGER,
+                    total INTEGER,
+                    time REAL,
+                    date TEXT
+                )
+            ''')
+
+        conn.commit()
+        conn.close()
+        print(f"✅ Տվյալների բազան պատրաստ է ({'PostgreSQL' if USE_POSTGRES else 'SQLite'})")
+    except Exception as e:
+        print(f"❌ Տվյալների բազայի սխալ. {e}")
 
 
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+def execute_query(query, params=None, fetch=False, fetch_one=False):
+    """Ունիվերսալ ֆունկցիա query-ների համար"""
+    conn = get_connection()
+    try:
+        if USE_POSTGRES:
+            c = conn.cursor(cursor_factory=RealDictCursor)
+        else:
+            c = conn.cursor()
+
+        # Postgres-ը օգտագործում է %s, SQLite-ը՝ ?
+        if USE_POSTGRES and params:
+            query = query.replace('?', '%s')
+
+        c.execute(query, params or ())
+
+        result = None
+        if fetch:
+            result = [dict(row) for row in c.fetchall()]
+        elif fetch_one:
+            row = c.fetchone()
+            result = dict(row) if row else None
+
+        if not fetch and not fetch_one:
+            conn.commit()
+
+        return result
+    finally:
+        conn.close()
 
 
 # ============ ՀԱՐՑԵՐԻ ԲԱԶԱ ============
@@ -335,7 +400,7 @@ def quiz():
 
 @app.route('/leaderboard')
 def leaderboard():
-    return render_template('leaderboard.html', title="Լիդերբորդ")
+    return render_template('leaderboard.html', title="Առաջատարների Աղյուսակ")
 
 
 # ============ API ՀԱՐՑՈՒՄՆԵՐ ============
@@ -381,36 +446,20 @@ def check_answer():
     return jsonify({"error": "Հարցը չի գտնվել"}), 404
 
 
-# ============ API ԼԻԴԵՐԲՈՐԴ ============
+# ============ API ԱՌԱՋԱՏԱՐՆԵՐԻ ԱՂՅՈՒՍԱԿ ============
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     try:
-        conn = get_db()
-        c = conn.cursor()
-        c.execute('''
-            SELECT name, score, difficulty, difficulty_label, correct, total, time, date
-            FROM leaderboard
-            ORDER BY score DESC, time ASC
-            LIMIT 100
-        ''')
-        rows = c.fetchall()
-        conn.close()
-
-        result = []
-        for r in rows:
-            result.append({
-                "name": r["name"],
-                "score": r["score"],
-                "difficulty": r["difficulty"],
-                "difficulty_label": r["difficulty_label"],
-                "correct": r["correct"],
-                "total": r["total"],
-                "time": r["time"],
-                "date": r["date"]
-            })
-        return jsonify(result[:10])
+        rows = execute_query(
+            '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
+               FROM leaderboard
+               ORDER BY score DESC, time ASC
+               LIMIT 10''',
+            fetch=True
+        )
+        return jsonify(rows or [])
     except Exception as e:
-        print(f"Լիդերբորդի սխալ. {e}")
+        print(f"Առաջատարների սխալ. {e}")
         return jsonify([])
 
 
@@ -440,21 +489,22 @@ def add_to_leaderboard():
 
         date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        conn = get_db()
-        c = conn.cursor()
-        c.execute('''
-            INSERT INTO leaderboard (name, score, difficulty, difficulty_label, correct, total, time, date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (name, score, difficulty, diff_label, correct, total, round(time_spent, 1), date_str))
-        conn.commit()
+        # Ավելացնում ենք գրառումը
+        execute_query(
+            '''INSERT INTO leaderboard 
+               (name, score, difficulty, difficulty_label, correct, total, time, date)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+            (name, score, difficulty, diff_label, correct, total, round(time_spent, 1), date_str)
+        )
 
         # Գտնում ենք տեղը
-        c.execute('''
-            SELECT COUNT(*) + 1 AS pos FROM leaderboard
-            WHERE score > ? OR (score = ? AND time < ?)
-        ''', (score, score, time_spent))
-        position = c.fetchone()["pos"]
-        conn.close()
+        row = execute_query(
+            '''SELECT COUNT(*) + 1 AS pos FROM leaderboard
+               WHERE score > ? OR (score = ? AND time < ?)''',
+            (score, score, time_spent),
+            fetch_one=True
+        )
+        position = row['pos'] if row else None
 
         return jsonify({
             "success": True,
