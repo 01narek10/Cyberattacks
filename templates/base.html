@@ -21,7 +21,7 @@
                 <li><a href="{{ url_for('cases') }}" class="nav-link">{{ t.nav_cases }}</a></li>
                 <li><a href="{{ url_for('defense') }}" class="nav-link">{{ t.nav_defense }}</a></li>
                 <li><a href="{{ url_for('quiz') }}" class="nav-link">{{ t.nav_quiz }}</a></li>
-                <li><a href="{{ url_for('leaderboard') }}" class="nav-link">🏆 {{ t.nav_leaderboard }}</a></li>
+                <li><a href="{{ url_for('leaderboard') }}" class="nav-link">{{ t.nav_leaderboard }}</a></li>
             </ul>
 
             <div class="nav-actions">
@@ -62,8 +62,8 @@
             </div>
             <div class="footer-col">
                 <h4>{{ t.footer_contact }}</h4>
-                <p>info@kibervahan.am</p>
-                <p>Երևան, Հայաստան</p>
+                <p>01narek10nersisyan@gmail.com</p>
+                <p>Իջևան, Հայաստան</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -71,7 +71,6 @@
         </div>
     </footer>
 
-    <!-- Թարգմանությունները JS-ին փոխանցելը -->
     <script>
         window.TRANSLATIONS = {
             lang: "{{ lang }}",
