@@ -552,3 +552,121 @@ function escapeHtml(str) {
     div.textContent = str;
     return div.innerHTML;
 }
+
+
+/* ==========================================================
+   🎨 ԱՆԻՄԱՑԻՈՆ ՖՈՆ — Matrix Rain + Particles
+   ========================================================== */
+
+// ==========================================================
+// 🌧️ MATRIX RAIN
+// ==========================================================
+(function initMatrixRain() {
+    const canvas = document.getElementById('matrix-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Կիբեռանվտանգությանը համապատասխան սիմվոլներ
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ01010101ABCDEF#$%&@!';
+    const charsArray = chars.split('');
+
+    const fontSize = 16;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function getColor() {
+        // Մութ ռեժիմում՝ cyan, լուսավորում՝ կապույտ
+        return document.body.classList.contains('light-mode')
+            ? 'rgba(37, 99, 235, 0.7)'
+            : 'rgba(0, 240, 255, 0.7)';
+    }
+
+    function draw() {
+        // Անհրաժեշտության դեպքում թարմացնում ենք սյուների քանակը
+        const newColumns = Math.floor(canvas.width / fontSize);
+        if (newColumns !== columns) {
+            columns = newColumns;
+            drops = Array(columns).fill(1);
+        }
+
+        // Կիսաթափանց սև ֆոն հետքի համար
+        ctx.fillStyle = document.body.classList.contains('light-mode')
+            ? 'rgba(248, 250, 252, 0.08)'
+            : 'rgba(10, 14, 23, 0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = getColor();
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = charsArray[Math.floor(Math.random() * charsArray.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(draw, 55);
+})();
+
+
+// ==========================================================
+// ✨ ԼՈՂԱՑՈՂ ՄԱՍՆԻԿՆԵՐ
+// ==========================================================
+(function initParticles() {
+    const container = document.getElementById('bg-particles');
+    if (!container) return;
+
+    const PARTICLE_COUNT = window.innerWidth < 768 ? 20 : 45;
+    const colors = ['', 'purple', 'green', 'pink'];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'particle-dot ' + colors[Math.floor(Math.random() * colors.length)];
+        dot.style.left = Math.random() * 100 + '%';
+        dot.style.animationDuration = (8 + Math.random() * 12) + 's';
+        dot.style.animationDelay = (Math.random() * 15) + 's';
+        dot.style.width = dot.style.height = (2 + Math.random() * 3) + 'px';
+        container.appendChild(dot);
+    }
+})();
+
+
+// ==========================================================
+// 💫 ՖՈՆԻ ՇԱՐԺՈՒՄ ՄՈՒԿԻ ՀԵՏ (Parallax Effect)
+// ==========================================================
+(function initParallax() {
+    // Միայն desktop-ի համար
+    if (window.innerWidth < 1024) return;
+
+    const orbs = document.querySelectorAll('.orb');
+    let ticking = false;
+
+    window.addEventListener('mousemove', (e) => {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(() => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+            orbs.forEach((orb, i) => {
+                const depth = (i + 1) * 15;
+                orb.style.transform = `translate(${x * depth}px, ${y * depth}px)`;
+            });
+
+            ticking = false;
+        });
+    });
+})();
