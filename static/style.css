@@ -2689,3 +2689,17 @@ body.light-mode .bg-matrix {
     }
     .bg-matrix { display: none; }
 }
+
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    min-height: 85vh;
+    padding: 4rem 2rem;
+    max-width: 1240px;
+    margin: 0 auto;
+    gap: 3rem;
+    position: relative; /* ← ավելացրու սա */
+    z-index: 1;         /* ← և սա */
+}
