@@ -382,7 +382,7 @@ if (startScreen) {
 
         statScore.textContent = score;
         statCorrect.textContent = `${correctCount} / ${questions.length}`;
-        statTime.textContent = Math.round(totalTimeSpent) + 'վ';
+        statTime.textContent = Math.round(totalTimeSpent) + (T.seconds_short || 'վ');
 
         const pct = (correctCount / questions.length) * 100;
         if (pct >= 90) {
@@ -493,7 +493,7 @@ function loadLeaderboard(filter) {
                         <td><span class="diff-pill diff-${e.difficulty}">${e.difficulty_label}</span></td>
                         <td class="td-score"><strong>${e.score}</strong></td>
                         <td class="td-correct">${e.correct}/${e.total}</td>
-                        <td class="td-time">${e.time}վ</td>
+                        <td class="td-time">${e.time}${T.seconds_short || 'վ'}</td>
                         <td class="td-date">${formatDate(e.date)}</td>
                     </tr>
                 `;
