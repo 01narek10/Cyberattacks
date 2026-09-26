@@ -3,8 +3,8 @@
 {% block content %}
 <section class="section fade-in">
     <div class="section-title">
-        <h2>Իրական Կիբեռմիջադեպեր</h2>
-        <p>Պատմության ամենաաղմկահարույց կիբեռհարձակումները</p>
+        <h2>{{ t.cases_title }}</h2>
+        <p>{{ t.cases_subtitle }}</p>
     </div>
     <div class="grid grid-3">
         {% for c in cyber_cases %}
@@ -21,11 +21,9 @@
 </section>
 
 <section class="section bg-darker">
-    <div class="section-title">
-        <h2>🎬 Վավերագրական</h2>
-    </div>
+    <div class="section-title"><h2>{{ t.cases_video_title }}</h2></div>
     <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/k5voQjb0vcc" title="Կիբեռհանցագործություն" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/k5voQjb0vcc" title="Cyber Crime" allowfullscreen></iframe>
     </div>
 </section>
 {% endblock %}
