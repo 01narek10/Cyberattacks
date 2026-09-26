@@ -259,8 +259,10 @@ if (startScreen) {
             }, 500);
 
             const pct = (currentIndex / questions.length) * 100;
-            progressFill.style.width = pct + '%';
-            progressPercent.textContent = Math.round(pct) + '%';
+            progressFill.style.width = (currentIndex / questions.length) * 100 + '%';
+            if (progressPercent) {
+                progressPercent.textContent = Math.round((currentIndex / questions.length) * 100) + '%';
+            }
 
             timeRemaining = levelConfig.time;
             questionStartTime = Date.now();
