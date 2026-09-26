@@ -17,7 +17,7 @@
             <p>{{ t.quiz_select_diff_desc }}</p>
         </div>
 
-        <div class="difficulty-grid">
+               <div class="difficulty-grid">
             <div class="difficulty-card easy" data-difficulty="easy">
                 <div class="diff-header">
                     <div class="diff-icon">🟢</div>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="diff-stats">
-                    <div class="diff-stat"><strong>8</strong><span>{{ t.quiz_questions }}</span></div>
+                    <div class="diff-stat"><strong>10</strong><span>{{ t.quiz_questions }}</span></div>
                     <div class="diff-stat"><strong>30վ</strong><span>{{ t.quiz_seconds }}</span></div>
                     <div class="diff-stat"><strong>10</strong><span>{{ t.quiz_points }}</span></div>
                 </div>
@@ -43,7 +43,7 @@
                     </div>
                 </div>
                 <div class="diff-stats">
-                    <div class="diff-stat"><strong>10</strong><span>{{ t.quiz_questions }}</span></div>
+                    <div class="diff-stat"><strong>12</strong><span>{{ t.quiz_questions }}</span></div>
                     <div class="diff-stat"><strong>25վ</strong><span>{{ t.quiz_seconds }}</span></div>
                     <div class="diff-stat"><strong>20</strong><span>{{ t.quiz_points }}</span></div>
                 </div>
@@ -59,29 +59,13 @@
                     </div>
                 </div>
                 <div class="diff-stats">
-                    <div class="diff-stat"><strong>12</strong><span>{{ t.quiz_questions }}</span></div>
+                    <div class="diff-stat"><strong>15</strong><span>{{ t.quiz_questions }}</span></div>
                     <div class="diff-stat"><strong>20վ</strong><span>{{ t.quiz_seconds }}</span></div>
                     <div class="diff-stat"><strong>30</strong><span>{{ t.quiz_points }}</span></div>
                 </div>
                 <button class="diff-select-btn">{{ t.quiz_select }}</button>
             </div>
         </div>
-
-        <div class="name-panel">
-            <label for="player-name">
-                <span class="label-icon">👤</span>
-                {{ t.quiz_enter_name }}
-            </label>
-            <input type="text" id="player-name" maxlength="20" placeholder="{{ t.quiz_name_placeholder }}" autocomplete="off">
-            <p class="input-hint">{{ t.quiz_name_hint }}</p>
-        </div>
-
-        <button id="start-btn" class="start-quiz-btn" disabled>
-            <span>{{ t.quiz_start }}</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
-    </div>
-
     <!-- ԽԱՂԻ ԷԿՐԱՆ -->
     <div id="game-screen" class="game-panel hidden">
         <div class="game-topbar">
