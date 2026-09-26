@@ -219,6 +219,9 @@ TRANSLATIONS = {
         'lb_loading': 'Բեռնվում է...', 'lb_empty': 'Դեռևս արդյունքներ չկան',
         'lb_empty_desc': 'Եղիր առաջինը ով կգրանցի իր անունը աղյուսակում',
         'lb_start_quiz': 'Սկսել Թեստը',
+        'stat_damage_value': '10.5 տրլն',
+        'footer_location': 'Իջևան, Հայաստան',
+        'seconds_short': 'վ'
     },
 
     'en': {
@@ -418,6 +421,9 @@ TRANSLATIONS = {
         'lb_loading': 'Loading...', 'lb_empty': 'No results yet',
         'lb_empty_desc': 'Be the first to register your name on the leaderboard',
         'lb_start_quiz': 'Start Quiz',
+        'stat_damage_value': '10.5 tril',
+        'footer_location': 'Ijevan, Armenia',
+        'seconds_short': 's'
     },
 
     'ru': {
@@ -617,6 +623,9 @@ TRANSLATIONS = {
         'lb_loading': 'Загрузка...', 'lb_empty': 'Пока нет результатов',
         'lb_empty_desc': 'Стань первым, кто зарегистрирует свое имя в рейтинге',
         'lb_start_quiz': 'Начать Тест',
+        'stat_damage_value': '10.5 тр',
+        'footer_location': 'Иджеван, Армения',
+        'seconds_short': 'с'
     }
 }
 
