@@ -3,60 +3,60 @@
 {% block content %}
 <section class="section fade-in">
     <div class="section-title">
-        <h2>Հաքերների Տեսակները</h2>
-        <p>Ոչ բոլոր հաքերներն են չարագործ. նրանք բաժանվում են ըստ նպատակների և օրինականության</p>
+        <h2>{{ t.hackers_title }}</h2>
+        <p>{{ t.hackers_subtitle }}</p>
     </div>
 
     <div class="grid grid-3">
         <div class="card hacker-black">
-            <span class="card-tag red">Սև Գլխարկ</span>
-            <h3>🎩 Չարամիտ Հաքերներ</h3>
-            <p>Գործում են օրենքից դուրս։ Կոտրում են համակարգերը ֆինանսական շահի, տվյալների վաճառքի կամ պարզապես վնաս հասցնելու համար։</p>
+            <span class="card-tag red">{{ t.hacker_black_tag }}</span>
+            <h3>{{ t.hacker_black_title }}</h3>
+            <p>{{ t.hacker_black_desc }}</p>
         </div>
         <div class="card hacker-white">
-            <span class="card-tag green">Սպիտակ Գլխարկ</span>
-            <h3>🎩 Էթիկական Հաքերներ</h3>
-            <p>Աշխատում են օրինական դաշտում։ Ընկերությունները վարձում են նրանց՝ խոցելիությունները գտնելու և շտկելու համար։</p>
+            <span class="card-tag green">{{ t.hacker_white_tag }}</span>
+            <h3>{{ t.hacker_white_title }}</h3>
+            <p>{{ t.hacker_white_desc }}</p>
         </div>
         <div class="card hacker-grey">
-            <span class="card-tag gray">Մոխրագույն Գլխարկ</span>
-            <h3>🎩 Մոխրագույն Հաքերներ</h3>
-            <p>Գործում են երկուսի արանքում։ Կարող են կոտրել առանց թույլտվության, բայց առանց չարամիտ նպատակի։</p>
+            <span class="card-tag gray">{{ t.hacker_grey_tag }}</span>
+            <h3>{{ t.hacker_grey_title }}</h3>
+            <p>{{ t.hacker_grey_desc }}</p>
         </div>
         <div class="card hacker-activist">
-            <span class="card-tag orange">Հաքտիվիստ</span>
-            <h3>✊ Հաքտիվիստներ</h3>
-            <p>Հարձակումներ են իրականացնում քաղաքական կամ սոցիալական պատճառներով։ Օրինակ՝ Անոնիմուս խումբը։</p>
+            <span class="card-tag orange">{{ t.hacker_activist_tag }}</span>
+            <h3>{{ t.hacker_activist_title }}</h3>
+            <p>{{ t.hacker_activist_desc }}</p>
         </div>
         <div class="card hacker-state">
-            <span class="card-tag blue">Պետական</span>
-            <h3>🏛️ Պետական Հաքերներ</h3>
-            <p>Պետությունների կողմից ֆինանսավորվող խմբեր՝ լրտեսության և կիբեռպատերազմի համար։ Օրինակ՝ ԱՊՏ28, Լազարուս։</p>
+            <span class="card-tag blue">{{ t.hacker_state_tag }}</span>
+            <h3>{{ t.hacker_state_title }}</h3>
+            <p>{{ t.hacker_state_desc }}</p>
         </div>
         <div class="card hacker-script">
-            <span class="card-tag purple">Սկսնակներ</span>
-            <h3>👶 Սկրիպտ Սկսնակներ</h3>
-            <p>Սկսնակներ, որոնք օգտագործում են ուրիշների գրած գործիքները՝ առանց խորը գիտելիքների։</p>
+            <span class="card-tag purple">{{ t.hacker_script_tag }}</span>
+            <h3>{{ t.hacker_script_title }}</h3>
+            <p>{{ t.hacker_script_desc }}</p>
         </div>
     </div>
 </section>
 
 <section class="section bg-darker">
     <div class="section-title">
-        <h2>🖼️ Հայտնի Հաքերային Խմբեր</h2>
+        <h2>{{ t.groups_title }}</h2>
     </div>
     <div class="grid grid-2">
         <figure class="media-card">
-            <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=900&q=80" alt="Հաքերային Խումբ">
-            <figcaption>Անոնիմուս — ամենահայտնի հաքտիվիստական խումբը</figcaption>
+            <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=900&q=80" alt="Hacker Groups">
+            <figcaption>{{ t.groups_caption }}</figcaption>
         </figure>
         <div class="content-block">
-            <h3>Հայտնի Խմբեր</h3>
+            <h3>{{ t.groups_heading }}</h3>
             <ul class="styled-list">
-                <li><strong>Անոնիմուս.</strong> Հաքտիվիստական կոլեկտիվ, որը հարձակվում է կառավարությունների և կորպորացիաների վրա։</li>
-                <li><strong>Լազարուս Խումբ.</strong> Հյուսիսային Կորեայի հետ կապված, մեղադրվում է բանկերի կողոպուտի մեջ։</li>
-                <li><strong>ԱՊՏ28 (Ֆանսի Բեր).</strong> Ռուսական հետախուզության հետ կապված խումբ։</li>
-                <li><strong>ՌԵվիլ.</strong> Փրկագնային Ծրագիր որպես ծառայություն մոդելով աշխատող հանցախումբ։</li>
+                <li><strong>Anonymous.</strong> {{ t.groups_anonymous }}</li>
+                <li><strong>Lazarus Group.</strong> {{ t.groups_lazarus }}</li>
+                <li><strong>APT28 (Fancy Bear).</strong> {{ t.groups_apt28 }}</li>
+                <li><strong>REvil.</strong> {{ t.groups_revil }}</li>
             </ul>
         </div>
     </div>
@@ -64,10 +64,10 @@
 
 <section class="section">
     <div class="section-title">
-        <h2>🎥 Ուսումնական Վիդեո</h2>
+        <h2>{{ t.hackers_video_title }}</h2>
     </div>
     <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/3Kq1MIfTWCE" title="Հաքերներ" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/3Kq1MIfTWCE" title="Hackers" allowfullscreen></iframe>
     </div>
 </section>
 {% endblock %}
