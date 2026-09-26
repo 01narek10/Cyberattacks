@@ -3,17 +3,17 @@
 {% block content %}
 <section class="hero">
     <div class="hero-content">
-        <span class="badge">Կիբեռանվտանգության Ուղեցույց</span>
-        <h1>Պաշտպանիր Քեզ <span>Թվային Աշխարհում</span></h1>
-        <p>Կիբեռհանցագործության, ֆիշինգի, հաքերների և տվյալների պաշտպանության համապարփակ ուղեցույց։</p>
+        <span class="badge">{{ t.hero_badge }}</span>
+        <h1>{{ t.hero_title_1 }} <span>{{ t.hero_title_2 }}</span></h1>
+        <p>{{ t.hero_desc }}</p>
         <div class="hero-buttons">
-            <a href="{{ url_for('types') }}" class="btn btn-primary">Սկսել Ուսումնասիրությունը</a>
-            <a href="{{ url_for('quiz') }}" class="btn btn-outline">Անցնել Թեստը</a>
+            <a href="{{ url_for('types') }}" class="btn btn-primary">{{ t.hero_btn_1 }}</a>
+            <a href="{{ url_for('quiz') }}" class="btn btn-outline">{{ t.hero_btn_2 }}</a>
         </div>
         <div class="hero-stats">
-            <div class="stat"><strong>200 000+</strong><span>Հարձակում Օրական</span></div>
-            <div class="stat"><strong>10.5 տրլն</strong><span>Տարեկան Վնաս</span></div>
-            <div class="stat"><strong>95%</strong><span>Մարդկային Սխալ</span></div>
+            <div class="stat"><strong>200 000+</strong><span>{{ t.stat_attacks }}</span></div>
+            <div class="stat"><strong>10.5 տրլն</strong><span>{{ t.stat_damage }}</span></div>
+            <div class="stat"><strong>95%</strong><span>{{ t.stat_human }}</span></div>
         </div>
     </div>
     <div class="hero-visual">
@@ -23,42 +23,42 @@
 
 <section class="section">
     <div class="section-title">
-        <h2>Ինչո՞ւ է Կարևոր</h2>
-        <p>Թվային դարաշրջանում յուրաքանչյուր օգտատեր պոտենցիալ թիրախ է</p>
+        <h2>{{ t.why_title }}</h2>
+        <p>{{ t.why_subtitle }}</p>
     </div>
     <div class="grid grid-3">
         <div class="card feature-card">
             <div class="feature-icon">🔒</div>
-            <h3>Գաղտնիություն</h3>
-            <p>Անձնական տվյալների, լուսանկարների և հաղորդագրությունների պաշտպանություն ապօրինի մուտքից։</p>
+            <h3>{{ t.feature_privacy_title }}</h3>
+            <p>{{ t.feature_privacy_desc }}</p>
         </div>
         <div class="card feature-card">
             <div class="feature-icon">💳</div>
-            <h3>Ֆինանսական Անվտանգություն</h3>
-            <p>Բանկային քարտերի և հաշիվների պաշտպանություն ֆիշինգային հարձակումներից։</p>
+            <h3>{{ t.feature_finance_title }}</h3>
+            <p>{{ t.feature_finance_desc }}</p>
         </div>
         <div class="card feature-card">
             <div class="feature-icon">⚡</div>
-            <h3>Կայունություն</h3>
-            <p>Համակարգերի անխափան աշխատանքի ապահովում վնասակար ծրագրերից։</p>
+            <h3>{{ t.feature_stability_title }}</h3>
+            <p>{{ t.feature_stability_desc }}</p>
         </div>
     </div>
 </section>
 
 <section class="section bg-darker">
     <div class="section-title">
-        <h2>Մեր Նախագծի Մասին</h2>
+        <h2>{{ t.about_title }}</h2>
     </div>
     <div class="grid grid-2">
         <figure class="media-card">
-            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=900&q=80" alt="Հաքեր" loading="lazy">
-            <figcaption>Կիբեռհանցագործության մութ կողմը</figcaption>
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=900&q=80" alt="{{ t.about_img_caption }}" loading="lazy">
+            <figcaption>{{ t.about_img_caption }}</figcaption>
         </figure>
         <div class="content-block">
-            <h3>Թվային Սպառնալիքները Մեր Առօրյայում</h3>
-            <p>Ամեն վայրկյան աշխարհում տեղի են ունենում հազարավոր կիբեռհարձակումներ։ Ֆիշինգային նամակները, վնասակար ծրագրերը և տվյալների արտահոսքերը դարձել են առօրյա իրականություն։</p>
-            <p>Այս կայքը ստեղծվել է, որպեսզի բարձրացնի իրազեկվածությունը և սովորեցնի պաշտպանվել թվային սպառնալիքներից։</p>
-            <a href="{{ url_for('types') }}" class="btn btn-primary">Իմանալ ավելին →</a>
+            <h3>{{ t.about_heading }}</h3>
+            <p>{{ t.about_p1 }}</p>
+            <p>{{ t.about_p2 }}</p>
+            <a href="{{ url_for('types') }}" class="btn btn-primary">{{ t.about_btn }}</a>
         </div>
     </div>
 </section>
