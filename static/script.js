@@ -737,3 +737,130 @@ function escapeHtml(str) {
         });
     });
 })();
+
+// ==========================================================
+// 🤖 AI ՉԱԹ ՕԳՆԱԿԱՆ
+// ==========================================================
+(function initChat() {
+    const widget = document.getElementById('chat-widget');
+    if (!widget) return;
+
+    const toggle = document.getElementById('chat-toggle');
+    const closeBtn = document.getElementById('chat-close');
+    const panel = document.getElementById('chat-panel');
+    const notification = document.getElementById('chat-notification');
+    const messagesBox = document.getElementById('chat-messages');
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send');
+
+    let history = [];
+    let isSending = false;
+    let opened = false;
+
+    // Toggle
+    toggle.addEventListener('click', () => {
+        panel.classList.toggle('hidden');
+        if (!panel.classList.contains('hidden')) {
+            opened = true;
+            notification.classList.add('hidden');
+            input.focus();
+            playSound('tick');
+        }
+    });
+
+    closeBtn.addEventListener('click', () => {
+        panel.classList.add('hidden');
+        playSound('tick');
+    });
+
+    // Էնտերով ուղարկում
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    function addMessage(role, text) {
+        const msg = document.createElement('div');
+        msg.className = `chat-message ${role}`;
+        msg.innerHTML = `
+            <span class="chat-message-avatar">${role === 'user' ? '👤' : '🤖'}</span>
+            <div class="chat-message-bubble">${escapeChat(text)}</div>
+        `;
+        messagesBox.appendChild(msg);
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+
+    function addTyping() {
+        const msg = document.createElement('div');
+        msg.className = 'chat-message bot typing';
+        msg.id = 'typing-indicator';
+        msg.innerHTML = `
+            <span class="chat-message-avatar">🤖</span>
+            <div class="chat-message-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        `;
+        messagesBox.appendChild(msg);
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+
+    function removeTyping() {
+        const t = document.getElementById('typing-indicator');
+        if (t) t.remove();
+    }
+
+    function escapeChat(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    async function sendMessage() {
+        const text = input.value.trim();
+        if (!text || isSending) return;
+
+        isSending = true;
+        sendBtn.disabled = true;
+        input.value = '';
+
+        addMessage('user', text);
+        history.push({ role: 'user', text: text });
+        playSound('tick');
+
+        addTyping();
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: history })
+            });
+
+            const data = await res.json();
+            removeTyping();
+
+            if (data.error) {
+                addMessage('bot', '⚠️ ' + data.error);
+                playSound('wrong');
+            } else {
+                addMessage('bot', data.reply);
+                history.push({ role: 'model', text: data.reply });
+                playSound('correct');
+            }
+        } catch (e) {
+            removeTyping();
+            addMessage('bot', '⚠️ Կապի սխալ։ Փորձի՛ր նորից։');
+            console.error(e);
+        } finally {
+            isSending = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    }
+})();
