@@ -6,28 +6,19 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 try:
     from google import genai
     from google.genai import types
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
     HAS_GENAI = True
+    HAS_POSTGRES = True
 except ImportError:
+    HAS_POSTGRES = False
     HAS_GENAI = False
 
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 USE_AI = bool(GEMINI_API_KEY and HAS_GENAI)
 
-# Փորձում ենք բեռնել psycopg2 (PostgreSQL-ի համար)
-try:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
-    HAS_POSTGRES = True
-except ImportError:
-    HAS_POSTGRES = False
-
 app = Flask(__name__)
 app.secret_key = 'kibervahan-secret-key-2026'
-
-DATABASE_URL = os.environ.get('DATABASE_URL')
-USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
 
 AI_SYSTEM_PROMPT = (
     "Դու ԿիբեռՎահան կայքի վիրտուալ օգնականն ես։ "
@@ -37,6 +28,13 @@ AI_SYSTEM_PROMPT = (
     "Եթե հարցը կիբեռանվտանգության հետ կապ չունի, քաղաքավարի ասա, որ միայն կիբեռանվտանգության թեմաներով ես օգնում։ "
     "Երբեք մի՛ տուր վտանգավոր խորհուրդներ իրական հարձակումներ կատարելու համար։"
 )
+
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
+
 
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
 TRANSLATIONS = {
@@ -1378,8 +1376,46 @@ def ai_status():
         'API_KEY_SET': bool(GEMINI_API_KEY),
         'API_KEY_LENGTH': len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
         'USE_AI': USE_AI,
-        'KEY_PREFIX': GEMINI_API_KEY[:8] if GEMINI_API_KEY else None
+        'KEY_PREFIX': GEMINI_API_KEY[:5] if GEMINI_API_KEY else None
     })
+
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    if not USE_AI:
+        return jsonify({'error': 'AI-ը միացված չէ'}), 503
+
+    data = request.get_json() or {}
+    messages = data.get('messages', [])
+
+    if not messages or not isinstance(messages, list):
+        return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
+
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
+        contents = []
+        for msg in messages[-10:]:
+            role = 'user' if msg.get('role') == 'user' else 'model'
+            text = (msg.get('text') or '').strip()[:1000]
+            if text:
+                contents.append(types.Content(role=role, parts=[types.Part(text=text)]))
+
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=AI_SYSTEM_PROMPT,
+                temperature=0.7,
+                max_output_tokens=500,
+            ),
+        )
+
+        reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
+        return jsonify({'reply': reply})
+    except Exception as e:
+        print(f'AI error: {e}')
+        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
