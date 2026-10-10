@@ -1,11 +1,13 @@
 /* ==========================================================
-   ԿիբեռՎահան — Ինտերակտիվ Սկրիպտներ
+   ԿիբեռՎահան — Ինտերակտիվ Սկրիպտներ (Ամբողջական)
    ========================================================== */
 
 const T = window.TRANSLATIONS || {};
 let soundEnabled = localStorage.getItem('sound') !== 'off';
 
-// ---------- ԹԵՄԱ ----------
+// ==========================================================
+//   ԹԵՄԱՅԻ ՓՈԽԱՐԿՈՒՄ (DARK / LIGHT)
+// ==========================================================
 const themeBtn = document.getElementById('theme-toggle');
 if (themeBtn) {
     if (localStorage.getItem('theme') === 'light') {
@@ -20,7 +22,9 @@ if (themeBtn) {
     });
 }
 
-// ---------- ՁԱՅՆ ----------
+// ==========================================================
+//   ՁԱՅՆԻ ԿԱՌԱՎԱՐՈՒՄ (Web Audio API)
+// ==========================================================
 const soundBtn = document.getElementById('sound-toggle');
 if (soundBtn) {
     soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
@@ -32,8 +36,8 @@ if (soundBtn) {
     });
 }
 
-// Web Audio API-ով ձայներ
 let audioCtx = null;
+
 function playSound(type) {
     if (!soundEnabled) return;
     try {
@@ -105,7 +109,9 @@ function playSound(type) {
     }
 }
 
-// ---------- Բջջային ՄԵՆՅՈՒ ----------
+// ==========================================================
+//   ԲՋՋԱՅԻՆ ՄԵՆՅՈՒ
+// ==========================================================
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
 if (hamburger && navMenu) {
@@ -161,7 +167,7 @@ if (startScreen) {
 
     const CIRCLE_LENGTH = 2 * Math.PI * 19;
 
-    // ---------- Բարդության ընտրություն ----------
+    // ---------- Բարդության քարտի ընտրություն ----------
     document.querySelectorAll('.difficulty-card').forEach(card => {
         card.addEventListener('click', () => {
             document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
@@ -172,17 +178,41 @@ if (startScreen) {
         });
     });
 
+    // ---------- Անունի մուտքագրում ----------
     playerNameInput.addEventListener('input', () => {
         playerName = playerNameInput.value.trim();
         checkStartReady();
     });
 
-   function checkStartReady() {
-    startBtn.disabled = !(selectedDifficulty && playerName.length >= 2);
-}
+    // ---------- Սկսել կոճակի ակտիվացում ----------
+    function checkStartReady() {
+        const ready = selectedDifficulty && playerName.length >= 2;
+        startBtn.disabled = !ready;
 
+        const hint = document.getElementById('start-hint');
+        if (hint) {
+            if (ready) {
+                hint.textContent = '✅ Պատրաստ է։ Սեղմի՛ր «Սկսել Թեստը»։';
+                hint.style.color = 'var(--accent-green)';
+            } else if (!selectedDifficulty && playerName.length < 2) {
+                hint.textContent = '⚠️ Ընտրի՛ր բարդության մակարդակ և մուտքագրի՛ր անունդ (2+ տառ)';
+                hint.style.color = 'var(--accent-orange)';
+            } else if (!selectedDifficulty) {
+                hint.textContent = '⚠️ Ընտրի՛ր բարդության մակարդակը';
+                hint.style.color = 'var(--accent-orange)';
+            } else {
+                hint.textContent = '⚠️ Մուտքագրի՛ր անունդ (2+ տառ)';
+                hint.style.color = 'var(--accent-orange)';
+            }
+        }
+    }
+
+    // ---------- ՍԿՍԵԼ ԹԵՍՏԸ ----------
     startBtn.addEventListener('click', () => {
         playSound('tick');
+        startBtn.disabled = true;
+        startBtn.innerHTML = '<span>⏳ Բեռնվում է...</span>';
+
         fetch(`/api/questions/${selectedDifficulty}`)
             .then(res => res.json())
             .then(data => {
@@ -196,9 +226,15 @@ if (startScreen) {
                 };
                 startQuiz();
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error(err);
+                alert('Չհաջողվեց բեռնել հարցերը։ Փորձի՛ր նորից։');
+                startBtn.disabled = false;
+                startBtn.innerHTML = `<span>${T.quiz_start || 'Սկսել'}</span>`;
+            });
     });
 
+    // ---------- ՍԿՍԵԼ ԽԱՂԸ ----------
     function startQuiz() {
         startScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
@@ -209,7 +245,10 @@ if (startScreen) {
         currentDiffBadge.textContent = levelConfig.label;
         currentDiffBadge.className = 'quiz-badge diff-' + levelConfig.difficulty;
 
-        currentIndex = 0; score = 0; correctCount = 0; totalTimeSpent = 0;
+        currentIndex = 0;
+        score = 0;
+        correctCount = 0;
+        totalTimeSpent = 0;
         loadQuestion();
     }
 
@@ -219,10 +258,9 @@ if (startScreen) {
         return colors[idx];
     }
 
+    // ---------- ՀԱՐՑԻ ԲԵՌՆՈՒՄ ----------
     function loadQuestion() {
         clearInterval(timerInterval);
-
-        // Անիմացիա — Fade out հին պարունակությունը
         questionCard.classList.add('slide-out');
         optionsContainer.classList.add('slide-out');
 
@@ -247,7 +285,6 @@ if (startScreen) {
                 optionsContainer.appendChild(btn);
             });
 
-            // Անիմացիա — Fade in նոր պարունակությունը
             questionCard.classList.remove('slide-out');
             optionsContainer.classList.remove('slide-out');
             questionCard.classList.add('slide-in');
@@ -259,9 +296,9 @@ if (startScreen) {
             }, 500);
 
             const pct = (currentIndex / questions.length) * 100;
-            progressFill.style.width = (currentIndex / questions.length) * 100 + '%';
+            progressFill.style.width = pct + '%';
             if (progressPercent) {
-                progressPercent.textContent = Math.round((currentIndex / questions.length) * 100) + '%';
+                progressPercent.textContent = Math.round(pct) + '%';
             }
 
             timeRemaining = levelConfig.time;
@@ -278,6 +315,7 @@ if (startScreen) {
         }, 250);
     }
 
+    // ---------- ԺԱՄԱՉԱՓԻ ԹԱՐՄԱՑՈՒՄ ----------
     function updateTimer() {
         timerNumber.textContent = timeRemaining;
         const pct = timeRemaining / levelConfig.time;
@@ -301,6 +339,7 @@ if (startScreen) {
         liveCorrect.textContent = correctCount;
     }
 
+    // ---------- ԺԱՄԱՆԱԿԸ ՍՊԱՌՎԵԼ Է ----------
     function timeUp() {
         playSound('wrong');
         const allBtns = optionsContainer.querySelectorAll('.option-item');
@@ -327,6 +366,7 @@ if (startScreen) {
         .finally(() => setTimeout(nextQuestion, 1600));
     }
 
+    // ---------- ՊԱՏԱՍԽԱՆԻ ԸՆՏՐՈՒԹՅՈՒՆ ----------
     function selectAnswer(selected, btnEl) {
         clearInterval(timerInterval);
         const timeSpent = Math.min(levelConfig.time, (Date.now() - questionStartTime) / 1000);
@@ -365,6 +405,7 @@ if (startScreen) {
         .finally(() => setTimeout(nextQuestion, 1600));
     }
 
+    // ---------- ՀԱՋՈՐԴ ՀԱՐՑ ----------
     function nextQuestion() {
         currentIndex++;
         if (currentIndex < questions.length) {
@@ -374,6 +415,7 @@ if (startScreen) {
         }
     }
 
+    // ---------- ԱՐԴՅՈՒՆՔՆԵՐ ----------
     function showResults() {
         gameScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
@@ -403,6 +445,7 @@ if (startScreen) {
             resultSubtitle.textContent = T.quiz_learn_sub || '';
         }
 
+        // Ուղարկում ենք լիդերբորդին
         fetch('/api/leaderboard', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -419,9 +462,13 @@ if (startScreen) {
         .then(data => {
             statRank.textContent = data.position ? '#' + data.position : '—';
         })
-        .catch(err => { console.error(err); statRank.textContent = '—'; });
+        .catch(err => {
+            console.error(err);
+            statRank.textContent = '—';
+        });
     }
 
+    // ---------- ԿՐԿԻՆ ՓՈՐՁԵԼ ----------
     restartBtn.addEventListener('click', () => {
         playSound('tick');
         resultScreen.classList.add('hidden');
@@ -433,7 +480,7 @@ if (startScreen) {
 }
 
 // ==========================================================
-//   ԼԻԴԵՐԲՈՐԴԻ ԷՋ
+//   ԱՌԱՋԱՏԱՐՆԵՐԻ ԱՂՅՈՒՍԱԿԻ ԷՋ
 // ==========================================================
 const lbTable = document.getElementById('leaderboard-table');
 if (lbTable) {
@@ -479,7 +526,7 @@ function loadLeaderboard(filter) {
 
             table.classList.remove('hidden');
             body.innerHTML = filtered.map((e, i) => {
-                const rankClass = i < 3 ? `rank-${i+1}` : '';
+                const rankClass = i < 3 ? `rank-${i + 1}` : '';
                 const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
                 return `
                     <tr class="${rankClass}">
@@ -508,6 +555,7 @@ function loadLeaderboard(filter) {
 
 function renderPodium(list) {
     const top3 = list.slice(0, 3);
+
     if (top3[0]) {
         const p1 = document.getElementById('podium-1');
         p1.querySelector('.podium-avatar').textContent = top3[0].name.charAt(0).toUpperCase();
@@ -546,7 +594,9 @@ function formatDate(dateStr) {
         const [d] = dateStr.split(' ');
         const [y, m, day] = d.split('-');
         return `${day}.${m}.${y.slice(2)}`;
-    } catch (e) { return dateStr; }
+    } catch (e) {
+        return dateStr;
+    }
 }
 
 function escapeHtml(str) {
@@ -555,13 +605,8 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
-
-/* ==========================================================
-   🎨 ԱՆԻՄԱՑԻՈՆ ՖՈՆ — Matrix Rain + Particles
-   ========================================================== */
-
 // ==========================================================
-// 🌧️ MATRIX RAIN
+//   🌧️ MATRIX RAIN (Canvas)
 // ==========================================================
 (function initMatrixRain() {
     const canvas = document.getElementById('matrix-canvas');
@@ -585,21 +630,18 @@ function escapeHtml(str) {
     let drops = Array(columns).fill(1);
 
     function getColor() {
-        // Մութ ռեժիմում՝ cyan, լուսավորում՝ կապույտ
         return document.body.classList.contains('light-mode')
             ? 'rgba(37, 99, 235, 0.7)'
             : 'rgba(0, 240, 255, 0.7)';
     }
 
     function draw() {
-        // Անհրաժեշտության դեպքում թարմացնում ենք սյուների քանակը
         const newColumns = Math.floor(canvas.width / fontSize);
         if (newColumns !== columns) {
             columns = newColumns;
             drops = Array(columns).fill(1);
         }
 
-        // Կիսաթափանց սև ֆոն հետքի համար
         ctx.fillStyle = document.body.classList.contains('light-mode')
             ? 'rgba(248, 250, 252, 0.08)'
             : 'rgba(10, 14, 23, 0.08)';
@@ -622,9 +664,8 @@ function escapeHtml(str) {
     setInterval(draw, 55);
 })();
 
-
 // ==========================================================
-// ✨ ԼՈՂԱՑՈՂ ՄԱՍՆԻԿՆԵՐ
+//   ✨ ԼՈՂԱՑՈՂ ՄԱՍՆԻԿՆԵՐ
 // ==========================================================
 (function initParticles() {
     const container = document.getElementById('bg-particles');
@@ -644,15 +685,39 @@ function escapeHtml(str) {
     }
 })();
 
+// ==========================================================
+//   🎈 ԼՈՂԱՑՈՂ ԱՌԱՐԿԱՆԵՐ (ԷՄՈՋԻՆԵՐ)
+// ==========================================================
+(function initFloatingObjects() {
+    const container = document.getElementById('floating-objects');
+    if (!container) return;
+
+    // Կիբեռանվտանգության թեմատիկ էմոջիներ
+    const icons = ['🛡️', '🔒', '🔑', '💻', '🌐', '⚡', '🔐', '🕵️', '📡', '🧬', '🎯', '⚠️'];
+    const COUNT = window.innerWidth < 768 ? 8 : 14;
+
+    for (let i = 0; i < COUNT; i++) {
+        const item = document.createElement('div');
+        item.className = 'float-item';
+        item.textContent = icons[Math.floor(Math.random() * icons.length)];
+        item.style.left = Math.random() * 100 + '%';
+        item.style.top = Math.random() * 100 + '%';
+        item.style.fontSize = (30 + Math.random() * 40) + 'px';
+        item.style.animationDuration = (25 + Math.random() * 30) + 's';
+        item.style.animationDelay = (-Math.random() * 30) + 's';
+        container.appendChild(item);
+    }
+})();
 
 // ==========================================================
-// 💫 ՖՈՆԻ ՇԱՐԺՈՒՄ ՄՈՒԿԻ ՀԵՏ (Parallax Effect)
+//   💫 ՖՈՆԻ ՇԱՐԺՈՒՄ ՄԿՆԻԿԻ ՀԵՏ (Parallax)
 // ==========================================================
 (function initParallax() {
-    // Միայն desktop-ի համար
     if (window.innerWidth < 1024) return;
 
     const orbs = document.querySelectorAll('.orb');
+    if (orbs.length === 0) return;
+
     let ticking = false;
 
     window.addEventListener('mousemove', (e) => {
