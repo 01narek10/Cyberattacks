@@ -739,7 +739,7 @@ function escapeHtml(str) {
 })();
 
 // ==========================================================
-// 🤖 AI ՉԱԹ ՕԳՆԱԿԱՆ
+// 🤖 AI ՉԱԹ ՕԳՆԱԿԱՆ — DRAGGABLE
 // ==========================================================
 (function initChat() {
     const widget = document.getElementById('chat-widget');
@@ -748,32 +748,196 @@ function escapeHtml(str) {
     const toggle = document.getElementById('chat-toggle');
     const closeBtn = document.getElementById('chat-close');
     const panel = document.getElementById('chat-panel');
-    const notification = document.getElementById('chat-notification');
     const messagesBox = document.getElementById('chat-messages');
     const input = document.getElementById('chat-input');
     const sendBtn = document.getElementById('chat-send');
 
     let history = [];
     let isSending = false;
-    let opened = false;
 
-    // Toggle
-    toggle.addEventListener('click', () => {
-        panel.classList.toggle('hidden');
-        if (!panel.classList.contains('hidden')) {
-            opened = true;
-            notification.classList.add('hidden');
-            input.focus();
-            playSound('tick');
+    // ============================================
+    // 📍 DRAGGABLE — Վերականգնի՛ր դիրքը
+    // ============================================
+    const STORAGE_KEY = 'chatWidgetPos';
+    const savedPos = localStorage.getItem(STORAGE_KEY);
+
+    if (savedPos) {
+        try {
+            const pos = JSON.parse(savedPos);
+            widget.style.left = pos.x + 'px';
+            widget.style.top = pos.y + 'px';
+            widget.style.right = 'auto';
+            widget.style.bottom = 'auto';
+        } catch (e) {
+            console.warn('Chat position error:', e);
+        }
+    }
+
+    // ============================================
+    // 📍 DRAGGABLE — Mouse + Touch
+    // ============================================
+    let isDragging = false;
+    let wasDragged = false;
+    let startX = 0, startY = 0;
+    let widgetStartX = 0, widgetStartY = 0;
+
+    function getPos(e) {
+        if (e.touches && e.touches[0]) {
+            return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
+    }
+
+    function startDrag(e) {
+        // Մի՛ սկսիր drag, եթե panel-ը բաց է
+        if (!panel.classList.contains('hidden')) return;
+
+        const pos = getPos(e);
+        const rect = widget.getBoundingClientRect();
+
+        startX = pos.x;
+        startY = pos.y;
+        widgetStartX = rect.left;
+        widgetStartY = rect.top;
+        isDragging = true;
+        wasDragged = false;
+
+        toggle.classList.add('dragging');
+        e.preventDefault();
+    }
+
+    function moveDrag(e) {
+        if (!isDragging) return;
+
+        const pos = getPos(e);
+        const dx = pos.x - startX;
+        const dy = pos.y - startY;
+
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+            wasDragged = true;
+        }
+
+        let newX = widgetStartX + dx;
+        let newY = widgetStartY + dy;
+
+        // Սահմաններ
+        const maxX = window.innerWidth - 68;
+        const maxY = window.innerHeight - 68;
+        newX = Math.max(8, Math.min(maxX, newX));
+        newY = Math.max(8, Math.min(maxY, newY));
+
+        widget.style.left = newX + 'px';
+        widget.style.top = newY + 'px';
+        widget.style.right = 'auto';
+        widget.style.bottom = 'auto';
+
+        e.preventDefault();
+    }
+
+    function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        toggle.classList.remove('dragging');
+
+        // Պահի՛ր դիրքը
+        const rect = widget.getBoundingClientRect();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            x: rect.left,
+            y: rect.top
+        }));
+
+        // Փոքրիկ click-ից հետո փակիր drag-ի flag-ը
+        setTimeout(() => { wasDragged = false; }, 50);
+    }
+
+    // Event listeners
+    toggle.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', moveDrag);
+    document.addEventListener('mouseup', endDrag);
+
+    toggle.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('touchmove', moveDrag, { passive: false });
+    document.addEventListener('touchend', endDrag);
+
+    // ============================================
+    // 🖱️ CLICK vs DRAG
+    // ============================================
+    toggle.addEventListener('click', (e) => {
+        if (wasDragged) {
+            e.preventDefault();
+            return;
+        }
+        openPanel();
+    });
+
+    // ============================================
+    // 🔓 ԲԱՑԵԼ / ՓԱԿԵԼ
+    // ============================================
+    function openPanel() {
+        widget.classList.add('open');
+        panel.classList.remove('hidden');
+        input.focus();
+        playSound('tick');
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+
+        // Դիրքավորի՛ր panel-ը ըստ widget-ի
+        positionPanel();
+    }
+
+    function closePanel() {
+        widget.classList.remove('open');
+        panel.classList.add('hidden');
+        playSound('tick');
+    }
+
+    function positionPanel() {
+        const rect = widget.getBoundingClientRect();
+        const panelWidth = 400;
+        const panelHeight = 580;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        // Հորիզոնական
+        let left = rect.left - panelWidth + 68;
+        if (left < 12) left = 12;
+        if (left + panelWidth > vw - 12) left = vw - panelWidth - 12;
+
+        // Ուղղահայաց՝ փորձի՛ր բացել վերև
+        let top = rect.top - panelHeight - 12;
+        if (top < 12) {
+            // Չի տեղավորվում վերևը — բացի՛ր ներքև
+            top = rect.bottom + 12;
+            if (top + panelHeight > vh - 12) {
+                top = Math.max(12, vh - panelHeight - 12);
+            }
+        }
+
+        panel.style.position = 'fixed';
+        panel.style.left = left + 'px';
+        panel.style.top = top + 'px';
+        panel.style.right = 'auto';
+        panel.style.bottom = 'auto';
+    }
+
+    closeBtn.addEventListener('click', closePanel);
+
+    // Փակիր ESC-ով
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
+            closePanel();
         }
     });
 
-    closeBtn.addEventListener('click', () => {
-        panel.classList.add('hidden');
-        playSound('tick');
+    // Window resize — վերահաշվարկի՛ր
+    window.addEventListener('resize', () => {
+        if (!panel.classList.contains('hidden')) {
+            positionPanel();
+        }
     });
 
-    // Էնտերով ուղարկում
+    // ============================================
+    // 💬 ՀԱՂՈՐԴԱԳՐՈՒԹՅՈՒՆՆԵՐ
+    // ============================================
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -832,7 +996,6 @@ function escapeHtml(str) {
         addMessage('user', text);
         history.push({ role: 'user', text: text });
         playSound('tick');
-
         addTyping();
 
         try {
@@ -863,4 +1026,16 @@ function escapeHtml(str) {
             input.focus();
         }
     }
+
+    // Սկզբում դիրքավորի՛ր սահմանի մեջ
+    window.addEventListener('load', () => {
+        const rect = widget.getBoundingClientRect();
+        if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
+            widget.style.left = 'auto';
+            widget.style.top = 'auto';
+            widget.style.right = '24px';
+            widget.style.bottom = '24px';
+            localStorage.removeItem(STORAGE_KEY);
+        }
+    });
 })();
