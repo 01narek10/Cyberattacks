@@ -1371,6 +1371,16 @@ def hackers():
 def phishing():
     return render_template('phishing.html', title="Ֆիշինգ")
 
+@app.route('/api/ai-status')
+def ai_status():
+    return jsonify({
+        'HAS_GENAI': HAS_GENAI,
+        'API_KEY_SET': bool(GEMINI_API_KEY),
+        'API_KEY_LENGTH': len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
+        'USE_AI': USE_AI,
+        'KEY_PREFIX': GEMINI_API_KEY[:8] if GEMINI_API_KEY else None
+    })
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     if not USE_AI:
