@@ -14,10 +14,10 @@ except ImportError:
 app = Flask(__name__)
 app.secret_key = 'kibervahan-secret-key-2026'
 
-# Տվյալների բազայի կարգավորում
 DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
-SQLITE_PATH = 'leaderboard.db'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
 
 # ✅ ԱԲՍՈԼՅՈՒՏ ՈՒՂԻ — մշտական է բոլոր restart-ների համար
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
