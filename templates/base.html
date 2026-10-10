@@ -88,6 +88,36 @@
         </div>
     </footer>
 
+    <!-- 🤖 AI ՉԱԹ ՎԻՋԵԹ -->
+<div class="chat-widget" id="chat-widget">
+    <button class="chat-toggle" id="chat-toggle" aria-label="Chat">
+        <span class="chat-toggle-icon">🤖</span>
+        <span class="chat-notification" id="chat-notification">1</span>
+    </button>
+    <div class="chat-panel hidden" id="chat-panel">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <span class="chat-avatar">🤖</span>
+                <div>
+                    <h4>ԿիբեռՕգնական</h4>
+                    <span class="chat-status">● Առցանց</span>
+                </div>
+            </div>
+            <button class="chat-close" id="chat-close" aria-label="Close">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-message bot">
+                <span class="chat-message-avatar">🤖</span>
+                <div class="chat-message-bubble">Բարև՛։ Ես ԿիբեռՕգնականն եմ։ Հարցրու՛ ինձ կիբեռանվտանգության մասին 🛡️</div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Գրի՛ր հարցդ..." maxlength="500" autocomplete="off">
+            <button id="chat-send" aria-label="Send">➤</button>
+        </div>
+    </div>
+</div>
+    
     <script>
         window.TRANSLATIONS = {
             lang: "{{ lang }}",
