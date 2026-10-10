@@ -3,6 +3,16 @@ import sqlite3
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 
+try:
+    from google import genai
+    from google.genai import types
+    HAS_GENAI = True
+except ImportError:
+    HAS_GENAI = False
+
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+USE_AI = bool(GEMINI_API_KEY and HAS_GENAI)
+
 # Փորձում ենք բեռնել psycopg2 (PostgreSQL-ի համար)
 try:
     import psycopg2
@@ -19,6 +29,14 @@ USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
 
+AI_SYSTEM_PROMPT = (
+    "Դու ԿիբեռՎահան կայքի վիրտուալ օգնականն ես։ "
+    "Օգնում ես օգտատերերին կիբեռանվտանգության, ֆիշինգի, հաքերների, "
+    "DDoS-ի, ransomware-ի, գաղտնաբառերի, 2FA-ի և տվյալների պաշտպանության հարցերում։ "
+    "Պատասխանիր կարճ (2-4 նախադասություն), պարզ և հայերեն (կամ այն լեզվով, որով գրում են)։ "
+    "Եթե հարցը կիբեռանվտանգության հետ կապ չունի, քաղաքավարի ասա, որ միայն կիբեռանվտանգության թեմաներով ես օգնում։ "
+    "Երբեք մի՛ տուր վտանգավոր խորհուրդներ իրական հարձակումներ կատարելու համար։"
+)
 
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
 TRANSLATIONS = {
@@ -1352,6 +1370,48 @@ def hackers():
 @app.route('/phishing')
 def phishing():
     return render_template('phishing.html', title="Ֆիշինգ")
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    if not USE_AI:
+        return jsonify({'error': 'AI-ը միացված չէ'}), 503
+
+    data = request.get_json() or {}
+    messages = data.get('messages', [])
+
+    if not messages or not isinstance(messages, list):
+        return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
+
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
+        contents = []
+        for msg in messages[-10:]:
+            role = 'user' if msg.get('role') == 'user' else 'model'
+            text = (msg.get('text') or '').strip()[:1000]
+            if text:
+                contents.append(
+                    types.Content(role=role, parts=[types.Part(text=text)])
+                )
+
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=AI_SYSTEM_PROMPT,
+                temperature=0.7,
+                max_output_tokens=500,
+            ),
+        )
+
+        reply = (response.text or '').strip()
+        if not reply:
+            reply = 'Ներողություն, չհասկացա հարցդ։ Փորձի՛ր այլ ձևով։'
+
+        return jsonify({'reply': reply})
+    except Exception as e:
+        print(f'AI error: {e}')
+        return jsonify({'error': 'AI-ի սխալ'}), 500
 
 @app.route('/cases')
 def cases():
