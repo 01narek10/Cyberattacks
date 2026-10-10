@@ -19,6 +19,9 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
 SQLITE_PATH = 'leaderboard.db'
 
+# ✅ ԱԲՍՈԼՅՈՒՏ ՈՒՂԻ — մշտական է բոլոր restart-ների համար
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
 
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
 TRANSLATIONS = {
@@ -1434,9 +1437,9 @@ def check_answer():
     return jsonify({"error": "Հարցը չի գտնվել"}), 404
 
 
-# ============ API ԱՌԱՋԱՏԱՐՆԵՐԻ ԱՂՅՈՒՍԱԿ ============
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
+    """Վերադարձնում է լավագույն 10-ը ըստ միավորների և ժամանակի"""
     try:
         rows = execute_query(
             '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
@@ -1448,6 +1451,23 @@ def get_leaderboard():
         return jsonify(rows or [])
     except Exception as e:
         print(f"Առաջատարների սխալ. {e}")
+        return jsonify([])
+
+
+@app.route('/api/leaderboard/all', methods=['GET'])
+def get_all_leaderboard():
+    """Վերադարձնում է բոլոր արդյունքները (մինչև 200)"""
+    try:
+        rows = execute_query(
+            '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
+               FROM leaderboard
+               ORDER BY score DESC, time ASC
+               LIMIT 200''',
+            fetch=True
+        )
+        return jsonify(rows or [])
+    except Exception as e:
+        print(f"Ամբողջ աղյուսակի սխալ. {e}")
         return jsonify([])
 
 
