@@ -2703,3 +2703,30 @@ body.light-mode .bg-matrix {
     position: relative; /* ← ավելացրու սա */
     z-index: 1;         /* ← և սա */
 }
+
+/* Սկսել կոճակի բացատրություն */
+.start-hint {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--accent-orange);
+    transition: color var(--t-fast);
+    min-height: 1.5rem;
+}
+
+/* ԿՈՃԱԿԸ ԱՎԵԼԻ ՏԵՍԱՆԵԼԻ */
+.start-quiz-btn {
+    margin-top: 1rem;
+    font-size: 1.15rem !important;
+    padding: 1.2rem 2rem !important;
+    letter-spacing: 0.03em;
+    animation: pulseBorder 3s ease-in-out infinite;
+}
+
+.start-quiz-btn:not(:disabled) {
+    animation: pulseBorder 2s ease-in-out infinite;
+}
+
+.start-quiz-btn:disabled {
+    animation: none;
+}
