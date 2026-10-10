@@ -177,9 +177,9 @@ if (startScreen) {
         checkStartReady();
     });
 
-    function checkStartReady() {
-        startBtn.disabled = !(selectedDifficulty && playerName.length >= 2);
-    }
+   function checkStartReady() {
+    startBtn.disabled = !(selectedDifficulty && playerName.length >= 2);
+}
 
     startBtn.addEventListener('click', () => {
         playSound('tick');
