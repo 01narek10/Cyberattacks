@@ -1050,7 +1050,6 @@ def chat():
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
 
-        # ✅ ՃԻՇՏ ՁԵՎԸ SDK 2.x-ի համար
         contents = []
         for msg in messages[-10:]:
             role = 'user' if msg.get('role') == 'user' else 'model'
@@ -1062,6 +1061,13 @@ def chat():
                         parts=[genai_types.Part(text=text)]
                     )
                 )
+
+        # ✅ Վերջինը ՄԻՇՏ պետք է լինի user-ից
+        while contents and contents[-1].role != 'user':
+            contents.pop()
+
+        if not contents:
+            return jsonify({'error': 'Ուղարկի՛ր հարց'}), 400
 
             response = client.models.generate_content(
             model='gemini-3.8-flash', 
