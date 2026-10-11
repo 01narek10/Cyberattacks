@@ -1072,15 +1072,38 @@ def chat():
         if not contents:
             return jsonify({'error': 'Ուղարկի՛ր հարց'}), 400
 
-        response = client.models.generate_content(
-            model='gemini-3.8-flash-lite',
-            contents=contents,
-            config=genai_types.GenerateContentConfig(
-                system_instruction=AI_SYSTEM_PROMPT,
-                temperature=0.3,
-                max_output_tokens=200,
-            )
-        )
+        # ✅ Ավտոմատ մոդելի ընտրություն՝ ըստ արագության
+        MODEL_CANDIDATES = [
+            'gemini-3.8-flash',        # 🏆 Առաջին ընտրություն
+            'gemini-3.7-flash',        # Fallback 1
+            'gemini-3.5-flash',        # Fallback 2
+            'gemini-3.5-flash-lite',   # Fallback 3 (ամենաարագ)
+            'gemini-2.5-flash',        # Fallback 4 (հին, բայց հուսալի)
+        ]
+
+        response = None
+        last_error = None
+
+        for model_name in MODEL_CANDIDATES:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=contents,
+                    config=genai_types.GenerateContentConfig(
+                        system_instruction=AI_SYSTEM_PROMPT,
+                        temperature=0.3,
+                        max_output_tokens=200,
+                    )
+                )
+                print(f"✅ AI աշխատեց: {model_name}")
+                break
+            except Exception as e:
+                last_error = e
+                print(f"❌ {model_name}: {str(e)[:100]}")
+                continue
+
+        if response is None:
+            return jsonify({'error': f'Բոլոր մոդելները ձախողվեցին'}), 500
 
         reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
         return jsonify({'reply': reply})
