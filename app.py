@@ -5,7 +5,6 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 
 try:
     from google import genai
-    from google.genai import types
     HAS_GENAI = True
 except ImportError:
     HAS_GENAI = False
@@ -1050,12 +1049,18 @@ def chat():
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
 
+        # ✅ ՃԻՇՏ ՁԵՎԸ SDK 2.x-ի համար
         contents = []
         for msg in messages[-10:]:
             role = 'user' if msg.get('role') == 'user' else 'model'
             text = (msg.get('text') or '').strip()[:1000]
             if text:
-                contents.append(types.Content(role=role, parts=[types.Part(text=text)]))
+                contents.append(
+                    types.Content(
+                        role=role,
+                        parts=[types.Part(text=text)]
+                    )
+                )
 
         response = client.models.generate_content(
             model='gemini-2.0-flash',
@@ -1064,15 +1069,14 @@ def chat():
                 system_instruction=AI_SYSTEM_PROMPT,
                 temperature=0.7,
                 max_output_tokens=500,
-            ),
+            )
         )
 
         reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
         return jsonify({'reply': reply})
     except Exception as e:
         print(f'AI error: {e}')
-        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
-
+        return jsonify({'error': f'AI սխալ: {str(e)[:200]}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
 @app.route('/api/questions/<difficulty>')
