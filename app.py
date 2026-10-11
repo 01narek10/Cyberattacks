@@ -1038,6 +1038,10 @@ def ai_status():
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
+    import sys
+    print(f"DEBUG: types = {types}", file=sys.stderr)
+    print(f"DEBUG: types type = {type(types)}", file=sys.stderr)
+    print(f"DEBUG: has Content = {hasattr(types, 'Content')}", file=sys.stderr)
     if not USE_AI:
         return jsonify({'error': 'AI-ը միացված չէ'}), 503
 
