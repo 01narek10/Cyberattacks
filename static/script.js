@@ -507,7 +507,7 @@ function loadLeaderboard(filter) {
     empty.classList.add('hidden');
     podium.classList.add('hidden');
 
-    fetch('/api/leaderboard')
+   fetch('/api/leaderboard?t=' + Date.now())
         .then(res => res.json())
         .then(data => {
             loading.classList.add('hidden');
