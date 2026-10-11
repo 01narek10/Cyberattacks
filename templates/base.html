@@ -93,7 +93,7 @@
     <button class="chat-toggle" id="chat-toggle" aria-label="AI Օգնական" title="Հարցրու AI-ին">
         <span class="chat-toggle-glow"></span>
         <span class="chat-toggle-icon">🤖</span>
-        <span class="chat-toggle-tooltip">Հարցրու AI-ին</span>
+       <span class="chat-toggle-tooltip">{{ t.chat_tooltip }}</span>
     </button>
     <div class="chat-panel hidden" id="chat-panel">
         <div class="chat-header">
@@ -109,11 +109,11 @@
         <div class="chat-messages" id="chat-messages">
             <div class="chat-message bot">
                 <span class="chat-message-avatar">🤖</span>
-                <div class="chat-message-bubble">Բարև՛։ Ես ԿիբեռՕգնականն եմ։ Հարցրու՛ ինձ կիբեռանվտանգության մասին 🛡️</div>
+                <div class="chat-message-bubble">{{ t.chat_welcome }}</div>
             </div>
         </div>
         <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Գրի՛ր հարցդ..." maxlength="500" autocomplete="off">
+            <input type="text" id="chat-input" placeholder="{{ t.chat_placeholder }}" maxlength="500" autocomplete="off">
             <button id="chat-send" aria-label="Ուղարկել">➤</button>
         </div>
     </div>
