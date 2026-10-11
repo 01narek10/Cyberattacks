@@ -983,7 +983,7 @@ def home():
     return render_template('index.html', title="Գլխավոր")
 
 @app.route('/types')
-def types():
+def types_page():
     return render_template('types.html', title="Սպառնալիքներ")
 
 @app.route('/hackers')
