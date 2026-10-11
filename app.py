@@ -5,6 +5,7 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 
 try:
     from google import genai
+    from google.genai import types
     HAS_GENAI = True
 except ImportError:
     HAS_GENAI = False
