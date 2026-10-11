@@ -1070,7 +1070,7 @@ def chat():
             return jsonify({'error': 'Ուղարկի՛ր հարց'}), 400
 
         response = client.models.generate_content(
-            model='gemini-3.8-flash',
+            model='gemini-3.8-flash-lite',
             contents=contents,
             config=genai_types.GenerateContentConfig(
                 system_instruction=AI_SYSTEM_PROMPT,
