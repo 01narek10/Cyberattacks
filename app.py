@@ -56,7 +56,9 @@ AI_SYSTEM_PROMPTS = {
 DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQLITE_PATH = os.path.join(BASE_DIR, '.db')
+SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
+print(f"📁 DB Path: {SQLITE_PATH}")
+print(f"📁 Exists: {os.path.exists(SQLITE_PATH)}")
 
 
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
