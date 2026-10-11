@@ -1047,12 +1047,12 @@ def chat():
     if not messages or not isinstance(messages, list):
         return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
-    try:
-        client = genai.Client(
-            api_key=GEMINI_API_KEY,
-            http_options={'timeout': 150}  # 15 վայրկյան timeout
-        )
+    errors_log = []
 
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
+        # ✅ Պատրաստի՛ր contents
         contents = []
         for msg in messages[-10:]:
             role = 'user' if msg.get('role') == 'user' else 'model'
@@ -1065,27 +1065,26 @@ def chat():
                     )
                 )
 
-               # ✅ Վերջինը ՄԻՇՏ պետք է լինի user-ից
         while contents and contents[-1].role != 'user':
             contents.pop()
 
         if not contents:
             return jsonify({'error': 'Ուղարկի՛ր հարց'}), 400
 
-        # ✅ Ավտոմատ մոդելի ընտրություն՝ ըստ արագության
-        MODEL_CANDIDATES = [
-            'gemini-3.8-flash',        # 🏆 Առաջին ընտրություն
-            'gemini-3.7-flash',        # Fallback 1
-            'gemini-3.5-flash',        # Fallback 2
-            'gemini-3.5-flash-lite',   # Fallback 3 (ամենաարագ)
-            'gemini-2.5-flash',        # Fallback 4 (հին, բայց հուսալի)
+        # ✅ Փորձենք 2 ձևով՝ 1) config-ով, 2) առանց config-ի
+        MODEL_LIST = [
+            'gemini-3.8-flash',
+            'gemini-3.5-flash',
+            'gemini-2.5-flash',
+            'gemini-flash-latest',
         ]
 
         response = None
-        last_error = None
 
-        for model_name in MODEL_CANDIDATES:
+        for model_name in MODEL_LIST:
+            # Ձև 1 — config-ով
             try:
+                print(f"🔵 Փորձում եմ {model_name} config-ով...")
                 response = client.models.generate_content(
                     model=model_name,
                     contents=contents,
@@ -1095,20 +1094,36 @@ def chat():
                         max_output_tokens=200,
                     )
                 )
-                print(f"✅ AI աշխատեց: {model_name}")
+                print(f"✅ {model_name} աշխատեց config-ով")
                 break
-            except Exception as e:
-                last_error = e
-                print(f"❌ {model_name}: {str(e)[:100]}")
-                continue
+            except Exception as e1:
+                errors_log.append(f"{model_name} [config]: {str(e1)[:150]}")
+                print(f"❌ {model_name} config-ով. {str(e1)[:200]}")
+
+            # Ձև 2 — առանց config-ի
+            try:
+                print(f"🔵 Փորձում եմ {model_name} առանց config-ի...")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=contents,
+                )
+                print(f"✅ {model_name} աշխատեց առանց config-ի")
+                break
+            except Exception as e2:
+                errors_log.append(f"{model_name} [no-config]: {str(e2)[:150]}")
+                print(f"❌ {model_name} առանց config-ի. {str(e2)[:200]}")
 
         if response is None:
-            return jsonify({'error': f'Բոլոր մոդելները ձախողվեցին'}), 500
+            return jsonify({
+                'error': 'Բոլոր մոդելները ձախողվեցին',
+                'details': errors_log
+            }), 500
 
-        reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
+        reply = (response.text or '').strip() or 'Չհասկացա, փորձի՛ր նորից։'
         return jsonify({'reply': reply})
+
     except Exception as e:
-        print(f'AI error: {e}')
+        print(f"💥 Ընդհանուր սխալ. {e}")
         return jsonify({'error': f'AI սխալ: {str(e)[:200]}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
