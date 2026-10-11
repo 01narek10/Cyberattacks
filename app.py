@@ -1062,15 +1062,15 @@ def chat():
                     )
                 )
 
-        # ✅ Վերջինը ՄԻՇՏ պետք է լինի user-ից
+               # ✅ Վերջինը ՄԻՇՏ պետք է լինի user-ից
         while contents and contents[-1].role != 'user':
             contents.pop()
 
         if not contents:
             return jsonify({'error': 'Ուղարկի՛ր հարց'}), 400
 
-            response = client.models.generate_content(
-            model='gemini-3.8-flash', 
+        response = client.models.generate_content(
+            model='gemini-3.8-flash',
             contents=contents,
             config=genai_types.GenerateContentConfig(
                 system_instruction=AI_SYSTEM_PROMPT,
@@ -1078,6 +1078,7 @@ def chat():
                 max_output_tokens=500,
             )
         )
+
         reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
         return jsonify({'reply': reply})
     except Exception as e:
