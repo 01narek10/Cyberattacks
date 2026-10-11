@@ -838,6 +838,9 @@ function escapeHtml(str) {
         if (!isDragging) return;
         isDragging = false;
         toggle.classList.remove('dragging');
+        
+        // Չեղարկի՛ր wasDragged-ը մի քանի ms-ից հետո
+        setTimeout(() => { wasDragged = false; }, 300);
 
         // Պահի՛ր դիրքը
         const rect = widget.getBoundingClientRect();
@@ -862,13 +865,32 @@ function escapeHtml(str) {
     // ============================================
     // 🖱️ CLICK vs DRAG
     // ============================================
+    // ✅ Ե՛վ click, և՛ touch-ի համար
+    let lastTouchTime = 0;
+    
     toggle.addEventListener('click', (e) => {
+        // Խուսափենք double-trigger-ից հեռախոսում
+        const now = Date.now();
+        if (now - lastTouchTime < 500) return;
+        
+        // Դանդաղ drag-ից հետո մի բացիր
         if (wasDragged) {
-            e.preventDefault();
+            wasDragged = false;
             return;
         }
         openPanel();
     });
+    
+    toggle.addEventListener('touchend', (e) => {
+        lastTouchTime = Date.now();
+        
+        // Եթե drag չեղավ → բացիր
+        if (!wasDragged) {
+            e.preventDefault();
+            openPanel();
+        }
+        wasDragged = false;
+    }, { passive: false });
 
     // ============================================
     // 🔓 ԲԱՑԵԼ / ՓԱԿԵԼ
