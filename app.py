@@ -1050,7 +1050,7 @@ def chat():
     try:
         client = genai.Client(
             api_key=GEMINI_API_KEY,
-            http_options={'timeout': 15}  # 15 վայրկյան timeout
+            http_options={'timeout': 150}  # 15 վայրկյան timeout
         )
 
         contents = []
