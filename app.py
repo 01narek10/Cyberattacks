@@ -1047,83 +1047,61 @@ def chat():
     if not messages or not isinstance(messages, list):
         return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
-    errors_log = []
-
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
 
-        # ✅ Պատրաստի՛ր contents
-        contents = []
-        for msg in messages[-10:]:
-            role = 'user' if msg.get('role') == 'user' else 'model'
-            text = (msg.get('text') or '').strip()[:1000]
-            if text:
-                contents.append(
-                    genai_types.Content(
-                        role=role,
-                        parts=[genai_types.Part(text=text)]
-                    )
-                )
+        # ✅ Պարզ string prompt — առանց Content/Part
+        prompt_lines = []
+        for msg in messages[-8:]:
+            role = msg.get('role', 'user')
+            text = (msg.get('text') or '').strip()[:800]
+            if not text:
+                continue
+            if role == 'user':
+                prompt_lines.append(f"User: {text}")
+            else:
+                prompt_lines.append(f"Assistant: {text}")
 
-        while contents and contents[-1].role != 'user':
-            contents.pop()
+        if not prompt_lines:
+            return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
-        if not contents:
-            return jsonify({'error': 'Ուղարկի՛ր հարց'}), 400
+        full_prompt = (
+            AI_SYSTEM_PROMPT + "\n\n" +
+            "\n".join(prompt_lines) +
+            "\n\nAssistant:"
+        )
 
-        # ✅ Փորձենք 2 ձևով՝ 1) config-ով, 2) առանց config-ի
+        # ✅ Ավտոմատ fallback մոդելների միջև
         MODEL_LIST = [
             'gemini-3.8-flash',
             'gemini-3.5-flash',
             'gemini-2.5-flash',
-            'gemini-flash-latest',
         ]
 
         response = None
+        last_error = None
 
         for model_name in MODEL_LIST:
-            # Ձև 1 — config-ով
             try:
-                print(f"🔵 Փորձում եմ {model_name} config-ով...")
                 response = client.models.generate_content(
                     model=model_name,
-                    contents=contents,
-                    config=genai_types.GenerateContentConfig(
-                        system_instruction=AI_SYSTEM_PROMPT,
-                        temperature=0.3,
-                        max_output_tokens=200,
-                    )
+                    contents=full_prompt,
                 )
-                print(f"✅ {model_name} աշխատեց config-ով")
+                print(f"✅ {model_name} աշխատեց")
                 break
-            except Exception as e1:
-                errors_log.append(f"{model_name} [config]: {str(e1)[:150]}")
-                print(f"❌ {model_name} config-ով. {str(e1)[:200]}")
-
-            # Ձև 2 — առանց config-ի
-            try:
-                print(f"🔵 Փորձում եմ {model_name} առանց config-ի...")
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=contents,
-                )
-                print(f"✅ {model_name} աշխատեց առանց config-ի")
-                break
-            except Exception as e2:
-                errors_log.append(f"{model_name} [no-config]: {str(e2)[:150]}")
-                print(f"❌ {model_name} առանց config-ի. {str(e2)[:200]}")
+            except Exception as e:
+                last_error = str(e)[:150]
+                print(f"❌ {model_name}: {last_error}")
+                continue
 
         if response is None:
-            return jsonify({
-                'error': 'Բոլոր մոդելները ձախողվեցին',
-                'details': errors_log
-            }), 500
+            return jsonify({'error': f'Մոդելները ձախողվեցին'}), 500
 
         reply = (response.text or '').strip() or 'Չհասկացա, փորձի՛ր նորից։'
         return jsonify({'reply': reply})
 
     except Exception as e:
-        print(f"💥 Ընդհանուր սխալ. {e}")
+        print(f"💥 AI error: {e}")
         return jsonify({'error': f'AI սխալ: {str(e)[:200]}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
