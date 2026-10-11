@@ -5,7 +5,7 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 
 try:
     from google import genai
-    from google.genai import types
+    from google.genai import types as genai_types
     HAS_GENAI = True
 except ImportError:
     HAS_GENAI = False
@@ -1061,16 +1061,16 @@ def chat():
             text = (msg.get('text') or '').strip()[:1000]
             if text:
                 contents.append(
-                    types.Content(
+                    genai_types.Content(
                         role=role,
-                        parts=[types.Part(text=text)]
+                        parts=[genai_types.Part(text=text)]
                     )
                 )
 
         response = client.models.generate_content(
             model='gemini-2.0-flash',
             contents=contents,
-            config=types.GenerateContentConfig(
+            config=genai_types.GenerateContentConfig(
                 system_instruction=AI_SYSTEM_PROMPT,
                 temperature=0.7,
                 max_output_tokens=500,
