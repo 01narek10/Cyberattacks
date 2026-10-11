@@ -1211,7 +1211,11 @@ def get_leaderboard():
             else:
                 row['difficulty_label'] = diff
 
-        return jsonify(rows or [])
+        response = jsonify(rows or [])
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
     except Exception as e:
         print(f"Առաջատարների սխալ. {e}")
         return jsonify([])
