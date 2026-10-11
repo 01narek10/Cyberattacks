@@ -1048,7 +1048,10 @@ def chat():
         return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        client = genai.Client(
+            api_key=GEMINI_API_KEY,
+            http_options={'timeout': 15}  # 15 վայրկյան timeout
+        )
 
         contents = []
         for msg in messages[-10:]:
@@ -1074,8 +1077,8 @@ def chat():
             contents=contents,
             config=genai_types.GenerateContentConfig(
                 system_instruction=AI_SYSTEM_PROMPT,
-                temperature=0.7,
-                max_output_tokens=500,
+                temperature=0.3,
+                max_output_tokens=200,
             )
         )
 
