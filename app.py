@@ -56,7 +56,7 @@ AI_SYSTEM_PROMPTS = {
 DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
+SQLITE_PATH = os.path.join(BASE_DIR, '.db')
 
 
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
@@ -1184,17 +1184,33 @@ def check_answer():
     return jsonify({"error": "Հարցը չի գտնվել"}), 404
 
 
-# ============ API — ԱՌԱՋԱՏԱՐՆԵՐ ============
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
     try:
+        lang = session.get('lang', 'hy')
+        if lang not in TRANSLATIONS:
+            lang = 'hy'
+
         rows = execute_query(
-            '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
+            '''SELECT name, score, difficulty, correct, total, time, date
                FROM leaderboard
                ORDER BY score DESC, time ASC
                LIMIT 10''',
             fetch=True
         )
+
+        # ✅ Թարգմանի՛ր difficulty-ն ընթացիկ լեզվով
+        label_key = f"label_{lang}"
+        for row in (rows or []):
+            diff = row.get('difficulty', 'easy')
+            if diff in QUESTIONS_BY_DIFFICULTY:
+                row['difficulty_label'] = QUESTIONS_BY_DIFFICULTY[diff].get(
+                    label_key,
+                    QUESTIONS_BY_DIFFICULTY[diff]['label_hy']
+                )
+            else:
+                row['difficulty_label'] = diff
+
         return jsonify(rows or [])
     except Exception as e:
         print(f"Առաջատարների սխալ. {e}")
@@ -1204,13 +1220,29 @@ def get_leaderboard():
 @app.route('/api/leaderboard/all', methods=['GET'])
 def get_all_leaderboard():
     try:
+        lang = session.get('lang', 'hy')
+        if lang not in TRANSLATIONS:
+            lang = 'hy'
+
         rows = execute_query(
-            '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
+            '''SELECT name, score, difficulty, correct, total, time, date
                FROM leaderboard
                ORDER BY score DESC, time ASC
                LIMIT 200''',
             fetch=True
         )
+
+        label_key = f"label_{lang}"
+        for row in (rows or []):
+            diff = row.get('difficulty', 'easy')
+            if diff in QUESTIONS_BY_DIFFICULTY:
+                row['difficulty_label'] = QUESTIONS_BY_DIFFICULTY[diff].get(
+                    label_key,
+                    QUESTIONS_BY_DIFFICULTY[diff]['label_hy']
+                )
+            else:
+                row['difficulty_label'] = diff
+
         return jsonify(rows or [])
     except Exception as e:
         print(f"Ամբողջ աղյուսակի սխալ. {e}")
