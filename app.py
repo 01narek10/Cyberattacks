@@ -1380,44 +1380,6 @@ def ai_status():
     })
 
 
-@app.route('/api/chat', methods=['POST'])
-def chat():
-    if not USE_AI:
-        return jsonify({'error': 'AI-ը միացված չէ'}), 503
-
-    data = request.get_json() or {}
-    messages = data.get('messages', [])
-
-    if not messages or not isinstance(messages, list):
-        return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
-
-    try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
-
-        contents = []
-        for msg in messages[-10:]:
-            role = 'user' if msg.get('role') == 'user' else 'model'
-            text = (msg.get('text') or '').strip()[:1000]
-            if text:
-                contents.append(types.Content(role=role, parts=[types.Part(text=text)]))
-
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=contents,
-            config=types.GenerateContentConfig(
-                system_instruction=AI_SYSTEM_PROMPT,
-                temperature=0.7,
-                max_output_tokens=500,
-            ),
-        )
-
-        reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
-        return jsonify({'reply': reply})
-    except Exception as e:
-        print(f'AI error: {e}')
-        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
-
-
 @app.route('/cases')
 def cases():
     lang = session.get('lang', 'hy')
