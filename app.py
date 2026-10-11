@@ -1086,8 +1086,15 @@ def chat():
         if not prompt_lines:
             return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
+        # ✅ Որոշի՛ր լեզուն ըստ session-ի
+        current_lang = session.get('lang', 'hy')
+        if current_lang not in AI_SYSTEM_PROMPTS:
+            current_lang = 'hy'
+
+        system_prompt = AI_SYSTEM_PROMPTS[current_lang]
+
         full_prompt = (
-            AI_SYSTEM_PROMPT + "\n\n" +
+            system_prompt + "\n\n" +
             "\n".join(prompt_lines) +
             "\n\nAssistant:"
         )
