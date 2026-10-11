@@ -6,13 +6,16 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 try:
     from google import genai
     from google.genai import types
+    HAS_GENAI = True
+except ImportError:
+    HAS_GENAI = False
+
+try:
     import psycopg2
     from psycopg2.extras import RealDictCursor
-    HAS_GENAI = True
     HAS_POSTGRES = True
 except ImportError:
     HAS_POSTGRES = False
-    HAS_GENAI = False
 
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 USE_AI = bool(GEMINI_API_KEY and HAS_GENAI)
@@ -29,7 +32,6 @@ AI_SYSTEM_PROMPT = (
     "Երբեք մի՛ տուր վտանգավոր խորհուրդներ իրական հարձակումներ կատարելու համար։"
 )
 
-
 DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_POSTGRES = bool(DATABASE_URL and HAS_POSTGRES)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -39,17 +41,13 @@ SQLITE_PATH = os.path.join(BASE_DIR, 'leaderboard.db')
 # ============ ԹԱՐԳՄԱՆՈՒԹՅՈՒՆՆԵՐ ============
 TRANSLATIONS = {
     'hy': {
-        # --- Navigation ---
         'nav_home': 'Գլխավոր', 'nav_threats': 'Սպառնալիքներ', 'nav_hackers': 'Հաքերներ',
         'nav_phishing': 'Ֆիշինգ', 'nav_cases': 'Քեյսեր', 'nav_defense': 'Պաշտպանություն',
         'nav_quiz': 'Թեստ', 'nav_leaderboard': 'Առաջատարների Աղյուսակ',
         'nav_theme': 'Թեմա', 'nav_sound_on': 'Ձայնը միացված է', 'nav_sound_off': 'Ձայնն անջատված է',
-        # --- Footer ---
         'footer_about': 'Նախագիծ՝ նվիրված կիբեռանվտանգությանը, ֆիշինգին և հաքերների աշխարհին։',
         'footer_sections': 'Բաժիններ', 'footer_contact': 'Կապ',
         'footer_copyright': '© 2026 ԿիբեռՎահան | ԹԳՀԳ նախագծային աշխատանք',
-
-        # --- INDEX PAGE ---
         'hero_badge': 'Կիբեռանվտանգության Ուղեցույց',
         'hero_title_1': 'Պաշտպանիր Քեզ',
         'hero_title_2': 'Թվային Աշխարհում',
@@ -73,8 +71,6 @@ TRANSLATIONS = {
         'about_p1': 'Ամեն վայրկյան աշխարհում տեղի են ունենում հազարավոր կիբեռհարձակումներ։ Ֆիշինգային նամակները, վնասակար ծրագրերը և տվյալների արտահոսքերը դարձել են առօրյա իրականություն։',
         'about_p2': 'Այս կայքը ստեղծվել է, որպեսզի բարձրացնի իրազեկվածությունը և սովորեցնի պաշտպանվել թվային սպառնալիքներից։',
         'about_btn': 'Իմանալ ավելին →',
-
-        # --- TYPES PAGE ---
         'types_title': 'Կիբեռհանցագործության Տեսակները',
         'types_subtitle': 'Հիմնական սպառնալիքները, որոնք սպառնում են թվային աշխարհին',
         'threat_malware_title': '🦠 Վնասակար Ծրագրեր',
@@ -107,8 +103,6 @@ TRANSLATIONS = {
         'stats_row_ddos_cases': '~15 ամեն օր',
         'stats_row_ddos_damage': '120 000 դոլար ժամային',
         'types_video_title': '🎬 Ինչպես է Աշխատում Ֆիշինգը',
-
-        # --- HACKERS PAGE ---
         'hackers_title': 'Հաքերների Տեսակները',
         'hackers_subtitle': 'Ոչ բոլոր հաքերներն են չարագործ. նրանք բաժանվում են ըստ նպատակների և օրինականության',
         'hacker_black_tag': 'Սև Գլխարկ',
@@ -137,8 +131,6 @@ TRANSLATIONS = {
         'groups_apt28': 'Ռուսական հետախուզության հետ կապված խումբ։',
         'groups_revil': 'Փրկագնային Ծրագիր որպես ծառայություն մոդելով աշխատող հանցախումբ։',
         'hackers_video_title': '🎥 Ուսումնական Վիդեո',
-
-        # --- PHISHING PAGE ---
         'phishing_title': 'Ֆիշինգ',
         'phishing_subtitle': 'Սոցիալական ինժեներիայի ամենատարածված ձևը',
         'phishing_what_title': 'Ի՞նչ է Ֆիշինգը',
@@ -170,13 +162,9 @@ TRANSLATIONS = {
         'phishing_step5_title': 'Կապ Հաստատեք Ուղղակիորեն',
         'phishing_step5_desc': 'Եթե նամակը «բանկից» է, զանգահարեք բանկի պաշտոնական հեռախոսահամարով և ստուգեք։',
         'phishing_video_title': '🎥 Տեսանյութ',
-
-        # --- CASES PAGE ---
         'cases_title': 'Իրական Կիբեռմիջադեպեր',
         'cases_subtitle': 'Պատմության ամենաաղմկահարույց կիբեռհարձակումները',
         'cases_video_title': '🎬 Վավերագրական',
-
-        # --- DEFENSE PAGE ---
         'defense_title': 'Պաշտպանության 10 Ոսկե Կանոնները',
         'defense_subtitle': 'Ինչպես չդառնալ կիբեռհանցագործների զոհ',
         'defense_rule1_title': 'Երկփուլանի Վավերացում',
@@ -200,8 +188,6 @@ TRANSLATIONS = {
         'defense_rule10_title': 'Կրթվեք',
         'defense_rule10_desc': 'Հետևեք կիբեռանվտանգության նորություններին։ Իմացեք նոր սպառնալիքների մասին։',
         'defense_video_title': '🎬 Ինչպես Պաշտպանվել',
-
-        # --- QUIZ ---
         'quiz_badge': 'Ինտերակտիվ Թեստ',
         'quiz_title': 'Ստուգիր Գիտելիքներդ',
         'quiz_subtitle': 'Ընտրիր բարդության մակարդակը, մուտքագրիր անունդ և մրցիր լավագույնների հետ',
@@ -225,8 +211,6 @@ TRANSLATIONS = {
         'quiz_great': 'Շատ լավ է։', 'quiz_great_sub': 'Մի փոքր էլ ջանք ու դու կհասնես գագաթին։',
         'quiz_good': 'Լավ է։', 'quiz_good_sub': 'Կարող ես ավելի լավ։ Փորձիր նորից։',
         'quiz_learn': 'Շարունակիր Սովորել։', 'quiz_learn_sub': 'Նայիր մյուս բաժինները և փորձիր նորից։',
-
-        # --- LEADERBOARD ---
         'lb_badge': 'Փառքի Սրահ', 'lb_title': 'Առաջատարների Աղյուսակ',
         'lb_subtitle': 'Լավագույն խաղացողները բոլոր բարդության մակարդակներից',
         'lb_all': 'Բոլորը', 'lb_easy': 'Հեշտ', 'lb_medium': 'Միջին', 'lb_hard': 'Բարդ',
@@ -237,21 +221,22 @@ TRANSLATIONS = {
         'lb_start_quiz': 'Սկսել Թեստը',
         'stat_damage_value': '10.5 տրլն',
         'footer_location': 'Իջևան, Հայաստան',
-        'seconds_short': 'վ'
+        'seconds_short': 'վ',
+        'chat_title': 'ԿիբեռՕգնական',
+        'chat_status': '● Առցանց',
+        'chat_placeholder': 'Գրի՛ր հարցդ...',
+        'chat_welcome': 'Բարև՛։ Ես ԿիբեռՕգնականն եմ։ Հարցրու՛ ինձ կիբեռանվտանգության մասին 🛡️',
+        'chat_tooltip': 'Հարցրու AI-ին'
     },
 
     'en': {
-        # --- Navigation ---
         'nav_home': 'Home', 'nav_threats': 'Threats', 'nav_hackers': 'Hackers',
         'nav_phishing': 'Phishing', 'nav_cases': 'Cases', 'nav_defense': 'Defense',
         'nav_quiz': 'Quiz', 'nav_leaderboard': 'Leaderboard',
         'nav_theme': 'Theme', 'nav_sound_on': 'Sound On', 'nav_sound_off': 'Sound Off',
-        # --- Footer ---
         'footer_about': 'A project dedicated to cybersecurity, phishing and the world of hackers.',
         'footer_sections': 'Sections', 'footer_contact': 'Contact',
         'footer_copyright': '© 2026 CyberShield | Educational Project',
-
-        # --- INDEX PAGE ---
         'hero_badge': 'Cybersecurity Guide',
         'hero_title_1': 'Protect Yourself',
         'hero_title_2': 'In the Digital World',
@@ -275,14 +260,12 @@ TRANSLATIONS = {
         'about_p1': 'Thousands of cyberattacks happen every second around the world. Phishing emails, malware and data breaches have become everyday reality.',
         'about_p2': 'This site was created to raise awareness and teach how to defend against digital threats.',
         'about_btn': 'Learn More →',
-
-        # --- TYPES PAGE ---
         'types_title': 'Types of Cybercrime',
         'types_subtitle': 'The main threats facing the digital world',
         'threat_malware_title': '🦠 Malware',
         'threat_malware_desc': 'Viruses, trojans, worms, spyware and adware. They secretly penetrate the system to steal or damage data.',
         'threat_ransomware_title': '💰 Ransomware',
-        'threat_ransomware_desc': 'Encrypts the user\'s files and demands cryptocurrency ransom to return the key. Famous example: WannaCry.',
+        'threat_ransomware_desc': "Encrypts the user's files and demands cryptocurrency ransom to return the key. Famous example: WannaCry.",
         'threat_ddos_title': '⚡ Distributed Attacks',
         'threat_ddos_desc': 'Hundreds of thousands of fake requests are sent to the server, disrupting the site. Known as a "load attack".',
         'threat_breach_title': '📂 Data Breach',
@@ -309,8 +292,6 @@ TRANSLATIONS = {
         'stats_row_ddos_cases': '~15 per day',
         'stats_row_ddos_damage': '$120,000 per hour',
         'types_video_title': '🎬 How Phishing Works',
-
-        # --- HACKERS PAGE ---
         'hackers_title': 'Types of Hackers',
         'hackers_subtitle': 'Not all hackers are criminals; they are classified by purpose and legality',
         'hacker_black_tag': 'Black Hat',
@@ -339,8 +320,6 @@ TRANSLATIONS = {
         'groups_apt28': 'A group linked to Russian intelligence.',
         'groups_revil': 'A criminal group operating with the Ransomware-as-a-Service model.',
         'hackers_video_title': '🎥 Educational Video',
-
-        # --- PHISHING PAGE ---
         'phishing_title': 'Phishing',
         'phishing_subtitle': 'The most common form of social engineering',
         'phishing_what_title': 'What is Phishing',
@@ -370,15 +349,11 @@ TRANSLATIONS = {
         'phishing_step4_title': 'Attachments',
         'phishing_step4_desc': 'Especially .exe, .scr, .zip format files are dangerous. Do not open them from unknown senders.',
         'phishing_step5_title': 'Contact Directly',
-        'phishing_step5_desc': 'If the email is "from the bank", call the bank\'s official phone number and verify.',
+        'phishing_step5_desc': "If the email is \"from the bank\", call the bank's official phone number and verify.",
         'phishing_video_title': '🎥 Video',
-
-        # --- CASES PAGE ---
         'cases_title': 'Real Cyber Incidents',
         'cases_subtitle': 'The most notorious cyberattacks in history',
         'cases_video_title': '🎬 Documentary',
-
-        # --- DEFENSE PAGE ---
         'defense_title': '10 Golden Rules of Defense',
         'defense_subtitle': 'How to avoid becoming a victim of cybercriminals',
         'defense_rule1_title': 'Two-Factor Authentication',
@@ -390,7 +365,7 @@ TRANSLATIONS = {
         'defense_rule4_title': 'Update Software',
         'defense_rule4_desc': 'Always update the operating system, browser and apps to close security gaps.',
         'defense_rule5_title': 'Check Links',
-        'defense_rule5_desc': 'Don\'t click on unknown links. Check the site address before clicking.',
+        'defense_rule5_desc': "Don't click on unknown links. Check the site address before clicking.",
         'defense_rule6_title': 'Backup',
         'defense_rule6_desc': 'Keep important data with the 3-2-1 rule: three copies, two media, one offsite.',
         'defense_rule7_title': 'VPN on Public WiFi',
@@ -398,12 +373,10 @@ TRANSLATIONS = {
         'defense_rule8_title': 'Antivirus',
         'defense_rule8_desc': 'Use a reliable antivirus program on your device.',
         'defense_rule9_title': 'Beware of Social Engineering',
-        'defense_rule9_desc': 'Don\'t share personal information on social networks. Hackers collect information.',
+        'defense_rule9_desc': "Don't share personal information on social networks. Hackers collect information.",
         'defense_rule10_title': 'Educate Yourself',
         'defense_rule10_desc': 'Follow cybersecurity news. Learn about new threats.',
         'defense_video_title': '🎬 How to Protect Yourself',
-
-        # --- QUIZ ---
         'quiz_badge': 'Interactive Quiz',
         'quiz_title': 'Test Your Knowledge',
         'quiz_subtitle': 'Choose a difficulty level, enter your name and compete with the best',
@@ -427,8 +400,6 @@ TRANSLATIONS = {
         'quiz_great': 'Very Good!', 'quiz_great_sub': 'A bit more effort and you will reach the top.',
         'quiz_good': 'Good!', 'quiz_good_sub': 'You can do better. Try again.',
         'quiz_learn': 'Keep Learning.', 'quiz_learn_sub': 'Check other sections and try again.',
-
-        # --- LEADERBOARD ---
         'lb_badge': 'Hall of Fame', 'lb_title': 'Leaderboard',
         'lb_subtitle': 'Top players from all difficulty levels',
         'lb_all': 'All', 'lb_easy': 'Easy', 'lb_medium': 'Medium', 'lb_hard': 'Hard',
@@ -439,21 +410,22 @@ TRANSLATIONS = {
         'lb_start_quiz': 'Start Quiz',
         'stat_damage_value': '10.5 tril',
         'footer_location': 'Ijevan, Armenia',
-        'seconds_short': 's'
+        'seconds_short': 's',
+        'chat_title': 'CyberAssistant',
+        'chat_status': '● Online',
+        'chat_placeholder': 'Type your question...',
+        'chat_welcome': "Hello! I'm CyberAssistant. Ask me about cybersecurity 🛡️",
+        'chat_tooltip': 'Ask AI'
     },
 
     'ru': {
-        # --- Navigation ---
         'nav_home': 'Главная', 'nav_threats': 'Угрозы', 'nav_hackers': 'Хакеры',
         'nav_phishing': 'Фишинг', 'nav_cases': 'Кейсы', 'nav_defense': 'Защита',
         'nav_quiz': 'Тест', 'nav_leaderboard': 'Рейтинг',
         'nav_theme': 'Тема', 'nav_sound_on': 'Звук включен', 'nav_sound_off': 'Звук выключен',
-        # --- Footer ---
         'footer_about': 'Проект, посвященный кибербезопасности, фишингу и миру хакеров.',
         'footer_sections': 'Разделы', 'footer_contact': 'Контакты',
         'footer_copyright': '© 2026 КиберЩит | Учебный проект',
-
-        # --- INDEX PAGE ---
         'hero_badge': 'Руководство по Кибербезопасности',
         'hero_title_1': 'Защити Себя',
         'hero_title_2': 'В Цифровом Мире',
@@ -477,8 +449,6 @@ TRANSLATIONS = {
         'about_p1': 'Каждую секунду в мире происходят тысячи кибератак. Фишинговые письма, вредоносные программы и утечки данных стали повседневной реальностью.',
         'about_p2': 'Этот сайт создан, чтобы повысить осведомленность и научить защищаться от цифровых угроз.',
         'about_btn': 'Узнать Больше →',
-
-        # --- TYPES PAGE ---
         'types_title': 'Типы Киберпреступности',
         'types_subtitle': 'Основные угрозы, стоящие перед цифровым миром',
         'threat_malware_title': '🦠 Вредоносное ПО',
@@ -511,8 +481,6 @@ TRANSLATIONS = {
         'stats_row_ddos_cases': '~15 в день',
         'stats_row_ddos_damage': '$120,000 в час',
         'types_video_title': '🎬 Как Работает Фишинг',
-
-        # --- HACKERS PAGE ---
         'hackers_title': 'Типы Хакеров',
         'hackers_subtitle': 'Не все хакеры — преступники; они делятся по целям и легальности',
         'hacker_black_tag': 'Черная Шляпа',
@@ -541,8 +509,6 @@ TRANSLATIONS = {
         'groups_apt28': 'Группа, связанная с российской разведкой.',
         'groups_revil': 'Преступная группа, работающая по модели Ransomware-as-a-Service.',
         'hackers_video_title': '🎥 Обучающее Видео',
-
-        # --- PHISHING PAGE ---
         'phishing_title': 'Фишинг',
         'phishing_subtitle': 'Самая распространенная форма социальной инженерии',
         'phishing_what_title': 'Что Такое Фишинг',
@@ -574,13 +540,9 @@ TRANSLATIONS = {
         'phishing_step5_title': 'Свяжитесь Напрямую',
         'phishing_step5_desc': 'Если письмо "от банка", позвоните по официальному номеру банка и проверьте.',
         'phishing_video_title': '🎥 Видео',
-
-        # --- CASES PAGE ---
         'cases_title': 'Реальные Кибер-Инциденты',
         'cases_subtitle': 'Самые громкие кибератаки в истории',
         'cases_video_title': '🎬 Документальный',
-
-        # --- DEFENSE PAGE ---
         'defense_title': '10 Золотых Правил Защиты',
         'defense_subtitle': 'Как не стать жертвой киберпреступников',
         'defense_rule1_title': 'Двухфакторная Аутентификация',
@@ -604,8 +566,6 @@ TRANSLATIONS = {
         'defense_rule10_title': 'Обучайтесь',
         'defense_rule10_desc': 'Следите за новостями кибербезопасности. Узнавайте о новых угрозах.',
         'defense_video_title': '🎬 Как Защититься',
-
-        # --- QUIZ ---
         'quiz_badge': 'Интерактивный Тест',
         'quiz_title': 'Проверь Свои Знания',
         'quiz_subtitle': 'Выбери уровень сложности, введи имя и соревнуйся с лучшими',
@@ -629,8 +589,6 @@ TRANSLATIONS = {
         'quiz_great': 'Очень Хорошо!', 'quiz_great_sub': 'Еще немного усилий и ты достигнешь вершины.',
         'quiz_good': 'Хорошо!', 'quiz_good_sub': 'Можешь лучше. Попробуй снова.',
         'quiz_learn': 'Продолжай Учиться.', 'quiz_learn_sub': 'Посмотри другие разделы и попробуй снова.',
-
-        # --- LEADERBOARD ---
         'lb_badge': 'Зал Славы', 'lb_title': 'Рейтинг',
         'lb_subtitle': 'Лучшие игроки всех уровней сложности',
         'lb_all': 'Все', 'lb_easy': 'Легкий', 'lb_medium': 'Средний', 'lb_hard': 'Сложный',
@@ -641,12 +599,17 @@ TRANSLATIONS = {
         'lb_start_quiz': 'Начать Тест',
         'stat_damage_value': '10.5 тр',
         'footer_location': 'Иджеван, Армения',
-        'seconds_short': 'с'
+        'seconds_short': 'с',
+        'chat_title': 'КиберПомощник',
+        'chat_status': '● Онлайн',
+        'chat_placeholder': 'Напишите вопрос...',
+        'chat_welcome': 'Привет! Я КиберПомощник. Спроси меня о кибербезопасности 🛡️',
+        'chat_tooltip': 'Спросить AI'
     }
 }
 
 
-# ============ ԻՐԱԿԱՆ ՔԵՅՍԵՐ (ԲԱԶՄԱԼԵԶՈՒ) ============
+# ============ ԻՐԱԿԱՆ ՔԵՅՍԵՐ ============
 CYBER_CASES = [
     {
         "year": "2017",
@@ -713,7 +676,6 @@ CYBER_CASES = [
 
 # ============ ՏՎՅԱԼՆԵՐԻ ԲԱԶԱՅԻ ՖՈՒՆԿՑԻԱՆԵՐ ============
 def get_connection():
-    """Վերադարձնում է տվյալների բազայի կապը (Postgres կամ SQLite)"""
     if USE_POSTGRES:
         return psycopg2.connect(DATABASE_URL)
     else:
@@ -723,7 +685,6 @@ def get_connection():
 
 
 def init_db():
-    """Ստեղծել աղյուսակը եթե գոյություն չունի"""
     try:
         conn = get_connection()
         c = conn.cursor()
@@ -765,7 +726,6 @@ def init_db():
 
 
 def execute_query(query, params=None, fetch=False, fetch_one=False):
-    """Ունիվերսալ ֆունկցիա query-ների համար"""
     conn = get_connection()
     try:
         if USE_POSTGRES:
@@ -773,7 +733,6 @@ def execute_query(query, params=None, fetch=False, fetch_one=False):
         else:
             c = conn.cursor()
 
-        # Postgres-ը օգտագործում է %s, SQLite-ը՝ ?
         if USE_POSTGRES and params:
             query = query.replace('?', '%s')
 
@@ -794,547 +753,213 @@ def execute_query(query, params=None, fetch=False, fetch_one=False):
         conn.close()
 
 
-# ============ ՀԱՐՑԵՐԻ ԲԱԶԱ (ՄԻՋԱԶԳԱՅԻՆ ՍՏԱՆԴԱՐՏՆԵՐՈՎ) ============
-# Աղբյուրներ: OWASP Top 10 (2021), NIST SP 800-63B Rev.4, NIST CSF 2.0,
-# ENISA Threat Landscape 2025, CISA, FBI IC3 2025, CompTIA Security+
+# ============ ՀԱՐՑԵՐԻ ԲԱԶԱ ============
 QUESTIONS_BY_DIFFICULTY = {
     "easy": {
         "label_hy": "Հեշտ", "label_en": "Easy", "label_ru": "Легкий",
         "time": 30, "points": 10,
         "questions": [
-            {
-                "id": 1,
-                "question": {
-                    "hy": "Ո՞րն է ամենաապահով գաղտնաբառը՝ համաձայն NIST SP 800-63B Rev.4 (2025) ուղեցույցի:",
-                    "en": "Which password is most secure according to NIST SP 800-63B Rev.4 (2025)?",
-                    "ru": "Какой пароль самый надежный согласно NIST SP 800-63B Rev.4 (2025)?"
-                },
-                "options": {
-                    "hy": ["Ձեր անունը և ծննդյան տարեթիվը", "Առնվազն 15 նիշ՝ մեծատառ, փոքրատառ, թվեր և սիմվոլներ", "Հեշտ հիշվող բառ առանց թվերի"],
-                    "en": ["Your name and birth year", "At least 15 characters with uppercase, lowercase, numbers and symbols", "An easy-to-remember word without numbers"],
-                    "ru": ["Ваше имя и год рождения", "Минимум 15 символов: заглавные, строчные, цифры и символы", "Легкое запоминающееся слово без цифр"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 2,
-                "question": {
-                    "hy": "Ի՞նչ է Երկփուլանի Վավերացումը (MFA) և ինչո՞ւ է CISA-ն այն համարում «ոսկե ստանդարտ»:",
-                    "en": "What is Multi-Factor Authentication (MFA) and why does CISA call it the 'gold standard'?",
-                    "ru": "Что такое Многофакторная Аутентификация (MFA) и почему CISA называет её 'золотым стандартом'?"
-                },
-                "options": {
-                    "hy": ["Երկու տարբեր գաղտնաբառի օգտագործում", "Հաշվի կրկնակի գրանցում", "Լրացուցիչ անվտանգության շերտ՝ գաղտնաբառից բացի երկրորդ ապացույց (FIDO2, YubiKey)"],
-                    "en": ["Using two different passwords", "Registering the account twice", "An extra security layer requiring a second proof (FIDO2, YubiKey) besides the password"],
-                    "ru": ["Использование двух разных паролей", "Двойная регистрация аккаунта", "Дополнительный уровень безопасности: второе доказательство помимо пароля (FIDO2, YubiKey)"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 3,
-                "question": {
-                    "hy": "Ի՞նչ է Ֆիշինգը՝ համաձայն CISA-ի սահմանման:",
-                    "en": "What is Phishing according to CISA's definition?",
-                    "ru": "Что такое Фишинг согласно определению CISA?"
-                },
-                "options": {
-                    "hy": ["Խաբեություն, որով հանցագործը ներկայանում է վստահելի աղբյուր և կորզում է գաղտնի տվյալներ", "Համակարգչի ֆիզիկական գողություն", "Ծրագրային ապահովման անվճար տարածում"],
-                    "en": ["A scam where the attacker poses as a trusted source to extract confidential data", "Physical theft of a computer", "Free distribution of software"],
-                    "ru": ["Мошенничество, при котором злоумышленник выдает себя за надежный источник", "Физическая кража компьютера", "Бесплатное распространение ПО"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 4,
-                "question": {
-                    "hy": "Ո՞րն է ENISA 2025 հաշվետվության համաձայն ամենատարածված հարձակման տեսակը (77%)?",
-                    "en": "According to ENISA 2025, which is the most common attack type (77%)?",
-                    "ru": "Согласно ENISA 2025, какой тип атак самый распространенный (77%)?"
-                },
-                "options": {
-                    "hy": ["Ransomware", "DDoS (Բաշխված Ծառայությունից Հրաժարում)", "Phishing"],
-                    "en": ["Ransomware", "DDoS (Distributed Denial of Service)", "Phishing"],
-                    "ru": ["Ransomware", "DDoS (Распределенная атака отказа в обслуживании)", "Фишинг"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 5,
-                "question": {
-                    "hy": "Ի՞նչ է Փրկագնային Ծրագիրը (Ransomware)՝ համաձայն ENISA 2025-ի:",
-                    "en": "What is Ransomware according to ENISA 2025?",
-                    "ru": "Что такое Программа-вымогатель (Ransomware) согласно ENISA 2025?"
-                },
-                "options": {
-                    "hy": ["Հակավիրուսային ծրագիր", "Malware, որը կոդավորում է ֆայլերը և պահանջում է փրկագին", "Պահուստային պատճենող գործիք", "Գովազդային ծրագիր"],
-                    "en": ["An antivirus program", "Malware that encrypts files and demands ransom", "A backup tool", "An advertising program"],
-                    "ru": ["Антивирусная программа", "Вредоносное ПО, шифрующее файлы и требующее выкуп", "Инструмент резервного копирования", "Рекламная программа"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 6,
-                "question": {
-                    "hy": "Ի՞նչ է նշանակում HTTPS-ը վեբ կայքի հասցեում:",
-                    "en": "What does HTTPS in a website address mean?",
-                    "ru": "Что означает HTTPS в адресе сайта?"
-                },
-                "options": {
-                    "hy": ["Կայքի արագության ցուցիչ", "Կայքի տարիքը", "Տվյալների ապահով գաղտնագրված փոխանցման արձանագրություն"],
-                    "en": ["A speed indicator of the site", "The age of the site", "A secure encrypted data transfer protocol"],
-                    "ru": ["Показатель скорости сайта", "Возраст сайта", "Протокол защищенной шифрованной передачи данных"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 7,
-                "question": {
-                    "hy": "Ինչո՞ւ է վտանգավոր հանրային Wi-Fi ցանցում մուտքագրել բանկային տվյալներ:",
-                    "en": "Why is it dangerous to enter banking data on public Wi-Fi?",
-                    "ru": "Почему опасно вводить банковские данные в публичном Wi-Fi?"
-                },
-                "options": {
-                    "hy": ["Ցանցը դանդաղ է աշխատում", "Հաքերը կարող է գաղտնալսել չգաղտնագրված տվյալները (MitM հարձակում)", "Բանկը չի թույլատրում"],
-                    "en": ["The network is slow", "An attacker can intercept unencrypted data (MitM attack)", "The bank does not allow it"],
-                    "ru": ["Сеть работает медленно", "Злоумышленник может перехватить незашифрованные данные (атака MitM)", "Банк не разрешает"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 8,
-                "question": {
-                    "hy": "Ինչո՞ւ է կարևոր ծրագրային թարմացումները տեղադրել ժամանակին՝ համաձայն NIST CSF 2.0-ի:",
-                    "en": "Why is it important to install software updates on time according to NIST CSF 2.0?",
-                    "ru": "Почему важно своевременно устанавливать обновления согласно NIST CSF 2.0?"
-                },
-                "options": {
-                    "hy": ["Միայն նոր դիզայն ավելացնելու համար", "Դրանք փակում են հայտնի անվտանգության խոցելիությունները", "Դա պարտադիր չէ", "Միայն արագության համար"],
-                    "en": ["Only to add a new design", "They patch known security vulnerabilities", "It is not necessary", "Only for speed"],
-                    "ru": ["Только для нового дизайна", "Они закрывают известные уязвимости безопасности", "Это не обязательно", "Только для скорости"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 9,
-                "question": {
-                    "hy": "Ի՞նչ է Հրադադարը (Firewall) ցանցային անվտանգության մեջ:",
-                    "en": "What is a Firewall in network security?",
-                    "ru": "Что такое Файрвол в сетевой безопасности?"
-                },
-                "options": {
-                    "hy": ["Համակարգ, որը վերահսկում և ֆիլտրում է ցանցային տրաֿֆիկը կանոնների հիման վրա", "Ֆիզիկական պատ", "Անլար ցանց", "Ամպային պահոց"],
-                    "en": ["A system that monitors and filters network traffic based on rules", "A physical wall", "A wireless network", "A cloud storage"],
-                    "ru": ["Система, контролирующая и фильтрующая трафик на основе правил", "Физическая стена", "Беспроводная сеть", "Облачное хранилище"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 10,
-                "question": {
-                    "hy": "Ի՞նչ է Սպիտակ Գլխարկ (White Hat) հաքերը:",
-                    "en": "What is a White Hat hacker?",
-                    "ru": "Кто такой Белый Хакер (White Hat)?"
-                },
-                "options": {
-                    "hy": ["Չարագործ, որը կոտրում է համակարգերը", "Էթիկական մասնագետ, որը աշխատում է օրինական պայմանագրով՝ գտնելու խոցելիությունները", "Վիրուս ստեղծող"],
-                    "en": ["A criminal who breaks into systems", "An ethical specialist working under legal contract to find vulnerabilities", "A virus creator"],
-                    "ru": ["Преступник, взламывающий системы", "Этичный специалист, работающий по легальному контракту", "Создатель вирусов"]
-                },
-                "answer": 1
-            }
+            {"id": 1, "question": {"hy": "Ո՞րն է ամենաապահով գաղտնաբառը՝ համաձայն NIST SP 800-63B Rev.4 (2025) ուղեցույցի:", "en": "Which password is most secure according to NIST SP 800-63B Rev.4 (2025)?", "ru": "Какой пароль самый надежный согласно NIST SP 800-63B Rev.4 (2025)?"},
+             "options": {"hy": ["Ձեր անունը և ծննդյան տարեթիվը", "Առնվազն 15 նիշ՝ մեծատառ, փոքրատառ, թվեր և սիմվոլներ", "Հեշտ հիշվող բառ առանց թվերի"],
+                         "en": ["Your name and birth year", "At least 15 characters with uppercase, lowercase, numbers and symbols", "An easy-to-remember word without numbers"],
+                         "ru": ["Ваше имя и год рождения", "Минимум 15 символов: заглавные, строчные, цифры и символы", "Легкое запоминающееся слово без цифр"]},
+             "answer": 1},
+            {"id": 2, "question": {"hy": "Ի՞նչ է Երկփուլանի Վավերացումը (MFA) և ինչո՞ւ է CISA-ն այն համարում «ոսկե ստանդարտ»:", "en": "What is Multi-Factor Authentication (MFA) and why does CISA call it the 'gold standard'?", "ru": "Что такое Многофакторная Аутентификация (MFA) и почему CISA называет её 'золотым стандартом'?"},
+             "options": {"hy": ["Երկու տարբեր գաղտնաբառի օգտագործում", "Հաշվի կրկնակի գրանցում", "Լրացուցիչ անվտանգության շերտ՝ գաղտնաբառից բացի երկրորդ ապացույց (FIDO2, YubiKey)"],
+                         "en": ["Using two different passwords", "Registering the account twice", "An extra security layer requiring a second proof (FIDO2, YubiKey)"],
+                         "ru": ["Использование двух разных паролей", "Двойная регистрация аккаунта", "Дополнительный уровень безопасности: второе доказательство (FIDO2, YubiKey)"]},
+             "answer": 2},
+            {"id": 3, "question": {"hy": "Ի՞նչ է Ֆիշինգը՝ համաձայն CISA-ի սահմանման:", "en": "What is Phishing according to CISA's definition?", "ru": "Что такое Фишинг согласно определению CISA?"},
+             "options": {"hy": ["Խաբեություն, որով հանցագործը ներկայանում է վստահելի աղբյուր և կորզում է գաղտնի տվյալներ", "Համակարգչի ֆիզիկական գողություն", "Ծրագրային ապահովման անվճար տարածում"],
+                         "en": ["A scam where the attacker poses as a trusted source to extract confidential data", "Physical theft of a computer", "Free distribution of software"],
+                         "ru": ["Мошенничество, при котором злоумышленник выдает себя за надежный источник", "Физическая кража компьютера", "Бесплатное распространение ПО"]},
+             "answer": 0},
+            {"id": 4, "question": {"hy": "Ո՞րն է ENISA 2025 հաշվետվության համաձայն ամենատարածված հարձակման տեսակը (77%)?", "en": "According to ENISA 2025, which is the most common attack type (77%)?", "ru": "Согласно ENISA 2025, какой тип атак самый распространенный (77%)?"},
+             "options": {"hy": ["Ransomware", "DDoS (Բաշխված Ծառայությունից Հրաժարում)", "Phishing"],
+                         "en": ["Ransomware", "DDoS (Distributed Denial of Service)", "Phishing"],
+                         "ru": ["Ransomware", "DDoS (Распределенная атака отказа в обслуживании)", "Фишинг"]},
+             "answer": 1},
+            {"id": 5, "question": {"hy": "Ի՞նչ է Փրկագնային Ծրագիրը (Ransomware)՝ համաձայն ENISA 2025-ի:", "en": "What is Ransomware according to ENISA 2025?", "ru": "Что такое Программа-вымогатель (Ransomware) согласно ENISA 2025?"},
+             "options": {"hy": ["Հակավիրուսային ծրագիր", "Malware, որը կոդավորում է ֆայլերը և պահանջում է փրկագին", "Պահուստային պատճենող գործիք", "Գովազդային ծրագիր"],
+                         "en": ["An antivirus program", "Malware that encrypts files and demands ransom", "A backup tool", "An advertising program"],
+                         "ru": ["Антивирусная программа", "Вредоносное ПО, шифрующее файлы и требующее выкуп", "Инструмент резервного копирования", "Рекламная программа"]},
+             "answer": 1},
+            {"id": 6, "question": {"hy": "Ի՞նչ է նշանակում HTTPS-ը վեբ կայքի հասցեում:", "en": "What does HTTPS in a website address mean?", "ru": "Что означает HTTPS в адресе сайта?"},
+             "options": {"hy": ["Կայքի արագության ցուցիչ", "Կայքի տարիքը", "Տվյալների ապահով գաղտնագրված փոխանցման արձանագրություն"],
+                         "en": ["A speed indicator of the site", "The age of the site", "A secure encrypted data transfer protocol"],
+                         "ru": ["Показатель скорости сайта", "Возраст сайта", "Протокол защищенной шифрованной передачи данных"]},
+             "answer": 2},
+            {"id": 7, "question": {"hy": "Ինչո՞ւ է վտանգավոր հանրային Wi-Fi ցանցում մուտքագրել բանկային տվյալներ:", "en": "Why is it dangerous to enter banking data on public Wi-Fi?", "ru": "Почему опасно вводить банковские данные в публичном Wi-Fi?"},
+             "options": {"hy": ["Ցանցը դանդաղ է աշխատում", "Հաքերը կարող է գաղտնալսել չգաղտնագրված տվյալները (MitM հարձակում)", "Բանկը չի թույլատրում"],
+                         "en": ["The network is slow", "An attacker can intercept unencrypted data (MitM attack)", "The bank does not allow it"],
+                         "ru": ["Сеть работает медленно", "Злоумышленник может перехватить незашифрованные данные (атака MitM)", "Банк не разрешает"]},
+             "answer": 1},
+            {"id": 8, "question": {"hy": "Ինչո՞ւ է կարևոր ծրագրային թարմացումները տեղադրել ժամանակին՝ համաձայն NIST CSF 2.0-ի:", "en": "Why is it important to install software updates on time according to NIST CSF 2.0?", "ru": "Почему важно своевременно устанавливать обновления согласно NIST CSF 2.0?"},
+             "options": {"hy": ["Միայն նոր դիզայն ավելացնելու համար", "Դրանք փակում են հայտնի անվտանգության խոցելիությունները", "Դա պարտադիր չէ", "Միայն արագության համար"],
+                         "en": ["Only to add a new design", "They patch known security vulnerabilities", "It is not necessary", "Only for speed"],
+                         "ru": ["Только для нового дизайна", "Они закрывают известные уязвимости безопасности", "Это не обязательно", "Только для скорости"]},
+             "answer": 1},
+            {"id": 9, "question": {"hy": "Ի՞նչ է Հրադադարը (Firewall) ցանցային անվտանգության մեջ:", "en": "What is a Firewall in network security?", "ru": "Что такое Файрвол в сетевой безопасности?"},
+             "options": {"hy": ["Համակարգ, որը վերահսկում և ֆիլտրում է ցանցային տրաֆիկը կանոնների հիման վրա", "Ֆիզիկական պատ", "Անլար ցանց", "Ամպային պահոց"],
+                         "en": ["A system that monitors and filters network traffic based on rules", "A physical wall", "A wireless network", "A cloud storage"],
+                         "ru": ["Система, контролирующая и фильтрующая трафик на основе правил", "Физическая стена", "Беспроводная сеть", "Облачное хранилище"]},
+             "answer": 0},
+            {"id": 10, "question": {"hy": "Ի՞նչ է Սպիտակ Գլխարկ (White Hat) հաքերը:", "en": "What is a White Hat hacker?", "ru": "Кто такой Белый Хакер (White Hat)?"},
+             "options": {"hy": ["Չարագործ, որը կոտրում է համակարգերը", "Էթիկական մասնագետ, որը աշխատում է օրինական պայմանագրով՝ գտնելու խոցելիությունները", "Վիրուս ստեղծող"],
+                         "en": ["A criminal who breaks into systems", "An ethical specialist working under legal contract to find vulnerabilities", "A virus creator"],
+                         "ru": ["Преступник, взламывающий системы", "Этичный специалист, работающий по легальному контракту", "Создатель вирусов"]},
+             "answer": 1},
         ]
     },
     "medium": {
         "label_hy": "Միջին", "label_en": "Medium", "label_ru": "Средний",
         "time": 25, "points": 20,
         "questions": [
-            {
-                "id": 1,
-                "question": {
-                    "hy": "Ինչո՞վ է Նշանառու Ֆիշինգը (Spear Phishing) տարբերվում սովորական Ֆիշինգից:",
-                    "en": "How does Spear Phishing differ from regular Phishing?",
-                    "ru": "Чем Целевой Фишинг отличается от обычного?"
-                },
-                "options": {
-                    "hy": ["Ուղարկվում է զանգվածաբար բոլորին", "Թիրախավորում է կոնկրետ անձի՝ օգտագործելով իրական անուններ և պաշտոններ", "Միայն հեռախոսով է իրականացվում", "Օգտագործում է միայն վիրուսներ"],
-                    "en": ["Sent massively to everyone", "Targets a specific person using real names and job titles", "Performed only by phone", "Uses only viruses"],
-                    "ru": ["Отправляется массово всем", "Нацелен на конкретное лицо, используя реальные имена и должности", "Осуществляется только по телефону", "Использует только вирусы"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 2,
-                "question": {
-                    "hy": "Ի՞նչ է Միջամուղային Հարձակումը (MitM)՝ համաձայն NIST-ի:",
-                    "en": "What is a Man-in-the-Middle (MitM) attack according to NIST?",
-                    "ru": "Что такое атака «Человек-посередине» (MitM) согласно NIST?"
-                },
-                "options": {
-                    "hy": ["Սերվերի ֆիզիկական գողություն", "Հանցագործը գաղտնի միջամտում է երկու կողմերի կապին և գաղտնալսում կամ փոփոխում է փոխանցվող տվյալները", "Համակարգչի վերագործարկում", "Կեղծ կայքի ստեղծում"],
-                    "en": ["Physical theft of the server", "The attacker secretly intercepts communication between two parties and eavesdrops or modifies transmitted data", "Rebooting the computer", "Creating a fake website"],
-                    "ru": ["Физическая кража сервера", "Злоумышленник тайно вмешивается в связь между двумя сторонами и перехватывает или изменяет данные", "Перезагрузка компьютера", "Создание поддельного сайта"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 3,
-                "question": {
-                    "hy": "Ի՞նչ է Բաշխված Ծառայությունից Հրաժարման Հարձակումը (DDoS)՝ ըստ ENISA 2025-ի:",
-                    "en": "What is a Distributed Denial of Service (DDoS) attack according to ENISA 2025?",
-                    "ru": "Что такое Распределенная атака отказа в обслуживании (DDoS) согласно ENISA 2025?"
-                },
-                "options": {
-                    "hy": ["Սերվերի ֆայլերի ջնջում", "Մեկ հաքեր կոտրում է սերվերը", "Հազարավոր վարակված սարքեր միաժամանակ հարցումներ են ուղարկում սերվերին՝ խափանելով նրա աշխատանքը", "Գաղտնաբառերի գողություն"],
-                    "en": ["Deleting server files", "One hacker breaks into the server", "Thousands of infected devices send simultaneous requests to the server, disrupting its operation", "Password theft"],
-                    "ru": ["Удаление файлов сервера", "Один хакер взламывает сервер", "Тысячи зараженных устройств одновременно отправляют запросы серверу, нарушая его работу", "Кража паролей"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 4,
-                "question": {
-                    "hy": "Ի՞նչ է Bug Bounty ծրագիրը՝ համաձայն CISA-ի:",
-                    "en": "What is a Bug Bounty program according to CISA?",
-                    "ru": "Что такое программа Bug Bounty согласно CISA?"
-                },
-                "options": {
-                    "hy": ["Ծրագրային ապահովման անվճար բաշխում", "Ընկերությունները վճարում են էթիկական հաքերներին՝ հայտնաբերված խոցելիությունների համար", "Վիրուսների մրցույթ", "Խաղերի մշակում"],
-                    "en": ["Free software distribution", "Companies pay ethical hackers for discovered security vulnerabilities", "A virus competition", "Game development"],
-                    "ru": ["Бесплатное распространение ПО", "Компании платят этичным хакерам за найденные уязвимости", "Конкурс вирусов", "Разработка игр"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 5,
-                "question": {
-                    "hy": "Ի՞նչ է Սոցիալական Ինժեներիան՝ համաձայն NIST SP 800-61-ի:",
-                    "en": "What is Social Engineering according to NIST SP 800-61?",
-                    "ru": "Что такое Социальная Инженерия согласно NIST SP 800-61?"
-                },
-                "options": {
-                    "hy": ["Հոգեբանական մանիպուլյացիա՝ մարդուն ստիպելու բացահայտել գաղտնի տվյալներ", "Սոցիալական ցանցերի ալգորիթմ", "Ցանցային արձանագրություն", "Ծրագրավորման մեթոդ"],
-                    "en": ["Psychological manipulation to trick a person into revealing confidential data", "A social network algorithm", "A network protocol", "A programming method"],
-                    "ru": ["Психологическая манипуляция для получения конфиденциальных данных", "Алгоритм соцсетей", "Сетевой протокол", "Метод программирования"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 6,
-                "question": {
-                    "hy": "Ի՞նչ է Զրո-Օրյա (Zero-Day) խոցելիությունը՝ համաձայն MITRE ATT&CK-ի:",
-                    "en": "What is a Zero-Day vulnerability according to MITRE ATT&CK?",
-                    "ru": "Что такое уязвимость Нулевого дня согласно MITRE ATT&CK?"
-                },
-                "options": {
-                    "hy": ["Հայտնի խոցելիություն, որն արդեն շտկվել է", "Անհայտ խոցելիություն, որի համար դեռ արտադրողը թարմացում չի թողարկել", "Ծրագրային սխալ՝ առանց անվտանգության նշանակության", "Հին վիրուս"],
-                    "en": ["A known vulnerability that has been patched", "An unknown vulnerability for which the vendor has not yet released a fix", "A software bug with no security impact", "An old virus"],
-                    "ru": ["Известная исправленная уязвимость", "Неизвестная уязвимость, для которой разработчик еще не выпустил обновление", "Ошибка без влияния на безопасность", "Старый вирус"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 7,
-                "question": {
-                    "hy": "Ինչո՞ւ է NIST-ը խորհուրդ տալիս օգտագործել Գաղտնաբառերի Կառավարիչ:",
-                    "en": "Why does NIST recommend using a Password Manager?",
-                    "ru": "Почему NIST рекомендует использовать Менеджер Паролей?"
-                },
-                "options": {
-                    "hy": ["Բարձրացնում է ինտերնետի արագությունը", "Գեներացնում է եզակի, բարդ գաղտնաբառեր և դրանք պահում է գաղտնագրված պահոցում", "Ավտոմատ մաքրում է բրաուզերի պատմությունը", "Փոխարինում է անտիվիրուսին"],
-                    "en": ["Increases internet speed", "Generates unique, complex passwords and stores them in an encrypted vault", "Automatically clears browser history", "Replaces antivirus"],
-                    "ru": ["Повышает скорость интернета", "Генерирует уникальные сложные пароли и хранит их в зашифрованном хранилище", "Автоматически очищает историю браузера", "Заменяет антивирус"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 8,
-                "question": {
-                    "hy": "Ի՞նչ է Հաքտիվիզմը (Hacktivism)՝ ըստ ENISA 2025-ի:",
-                    "en": "What is Hacktivism according to ENISA 2025?",
-                    "ru": "Что такое Хактивизм согласно ENISA 2025?"
-                },
-                "options": {
-                    "hy": ["Անձնական ֆինանսական շահ", "Ծրագրավորման ոճ", "Հաքերային հարձակում՝ քաղաքական կամ սոցիալական նպատակներով (օրինակ՝ Anonymous)", "Խաղային մրցույթ"],
-                    "en": ["Personal financial gain", "A programming style", "Hacking attacks for political or social purposes (e.g., Anonymous)", "A gaming competition"],
-                    "ru": ["Личная финансовая выгода", "Стиль программирования", "Хакерские атаки в политических или социальных целях (например, Anonymous)", "Игровой конкурс"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 9,
-                "question": {
-                    "hy": "Ի՞նչ է Կրիպտոգրաֆիան՝ ըստ NIST-ի սահմանման:",
-                    "en": "What is Cryptography according to NIST's definition?",
-                    "ru": "Что такое Криптография согласно определению NIST?"
-                },
-                "options": {
-                    "hy": ["Համակարգչային խաղերի տեսություն", "Գիտություն տեղեկատվության գաղտնագրման և ապահով փոխանցման մասին", "Սոցիալական ցանցերի ալգորիթմ", "Ծրագրավորման լեզու"],
-                    "en": ["A theory of computer games", "The science of encrypting and securely transmitting information", "A social network algorithm", "A programming language"],
-                    "ru": ["Теория компьютерных игр", "Наука о шифровании и безопасной передаче информации", "Алгоритм соцсетей", "Язык программирования"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 10,
-                "question": {
-                    "hy": "Ինչի՞ համար է իրականում օգտագործվում VPN-ը:",
-                    "en": "What is a VPN actually used for?",
-                    "ru": "Для чего на самом деле используется VPN?"
-                },
-                "options": {
-                    "hy": ["Ստեղծում է գաղտնագրված թունել՝ թաքցնելով ձեր IP-ն և պաշտպանելով փոխանցվող տվյալները", "Բարձրացնում է ինտերնետի արագությունը", "Փոխարինում է անտիվիրուսին", "Ամբողջովին անանուն է դարձնում"],
-                    "en": ["Creates an encrypted tunnel, hiding your IP and protecting transmitted data", "Increases internet speed", "Replaces antivirus", "Makes you completely anonymous"],
-                    "ru": ["Создает зашифрованный туннель, скрывая ваш IP и защищая данные", "Повышает скорость интернета", "Заменяет антивирус", "Делает полностью анонимным"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 11,
-                "question": {
-                    "hy": "Ի՞նչ է Ուժային Հարձակումը (Brute Force)՝ ըստ CompTIA Security+-ի:",
-                    "en": "What is a Brute Force attack according to CompTIA Security+?",
-                    "ru": "Что такое атака методом перебора согласно CompTIA Security+?"
-                },
-                "options": {
-                    "hy": ["Սերվերի ծանրաբեռնում", "Սոցիալական ինժեներիա", "Համակարգ մուտք գործելու փորձ՝ փորձարկելով բոլոր հնարավոր գաղտնաբառերի համակցությունները", "Ֆիշինգային նամակի ուղարկում"],
-                    "en": ["Server overload", "Social engineering", "Attempting to access a system by trying all possible password combinations", "Sending a phishing email"],
-                    "ru": ["Перегрузка сервера", "Социальная инженерия", "Попытка доступа путем перебора всех возможных комбинаций паролей", "Отправка фишингового письма"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 12,
-                "question": {
-                    "hy": "Ի՞նչ են Վեբ Քուքիները (Cookies) և ինչպե՞ս են դրանք օգտագործվում հարձակումների ժամանակ:",
-                    "en": "What are Web Cookies and how are they used in attacks?",
-                    "ru": "Что такое Веб-куки и как они используются в атаках?"
-                },
-                "options": {
-                    "hy": ["Համակարգչային վիրուսներ", "Փոքր ֆայլեր, որոնք պահում են տեղեկություններ կայքի մասին. հաքերները կարող են գողանալ դրանք՝ սեսիան հափշտակելու համար", "Սերվերի անվտանգության արձանագրություն", "Հակավիրուսային ծրագրեր"],
-                    "en": ["Computer viruses", "Small files that store information about a website; hackers can steal them to hijack sessions", "A server security protocol", "Antivirus programs"],
-                    "ru": ["Компьютерные вирусы", "Небольшие файлы, хранящие информацию о сайте; хакеры могут украсть их для перехвата сессии", "Протокол безопасности сервера", "Антивирусные программы"]
-                },
-                "answer": 1
-            }
+            {"id": 1, "question": {"hy": "Ինչո՞վ է Նշանառու Ֆիշինգը (Spear Phishing) տարբերվում սովորական Ֆիշինգից:", "en": "How does Spear Phishing differ from regular Phishing?", "ru": "Чем Целевой Фишинг отличается от обычного?"},
+             "options": {"hy": ["Ուղարկվում է զանգվածաբար բոլորին", "Թիրախավորում է կոնկրետ անձի՝ օգտագործելով իրական անուններ և պաշտոններ", "Միայն հեռախոսով է իրականացվում", "Օգտագործում է միայն վիրուսներ"],
+                         "en": ["Sent massively to everyone", "Targets a specific person using real names and job titles", "Performed only by phone", "Uses only viruses"],
+                         "ru": ["Отправляется массово всем", "Нацелен на конкретное лицо, используя реальные имена и должности", "Осуществляется только по телефону", "Использует только вирусы"]},
+             "answer": 1},
+            {"id": 2, "question": {"hy": "Ի՞նչ է Միջամուղային Հարձակումը (MitM)՝ համաձայն NIST-ի:", "en": "What is a Man-in-the-Middle (MitM) attack according to NIST?", "ru": "Что такое атака «Человек-посередине» (MitM) согласно NIST?"},
+             "options": {"hy": ["Սերվերի ֆիզիկական գողություն", "Հանցագործը գաղտնի միջամտում է երկու կողմերի կապին և գաղտնալսում կամ փոփոխում է փոխանցվող տվյալները", "Համակարգչի վերագործարկում", "Կեղծ կայքի ստեղծում"],
+                         "en": ["Physical theft of the server", "The attacker secretly intercepts communication between two parties", "Rebooting the computer", "Creating a fake website"],
+                         "ru": ["Физическая кража сервера", "Злоумышленник тайно вмешивается в связь между двумя сторонами", "Перезагрузка компьютера", "Создание поддельного сайта"]},
+             "answer": 1},
+            {"id": 3, "question": {"hy": "Ի՞նչ է Բաշխված Ծառայությունից Հրաժարման Հարձակումը (DDoS)՝ ըստ ENISA 2025-ի:", "en": "What is a Distributed Denial of Service (DDoS) attack according to ENISA 2025?", "ru": "Что такое Распределенная атака отказа в обслуживании (DDoS) согласно ENISA 2025?"},
+             "options": {"hy": ["Սերվերի ֆայլերի ջնջում", "Մեկ հաքեր կոտրում է սերվերը", "Հազարավոր վարակված սարքեր միաժամանակ հարցումներ են ուղարկում սերվերին", "Գաղտնաբառերի գողություն"],
+                         "en": ["Deleting server files", "One hacker breaks into the server", "Thousands of infected devices send simultaneous requests to the server", "Password theft"],
+                         "ru": ["Удаление файлов сервера", "Один хакер взламывает сервер", "Тысячи зараженных устройств одновременно отправляют запросы серверу", "Кража паролей"]},
+             "answer": 2},
+            {"id": 4, "question": {"hy": "Ի՞նչ է Bug Bounty ծրագիրը՝ համաձայն CISA-ի:", "en": "What is a Bug Bounty program according to CISA?", "ru": "Что такое программа Bug Bounty согласно CISA?"},
+             "options": {"hy": ["Ծրագրային ապահովման անվճար բաշխում", "Ընկերությունները վճարում են էթիկական հաքերներին՝ հայտնաբերված խոցելիությունների համար", "Վիրուսների մրցույթ", "Խաղերի մշակում"],
+                         "en": ["Free software distribution", "Companies pay ethical hackers for discovered security vulnerabilities", "A virus competition", "Game development"],
+                         "ru": ["Бесплатное распространение ПО", "Компании платят этичным хакерам за найденные уязвимости", "Конкурс вирусов", "Разработка игр"]},
+             "answer": 1},
+            {"id": 5, "question": {"hy": "Ի՞նչ է Սոցիալական Ինժեներիան՝ համաձայն NIST SP 800-61-ի:", "en": "What is Social Engineering according to NIST SP 800-61?", "ru": "Что такое Социальная Инженерия согласно NIST SP 800-61?"},
+             "options": {"hy": ["Հոգեբանական մանիպուլյացիա՝ մարդուն ստիպելու բացահայտել գաղտնի տվյալներ", "Սոցիալական ցանցերի ալգորիթմ", "Ցանցային արձանագրություն", "Ծրագրավորման մեթոդ"],
+                         "en": ["Psychological manipulation to trick a person into revealing confidential data", "A social network algorithm", "A network protocol", "A programming method"],
+                         "ru": ["Психологическая манипуляция для получения конфиденциальных данных", "Алгоритм соцсетей", "Сетевой протокол", "Метод программирования"]},
+             "answer": 0},
+            {"id": 6, "question": {"hy": "Ի՞նչ է Զրո-Օրյա (Zero-Day) խոցելիությունը՝ համաձայն MITRE ATT&CK-ի:", "en": "What is a Zero-Day vulnerability according to MITRE ATT&CK?", "ru": "Что такое уязвимость Нулевого дня согласно MITRE ATT&CK?"},
+             "options": {"hy": ["Հայտնի խոցելիություն, որն արդեն շտկվել է", "Անհայտ խոցելիություն, որի համար դեռ արտադրողը թարմացում չի թողարկել", "Ծրագրային սխալ՝ առանց անվտանգության նշանակության", "Հին վիրուս"],
+                         "en": ["A known vulnerability that has been patched", "An unknown vulnerability for which the vendor has not yet released a fix", "A software bug with no security impact", "An old virus"],
+                         "ru": ["Известная исправленная уязвимость", "Неизвестная уязвимость, для которой разработчик еще не выпустил обновление", "Ошибка без влияния на безопасность", "Старый вирус"]},
+             "answer": 1},
+            {"id": 7, "question": {"hy": "Ինչո՞ւ է NIST-ը խորհուրդ տալիս օգտագործել Գաղտնաբառերի Կառավարիչ:", "en": "Why does NIST recommend using a Password Manager?", "ru": "Почему NIST рекомендует использовать Менеджер Паролей?"},
+             "options": {"hy": ["Բարձրացնում է ինտերնետի արագությունը", "Գեներացնում է եզակի, բարդ գաղտնաբառեր և դրանք պահում է գաղտնագրված պահոցում", "Ավտոմատ մաքրում է բրաուզերի պատմությունը", "Փոխարինում է անտիվիրուսին"],
+                         "en": ["Increases internet speed", "Generates unique, complex passwords and stores them in an encrypted vault", "Automatically clears browser history", "Replaces antivirus"],
+                         "ru": ["Повышает скорость интернета", "Генерирует уникальные сложные пароли и хранит их в зашифрованном хранилище", "Автоматически очищает историю браузера", "Заменяет антивирус"]},
+             "answer": 1},
+            {"id": 8, "question": {"hy": "Ի՞նչ է Հաքտիվիզմը (Hacktivism)՝ ըստ ENISA 2025-ի:", "en": "What is Hacktivism according to ENISA 2025?", "ru": "Что такое Хактивизм согласно ENISA 2025?"},
+             "options": {"hy": ["Անձնական ֆինանսական շահ", "Ծրագրավորման ոճ", "Հաքերային հարձակում՝ քաղաքական կամ սոցիալական նպատակներով (օրինակ՝ Anonymous)", "Խաղային մրցույթ"],
+                         "en": ["Personal financial gain", "A programming style", "Hacking attacks for political or social purposes (e.g., Anonymous)", "A gaming competition"],
+                         "ru": ["Личная финансовая выгода", "Стиль программирования", "Хакерские атаки в политических или социальных целях", "Игровой конкурс"]},
+             "answer": 2},
+            {"id": 9, "question": {"hy": "Ի՞նչ է Կրիպտոգրաֆիան՝ ըստ NIST-ի սահմանման:", "en": "What is Cryptography according to NIST's definition?", "ru": "Что такое Криптография согласно определению NIST?"},
+             "options": {"hy": ["Համակարգչային խաղերի տեսություն", "Գիտություն տեղեկատվության գաղտնագրման և ապահով փոխանցման մասին", "Սոցիալական ցանցերի ալգորիթմ", "Ծրագրավորման լեզու"],
+                         "en": ["A theory of computer games", "The science of encrypting and securely transmitting information", "A social network algorithm", "A programming language"],
+                         "ru": ["Теория компьютерных игр", "Наука о шифровании и безопасной передаче информации", "Алгоритм соцсетей", "Язык программирования"]},
+             "answer": 1},
+            {"id": 10, "question": {"hy": "Ինչի՞ համար է իրականում օգտագործվում VPN-ը:", "en": "What is a VPN actually used for?", "ru": "Для чего на самом деле используется VPN?"},
+             "options": {"hy": ["Ստեղծում է գաղտնագրված թունել՝ թաքցնելով ձեր IP-ն և պաշտպանելով փոխանցվող տվյալները", "Բարձրացնում է ինտերնետի արագությունը", "Փոխարինում է անտիվիրուսին", "Ամբողջովին անանուն է դարձնում"],
+                         "en": ["Creates an encrypted tunnel, hiding your IP and protecting data", "Increases internet speed", "Replaces antivirus", "Makes you completely anonymous"],
+                         "ru": ["Создает зашифрованный туннель, скрывая ваш IP", "Повышает скорость интернета", "Заменяет антивирус", "Делает полностью анонимным"]},
+             "answer": 0},
+            {"id": 11, "question": {"hy": "Ի՞նչ է Ուժային Հարձակումը (Brute Force)՝ ըստ CompTIA Security+-ի:", "en": "What is a Brute Force attack according to CompTIA Security+?", "ru": "Что такое атака методом перебора согласно CompTIA Security+?"},
+             "options": {"hy": ["Սերվերի ծանրաբեռնում", "Սոցիալական ինժեներիա", "Համակարգ մուտք գործելու փորձ՝ փորձարկելով բոլոր հնարավոր գաղտնաբառերի համակցությունները", "Ֆիշինգային նամակի ուղարկում"],
+                         "en": ["Server overload", "Social engineering", "Attempting to access by trying all possible password combinations", "Sending a phishing email"],
+                         "ru": ["Перегрузка сервера", "Социальная инженерия", "Попытка доступа путем перебора всех комбинаций паролей", "Отправка фишингового письма"]},
+             "answer": 2},
+            {"id": 12, "question": {"hy": "Ի՞նչ են Վեբ Քուքիները (Cookies) և ինչպե՞ս են դրանք օգտագործվում հարձակումների ժամանակ:", "en": "What are Web Cookies and how are they used in attacks?", "ru": "Что такое Веб-куки и как они используются в атаках?"},
+             "options": {"hy": ["Համակարգչային վիրուսներ", "Փոքր ֆայլեր, որոնք պահում են տեղեկություններ կայքի մասին. հաքերները կարող են գողանալ դրանք՝ սեսիան հափշտակելու համար", "Սերվերի անվտանգության արձանագրություն", "Հակավիրուսային ծրագրեր"],
+                         "en": ["Computer viruses", "Small files that store info; hackers can steal them to hijack sessions", "A server security protocol", "Antivirus programs"],
+                         "ru": ["Компьютерные вирусы", "Небольшие файлы; хакеры могут украсть их для перехвата сессии", "Протокол безопасности сервера", "Антивирусные программы"]},
+             "answer": 1},
         ]
     },
     "hard": {
         "label_hy": "Բարդ", "label_en": "Hard", "label_ru": "Сложный",
         "time": 20, "points": 30,
         "questions": [
-            {
-                "id": 1,
-                "question": {
-                    "hy": "Ի՞նչ է SQL Ինյեկցիան (SQL Injection)՝ ըստ OWASP Top 10 (2021)-ի:",
-                    "en": "What is SQL Injection according to OWASP Top 10 (2021)?",
-                    "ru": "Что такое SQL-инъекция согласно OWASP Top 10 (2021)?"
-                },
-                "options": {
-                    "hy": ["Սերվերի վերագործարկում", "Ֆայլերի պահուստավորում", "Վեբ ձևերի միջոցով վնասակար SQL հարցումներ ներարկել տվյալների բազային՝ տվյալներ կորզելու կամ ջնջելու համար", "Կեղծ էլ. նամակ"],
-                    "en": ["Server reboot", "File backup", "Injecting malicious SQL queries into the database via web forms to extract or delete data", "A fake email"],
-                    "ru": ["Перезагрузка сервера", "Резервное копирование файлов", "Внедрение вредоносных SQL-запросов в базу через веб-формы", "Поддельное письмо"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 2,
-                "question": {
-                    "hy": "Ի՞նչ է Խաչաձև Կայքային Սկրիպտինգը (XSS)՝ ըստ OWASP Top 10-ի:",
-                    "en": "What is Cross-Site Scripting (XSS) according to OWASP Top 10?",
-                    "ru": "Что такое Межсайтовый скриптинг (XSS) согласно OWASP Top 10?"
-                },
-                "options": {
-                    "hy": ["Ներարկում են JavaScript կոդ վեբ էջում, որը գործարկվում է այլ օգտատերերի դիտարկիչներում", "Սերվերի գաղտնագրման ալգորիթմ", "Համակարգչային խաղ", "Ցանցային արձանագրություն"],
-                    "en": ["Injecting JavaScript code into a web page that executes in other users' browsers", "A server encryption algorithm", "A computer game", "A network protocol"],
-                    "ru": ["Внедрение JavaScript-кода в веб-страницу, выполняемого в браузерах других пользователей", "Алгоритм шифрования сервера", "Компьютерная игра", "Сетевой протокол"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 3,
-                "question": {
-                    "hy": "Ի՞նչ է CSRF-ը (Cross-Site Request Forgery)՝ ըստ OWASP-ի:",
-                    "en": "What is CSRF (Cross-Site Request Forgery) according to OWASP?",
-                    "ru": "Что такое CSRF согласно OWASP?"
-                },
-                "options": {
-                    "hy": ["Վեբ սերվերի արձանագրություն", "Հարձակում, որը ստիպում է վավերացված օգտատիրոջը անգիտակցաբար կատարել անցանկալի գործողություն վստահելի կայքում", "Գաղտնագրման ստանդարտ", "VPN արձանագրություն"],
-                    "en": ["A web server protocol", "An attack that forces an authenticated user to unknowingly perform an unwanted action on a trusted site", "An encryption standard", "A VPN protocol"],
-                    "ru": ["Протокол веб-сервера", "Атака, заставляющая аутентифицированного пользователя выполнить нежелательное действие", "Стандарт шифрования", "VPN-протокол"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 4,
-                "question": {
-                    "hy": "Ի՞նչ է SSRF-ը (Server-Side Request Forgery)՝ ըստ OWASP Top 10-ի:",
-                    "en": "What is SSRF (Server-Side Request Forgery) according to OWASP Top 10?",
-                    "ru": "Что такое SSRF согласно OWASP Top 10?"
-                },
-                "options": {
-                    "hy": ["Սերվերին ստիպել վնասակար հարցում ուղարկել ներքին ցանց կամ այլ ռեսուրսներ", "Օգտատիրոջ դիտարկիչի վերահսկում", "Ֆայլերի պատճենում", "Հաշվի ջնջում"],
-                    "en": ["Forcing the server to send a malicious request to the internal network or other resources", "Controlling the user's browser", "File copying", "Account deletion"],
-                    "ru": ["Заставить сервер отправить вредоносный запрос во внутреннюю сеть или другие ресурсы", "Управление браузером пользователя", "Копирование файлов", "Удаление аккаунта"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 5,
-                "question": {
-                    "hy": "Ո՞րն է Զրո Վստահության (Zero Trust) ճարտարապետության հիմնական սկզբունքը՝ ըստ NIST CSF 2.0-ի:",
-                    "en": "What is the core principle of Zero Trust architecture according to NIST CSF 2.0?",
-                    "ru": "Каков основной принцип архитектуры Нулевого Доверия согласно NIST CSF 2.0?"
-                },
-                "options": {
-                    "hy": ["Վստահել բոլոր աշխատակիցներին ներքին ցանցում", "Երբեք չվստահել, միշտ ստուգել՝ անկախ ցանցի դիրքից", "Անջատել բոլոր անվտանգության միջոցները", "Վստահել միայն ադմիններին"],
-                    "en": ["Trust all employees inside the internal network", "Never trust, always verify — regardless of network location", "Disable all security measures", "Trust only administrators"],
-                    "ru": ["Доверять всем сотрудникам во внутренней сети", "Никогда не доверять, всегда проверять — независимо от расположения в сети", "Отключить все меры безопасности", "Доверять только администраторам"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 6,
-                "question": {
-                    "hy": "Ի՞նչ է Ընդլայնված Մշտական Սպառնալիքը (APT)՝ ըստ MITRE ATT&CK-ի:",
-                    "en": "What is an Advanced Persistent Threat (APT) according to MITRE ATT&CK?",
-                    "ru": "Что такое Продвинутая Постоянная Угроза (APT) согласно MITRE ATT&CK?"
-                },
-                "options": {
-                    "hy": ["Մեկանգամյա զանգվածային հարձակում", "Անվճար ծրագիր", "Երկարաժամկետ, լավ պլանավորված, բազմափուլ հարձակում կոնկրետ թիրախի վրա", "Խաղային տերմին"],
-                    "en": ["A one-time mass attack", "Free software", "A long-term, well-planned, multi-stage attack on a specific target", "A gaming term"],
-                    "ru": ["Одноразовая массовая атака", "Бесплатное ПО", "Долгосрочная, хорошо спланированная, многоэтапная атака", "Игровой термин"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 7,
-                "question": {
-                    "hy": "Ինչի՞ համար է օգտագործվում Սանդբոքսը (Sandbox) անվտանգության ոլորտում:",
-                    "en": "What is a Sandbox used for in security?",
-                    "ru": "Для чего используется Песочница (Sandbox)?"
-                },
-                "options": {
-                    "hy": ["Մեկուսացված միջավայր է, որտեղ անվտանգ փորձարկում են կասխածելի ծրագրերը", "Ֆիզիկական սերվեր է", "Դիտարկիչի ընդլայնում է", "Ամպային պահոց է"],
-                    "en": ["An isolated environment where suspicious programs are safely tested", "A physical server", "A browser extension", "A cloud storage"],
-                    "ru": ["Изолированная среда, в которой безопасно тестируют подозрительные программы", "Физический сервер", "Расширение браузера", "Облачное хранилище"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 8,
-                "question": {
-                    "hy": "Ինչո՞վ է RSA-ն տարբերվում AES-ից:",
-                    "en": "How does RSA differ from AES?",
-                    "ru": "Чем RSA отличается от AES?"
-                },
-                "options": {
-                    "hy": ["RSA-ն ավելի արագ է", "AES-ը միայն ցանցերում է օգտագործվում", "RSA-ն ասիմետրիկ է (հանրային/մասնավոր բանալի), AES-ը՝ սիմետրիկ (մեկ բանալի)", "Երկուսն էլ հեշ ֆունկցիաներ են"],
-                    "en": ["RSA is faster", "AES is used only in networks", "RSA is asymmetric (public/private key), AES is symmetric (single key)", "Both are hash functions"],
-                    "ru": ["RSA быстрее", "AES используется только в сетях", "RSA асимметричен, AES симметричен", "Оба являются хеш-функциями"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 9,
-                "question": {
-                    "hy": "Ի՞նչ է Replay Attack-ը (Կրկնման Հարձակում):",
-                    "en": "What is a Replay Attack?",
-                    "ru": "Что такое атака повторного воспроизведения?"
-                },
-                "options": {
-                    "hy": ["Սերվերի վերագործարկում", "Ֆայլերի պատճենում", "Հարձակվողը որսում է վավերական հաղորդագրությունը և նորից ուղարկում՝ ներկայանալով որպես վավեր օգտատեր", "Կայքի բլոկավորում"],
-                    "en": ["Server reboot", "File copying", "The attacker captures a valid message and resends it, impersonating a legitimate user", "Website blocking"],
-                    "ru": ["Перезагрузка сервера", "Копирование файлов", "Злоумышленник перехватывает валидное сообщение и повторно отправляет его", "Блокировка сайта"]
-                },
-                "answer": 2
-            },
-            {
-                "id": 10,
-                "question": {
-                    "hy": "Ի՞նչ է SSTI-ն (Server-Side Template Injection)՝ ըստ OWASP-ի:",
-                    "en": "What is SSTI (Server-Side Template Injection) according to OWASP?",
-                    "ru": "Что такое SSTI согласно OWASP?"
-                },
-                "options": {
-                    "hy": ["Սերվերի կաղապարների մեջ վնասակար կոդ ներարկելը, որը կարող է հանգեցնել հեռահար կոդի գործարկման", "Համակարգչի վերակայում", "CSS ֆայլերի փոփոխում", "Կայքի դիզայնի փոփոխում"],
-                    "en": ["Injecting malicious code into server templates, potentially leading to remote code execution", "Computer reset", "Modifying CSS files", "Changing site design"],
-                    "ru": ["Внедрение вредоносного кода в шаблоны сервера", "Сброс компьютера", "Изменение CSS-файлов", "Изменение дизайна сайта"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 11,
-                "question": {
-                    "hy": "Ի՞նչ է Բիզնես Տրամաբանության Սխալը (Business Logic Flaw)՝ ըստ OWASP-ի:",
-                    "en": "What is a Business Logic Flaw according to OWASP?",
-                    "ru": "Что такое Ошибка Бизнес-логики согласно OWASP?"
-                },
-                "options": {
-                    "hy": ["Ցանցային ուշացում", "Ծրագրի տրամաբանության սխալ, որը թույլ է տալիս օգտատիրոջն անել անսպասելի գործողություններ", "Սարքավորման խնդիր", "Դիզայնի սխալ"],
-                    "en": ["Network latency", "A logic flaw in an application that allows a user to perform unexpected actions", "A hardware problem", "A design error"],
-                    "ru": ["Сетевая задержка", "Ошибка в логике приложения, позволяющая выполнять неожиданные действия", "Проблема оборудования", "Ошибка дизайна"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 12,
-                "question": {
-                    "hy": "Ի՞նչ է Տվյալների Կորստի Կանխարգելումը (DLP)՝ ըստ NIST CSF 2.0-ի:",
-                    "en": "What is Data Loss Prevention (DLP) according to NIST CSF 2.0?",
-                    "ru": "Что такое Предотвращение Потери Данных (DLP) согласно NIST CSF 2.0?"
-                },
-                "options": {
-                    "hy": ["Համակարգ, որը վերահսկում և կանխում է զգայուն տվյալների արտահոսքը կազմակերպությունից", "Անտիվիրուս", "Պահուստային ծրագիր", "VPN ծառայություն"],
-                    "en": ["A system that monitors and prevents leakage of sensitive data outside the organization", "Antivirus", "A backup program", "A VPN service"],
-                    "ru": ["Система, контролирующая и предотвращающая утечку конфиденциальных данных", "Антивирус", "Программа резервного копирования", "VPN-сервис"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 13,
-                "question": {
-                    "hy": "Ինչո՞ւ է Քվանտային Հաշվարկը (Quantum Computing) սպառնալիք ժամանակակից կրիպտոգրաֿֆիային:",
-                    "en": "Why is Quantum Computing a threat to modern cryptography?",
-                    "ru": "Почему Квантовые вычисления угрожают современной криптографии?"
-                },
-                "options": {
-                    "hy": ["Քվանտային համակարգիչները ավելի արագ են", "Շորի ալգորիթմը կարող է արդյունավետորեն կոտրել RSA-ն և ECC-ն", "Չի ազդում կրիպտոգրաֿֆիայի վրա", "Միայն ավելի քիչ էներգիա է ծախսում"],
-                    "en": ["Quantum computers are faster", "Shor's algorithm can efficiently break RSA and ECC", "It does not affect cryptography", "It only consumes less energy"],
-                    "ru": ["Квантовые компьютеры быстрее", "Алгоритм Шора эффективно взламывает RSA и ECC", "Не влияет на криптографию", "Только потребляет меньше энергии"]
-                },
-                "answer": 1
-            },
-            {
-                "id": 14,
-                "question": {
-                    "hy": "Ո՞րն է Ներթափանցման Թեստավորման (Penetration Testing) առաջին փուլը՝ ըստ NIST SP 800-115-ի:",
-                    "en": "What is the first phase of Penetration Testing according to NIST SP 800-115?",
-                    "ru": "Какова первая фаза тестирования на проникновение согласно NIST SP 800-115?"
-                },
-                "options": {
-                    "hy": ["Հետախուզության հավաքում (Reconnaissance)", "Մուտքի ստացում", "Վերջնական հաշվետվության գրում", "Համակարգի ջնջում"],
-                    "en": ["Reconnaissance", "Gaining access", "Writing the final report", "Deleting the system"],
-                    "ru": ["Разведка", "Получение доступа", "Написание финального отчета", "Удаление системы"]
-                },
-                "answer": 0
-            },
-            {
-                "id": 15,
-                "question": {
-                    "hy": "Ի՞նչ է Honeypot-ը (Մեղրամոմիկ)՝ ըստ CISA-ի:",
-                    "en": "What is a Honeypot according to CISA?",
-                    "ru": "Что такое Ханипот (Приманка) согласно CISA?"
-                },
-                "options": {
-                    "hy": ["Հակավիրուս", "Ֆայլի պահոց", "Խաբուսիկ համակարգ, որը նախատեսված է հարձակվողներին գրավելու և նրանց մեթոդները ուսումնասիրելու համար", "Գաղտնաբառերի կառավարիչ"],
-                    "en": ["Antivirus", "A file repository", "A decoy system designed to attract attackers and study their methods", "A password manager"],
-                    "ru": ["Антивирус", "Файловое хранилище", "Приманка — система для привлечения атакующих и изучения их методов", "Менеджер паролей"]
-                },
-                "answer": 2
-            }
+            {"id": 1, "question": {"hy": "Ի՞նչ է SQL Ինյեկցիան (SQL Injection)՝ ըստ OWASP Top 10 (2021)-ի:", "en": "What is SQL Injection according to OWASP Top 10 (2021)?", "ru": "Что такое SQL-инъекция согласно OWASP Top 10 (2021)?"},
+             "options": {"hy": ["Սերվերի վերագործարկում", "Ֆայլերի պահուստավորում", "Վեբ ձևերի միջոցով վնասակար SQL հարցումներ ներարկել տվյալների բազային", "Կեղծ էլ. նամակ"],
+                         "en": ["Server reboot", "File backup", "Injecting malicious SQL queries into the database via web forms", "A fake email"],
+                         "ru": ["Перезагрузка сервера", "Резервное копирование файлов", "Внедрение вредоносных SQL-запросов через веб-формы", "Поддельное письмо"]},
+             "answer": 2},
+            {"id": 2, "question": {"hy": "Ի՞նչ է Խաչաձև Կայքային Սկրիպտինգը (XSS)՝ ըստ OWASP Top 10-ի:", "en": "What is Cross-Site Scripting (XSS) according to OWASP Top 10?", "ru": "Что такое Межсайтовый скриптинг (XSS) согласно OWASP Top 10?"},
+             "options": {"hy": ["Ներարկում են JavaScript կոդ վեբ էջում, որը գործարկվում է այլ օգտատերերի դիտարկիչներում", "Սերվերի գաղտնագրման ալգորիթմ", "Համակարգչային խաղ", "Ցանցային արձանագրություն"],
+                         "en": ["Injecting JavaScript code into a web page that executes in other users' browsers", "A server encryption algorithm", "A computer game", "A network protocol"],
+                         "ru": ["Внедрение JavaScript-кода в веб-страницу, выполняемого в браузерах других пользователей", "Алгоритм шифрования сервера", "Компьютерная игра", "Сетевой протокол"]},
+             "answer": 0},
+            {"id": 3, "question": {"hy": "Ի՞նչ է CSRF-ը (Cross-Site Request Forgery)՝ ըստ OWASP-ի:", "en": "What is CSRF (Cross-Site Request Forgery) according to OWASP?", "ru": "Что такое CSRF согласно OWASP?"},
+             "options": {"hy": ["Վեբ սերվերի արձանագրություն", "Հարձակում, որը ստիպում է վավերացված օգտատիրոջը անգիտակցաբար կատարել անցանկալի գործողություն", "Գաղտնագրման ստանդարտ", "VPN արձանագրություն"],
+                         "en": ["A web server protocol", "An attack that forces an authenticated user to unknowingly perform an unwanted action", "An encryption standard", "A VPN protocol"],
+                         "ru": ["Протокол веб-сервера", "Атака, заставляющая пользователя выполнить нежелательное действие", "Стандарт шифрования", "VPN-протокол"]},
+             "answer": 1},
+            {"id": 4, "question": {"hy": "Ի՞նչ է SSRF-ը (Server-Side Request Forgery)՝ ըստ OWASP Top 10-ի:", "en": "What is SSRF (Server-Side Request Forgery) according to OWASP Top 10?", "ru": "Что такое SSRF согласно OWASP Top 10?"},
+             "options": {"hy": ["Սերվերին ստիպել վնասակար հարցում ուղարկել ներքին ցանց", "Օգտատիրոջ դիտարկիչի վերահսկում", "Ֆայլերի պատճենում", "Հաշվի ջնջում"],
+                         "en": ["Forcing the server to send a malicious request to the internal network", "Controlling the user's browser", "File copying", "Account deletion"],
+                         "ru": ["Заставить сервер отправить вредоносный запрос во внутреннюю сеть", "Управление браузером пользователя", "Копирование файлов", "Удаление аккаунта"]},
+             "answer": 0},
+            {"id": 5, "question": {"hy": "Ո՞րն է Զրո Վստահության (Zero Trust) ճարտարապետության հիմնական սկզբունքը՝ ըստ NIST CSF 2.0-ի:", "en": "What is the core principle of Zero Trust architecture?", "ru": "Каков основной принцип архитектуры Нулевого Доверия?"},
+             "options": {"hy": ["Վստահել բոլոր աշխատակիցներին ներքին ցանցում", "Երբեք չվստահել, միշտ ստուգել՝ անկախ ցանցի դիրքից", "Անջատել բոլոր անվտանգության միջոցները", "Վստահել միայն ադմիններին"],
+                         "en": ["Trust all employees inside the network", "Never trust, always verify — regardless of network location", "Disable all security measures", "Trust only administrators"],
+                         "ru": ["Доверять всем сотрудникам во внутренней сети", "Никогда не доверять, всегда проверять", "Отключить все меры безопасности", "Доверять только администраторам"]},
+             "answer": 1},
+            {"id": 6, "question": {"hy": "Ի՞նչ է Ընդլայնված Մշտական Սպառնալիքը (APT)՝ ըստ MITRE ATT&CK-ի:", "en": "What is an Advanced Persistent Threat (APT)?", "ru": "Что такое Продвинутая Постоянная Угроза (APT)?"},
+             "options": {"hy": ["Մեկանգամյա զանգվածային հարձակում", "Անվճար ծրագիր", "Երկարաժամկետ, լավ պլանավորված, բազմափուլ հարձակում կոնկրետ թիրախի վրա", "Խաղային տերմին"],
+                         "en": ["A one-time mass attack", "Free software", "A long-term, well-planned, multi-stage attack on a specific target", "A gaming term"],
+                         "ru": ["Одноразовая массовая атака", "Бесплатное ПО", "Долгосрочная, многоэтапная атака на конкретную цель", "Игровой термин"]},
+             "answer": 2},
+            {"id": 7, "question": {"hy": "Ինչի՞ համար է օգտագործվում Սանդբոքսը (Sandbox) անվտանգության ոլորտում:", "en": "What is a Sandbox used for in security?", "ru": "Для чего используется Песочница (Sandbox)?"},
+             "options": {"hy": ["Մեկուսացված միջավայր է, որտեղ անվտանգ փորձարկում են կասկածելի ծրագրերը", "Ֆիզիկական սերվեր է", "Դիտարկիչի ընդլայնում է", "Ամպային պահոց է"],
+                         "en": ["An isolated environment where suspicious programs are safely tested", "A physical server", "A browser extension", "A cloud storage"],
+                         "ru": ["Изолированная среда, в которой безопасно тестируют подозрительные программы", "Физический сервер", "Расширение браузера", "Облачное хранилище"]},
+             "answer": 0},
+            {"id": 8, "question": {"hy": "Ինչո՞վ է RSA-ն տարբերվում AES-ից:", "en": "How does RSA differ from AES?", "ru": "Чем RSA отличается от AES?"},
+             "options": {"hy": ["RSA-ն ավելի արագ է", "AES-ը միայն ցանցերում է օգտագործվում", "RSA-ն ասիմետրիկ է (հանրային/մասնավոր բանալի), AES-ը՝ սիմետրիկ (մեկ բանալի)", "Երկուսն էլ հեշ ֆունկցիաներ են"],
+                         "en": ["RSA is faster", "AES is used only in networks", "RSA is asymmetric, AES is symmetric", "Both are hash functions"],
+                         "ru": ["RSA быстрее", "AES используется только в сетях", "RSA асимметричен, AES симметричен", "Оба являются хеш-функциями"]},
+             "answer": 2},
+            {"id": 9, "question": {"hy": "Ի՞նչ է Replay Attack-ը (Կրկնման Հարձակում):", "en": "What is a Replay Attack?", "ru": "Что такое атака повторного воспроизведения?"},
+             "options": {"hy": ["Սերվերի վերագործարկում", "Ֆայլերի պատճենում", "Հարձակվողը որսում է վավերական հաղորդագրությունը և նորից ուղարկում", "Կայքի բլոկավորում"],
+                         "en": ["Server reboot", "File copying", "The attacker captures a valid message and resends it", "Website blocking"],
+                         "ru": ["Перезагрузка сервера", "Копирование файлов", "Злоумышленник перехватывает и повторно отправляет сообщение", "Блокировка сайта"]},
+             "answer": 2},
+            {"id": 10, "question": {"hy": "Ի՞նչ է SSTI-ն (Server-Side Template Injection)՝ ըստ OWASP-ի:", "en": "What is SSTI (Server-Side Template Injection)?", "ru": "Что такое SSTI согласно OWASP?"},
+             "options": {"hy": ["Սերվերի կաղապարների մեջ վնասակար կոդ ներարկելը", "Համակարգչի վերակայում", "CSS ֆայլերի փոփոխում", "Կայքի դիզայնի փոփոխում"],
+                         "en": ["Injecting malicious code into server templates", "Computer reset", "Modifying CSS files", "Changing site design"],
+                         "ru": ["Внедрение вредоносного кода в шаблоны сервера", "Сброс компьютера", "Изменение CSS-файлов", "Изменение дизайна сайта"]},
+             "answer": 0},
+            {"id": 11, "question": {"hy": "Ի՞նչ է Բիզնես Տրամաբանության Սխալը (Business Logic Flaw):", "en": "What is a Business Logic Flaw?", "ru": "Что такое Ошибка Бизнес-логики?"},
+             "options": {"hy": ["Ցանցային ուշացում", "Ծրագրի տրամաբանության սխալ, որը թույլ է տալիս անսպասելի գործողություններ", "Սարքավորման խնդիր", "Դիզայնի սխալ"],
+                         "en": ["Network latency", "A logic flaw that allows unexpected actions", "A hardware problem", "A design error"],
+                         "ru": ["Сетевая задержка", "Ошибка логики, позволяющая неожиданные действия", "Проблема оборудования", "Ошибка дизайна"]},
+             "answer": 1},
+            {"id": 12, "question": {"hy": "Ի՞նչ է Տվյալների Կորստի Կանխարգելումը (DLP):", "en": "What is Data Loss Prevention (DLP)?", "ru": "Что такое Предотвращение Потери Данных (DLP)?"},
+             "options": {"hy": ["Համակարգ, որը կանխում է զգայուն տվյալների արտահոսքը", "Անտիվիրուս", "Պահուստային ծրագիր", "VPN ծառայություն"],
+                         "en": ["A system that prevents leakage of sensitive data", "Antivirus", "A backup program", "A VPN service"],
+                         "ru": ["Система, предотвращающая утечку конфиденциальных данных", "Антивирус", "Программа резервного копирования", "VPN-сервис"]},
+             "answer": 0},
+            {"id": 13, "question": {"hy": "Ինչո՞ւ է Քվանտային Հաշվարկը (Quantum Computing) սպառնալիք կրիպտոգրաֆիային:", "en": "Why is Quantum Computing a threat to cryptography?", "ru": "Почему Квантовые вычисления угрожают криптографии?"},
+             "options": {"hy": ["Քվանտային համակարգիչները ավելի արագ են", "Շորի ալգորիթմը կարող է կոտրել RSA-ն և ECC-ն", "Չի ազդում կրիպտոգրաֆիայի վրա", "Ավելի քիչ էներգիա է ծախսում"],
+                         "en": ["Quantum computers are faster", "Shor's algorithm can break RSA and ECC", "It does not affect cryptography", "It consumes less energy"],
+                         "ru": ["Квантовые компьютеры быстрее", "Алгоритм Шора взламывает RSA и ECC", "Не влияет на криптографию", "Потребляет меньше энергии"]},
+             "answer": 1},
+            {"id": 14, "question": {"hy": "Ո՞րն է Ներթափանցման Թեստավորման (Penetration Testing) առաջին փուլը:", "en": "What is the first phase of Penetration Testing?", "ru": "Какова первая фаза тестирования на проникновение?"},
+             "options": {"hy": ["Հետախուզության հավաքում (Reconnaissance)", "Մուտքի ստացում", "Վերջնական հաշվետվության գրում", "Համակարգի ջնջում"],
+                         "en": ["Reconnaissance", "Gaining access", "Writing the final report", "Deleting the system"],
+                         "ru": ["Разведка", "Получение доступа", "Написание финального отчета", "Удаление системы"]},
+             "answer": 0},
+            {"id": 15, "question": {"hy": "Ի՞նչ է Honeypot-ը (Մեղրամոմիկ)՝ ըստ CISA-ի:", "en": "What is a Honeypot according to CISA?", "ru": "Что такое Ханипот (Приманка) согласно CISA?"},
+             "options": {"hy": ["Հակավիրուս", "Ֆայլի պահոց", "Խաբուսիկ համակարգ, որը գրավում է հարձակվողներին", "Գաղտնաբառերի կառավարիչ"],
+                         "en": ["Antivirus", "A file repository", "A decoy system designed to attract attackers", "A password manager"],
+                         "ru": ["Антивирус", "Файловое хранилище", "Приманка для атакующих", "Менеджер паролей"]},
+             "answer": 2},
         ]
     }
 }
+
 
 # ============ ՀԱՄԱՏԵՔՍՏԻ ՊՐՈՑԵՍՈՐ ============
 @app.context_processor
@@ -1369,24 +994,12 @@ def hackers():
 def phishing():
     return render_template('phishing.html', title="Ֆիշինգ")
 
-@app.route('/api/ai-status')
-def ai_status():
-    return jsonify({
-        'HAS_GENAI': HAS_GENAI,
-        'API_KEY_SET': bool(GEMINI_API_KEY),
-        'API_KEY_LENGTH': len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
-        'USE_AI': USE_AI,
-        'KEY_PREFIX': GEMINI_API_KEY[:5] if GEMINI_API_KEY else None
-    })
-
-
 @app.route('/cases')
 def cases():
     lang = session.get('lang', 'hy')
     if lang not in TRANSLATIONS:
         lang = 'hy'
 
-    # Թարգմանում ենք քեյսերը
     translated_cases = []
     for c in CYBER_CASES:
         translated_cases.append({
@@ -1411,6 +1024,57 @@ def leaderboard():
     return render_template('leaderboard.html', title="Առաջատարների Աղյուսակ")
 
 
+# ============ API — AI ՕԳՆԱԿԱՆ ============
+@app.route('/api/ai-status')
+def ai_status():
+    return jsonify({
+        'HAS_GENAI': HAS_GENAI,
+        'API_KEY_SET': bool(GEMINI_API_KEY),
+        'API_KEY_LENGTH': len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
+        'USE_AI': USE_AI,
+        'KEY_PREFIX': GEMINI_API_KEY[:5] if GEMINI_API_KEY else None
+    })
+
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    if not USE_AI:
+        return jsonify({'error': 'AI-ը միացված չէ'}), 503
+
+    data = request.get_json() or {}
+    messages = data.get('messages', [])
+
+    if not messages or not isinstance(messages, list):
+        return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
+
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
+        contents = []
+        for msg in messages[-10:]:
+            role = 'user' if msg.get('role') == 'user' else 'model'
+            text = (msg.get('text') or '').strip()[:1000]
+            if text:
+                contents.append(types.Content(role=role, parts=[types.Part(text=text)]))
+
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=AI_SYSTEM_PROMPT,
+                temperature=0.7,
+                max_output_tokens=500,
+            ),
+        )
+
+        reply = (response.text or '').strip() or 'Ներողություն, չհասկացա։ Փորձի՛ր այլ ձևով։'
+        return jsonify({'reply': reply})
+    except Exception as e:
+        print(f'AI error: {e}')
+        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
+
+
+# ============ API — ՀԱՐՑԵՐ ============
 @app.route('/api/questions/<difficulty>')
 def get_questions(difficulty):
     lang = session.get('lang', 'hy')
@@ -1441,6 +1105,7 @@ def get_questions(difficulty):
         "questions": safe_questions
     })
 
+
 @app.route('/api/check', methods=['POST'])
 def check_answer():
     data = request.get_json()
@@ -1461,9 +1126,9 @@ def check_answer():
     return jsonify({"error": "Հարցը չի գտնվել"}), 404
 
 
+# ============ API — ԱՌԱՋԱՏԱՐՆԵՐ ============
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
-    """Վերադարձնում է լավագույն 10-ը ըստ միավորների և ժամանակի"""
     try:
         rows = execute_query(
             '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
@@ -1480,7 +1145,6 @@ def get_leaderboard():
 
 @app.route('/api/leaderboard/all', methods=['GET'])
 def get_all_leaderboard():
-    """Վերադարձնում է բոլոր արդյունքները (մինչև 200)"""
     try:
         rows = execute_query(
             '''SELECT name, score, difficulty, difficulty_label, correct, total, time, date
@@ -1521,7 +1185,6 @@ def add_to_leaderboard():
 
         date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        # Ավելացնում ենք գրառումը
         execute_query(
             '''INSERT INTO leaderboard 
                (name, score, difficulty, difficulty_label, correct, total, time, date)
@@ -1529,7 +1192,6 @@ def add_to_leaderboard():
             (name, score, difficulty, diff_label, correct, total, round(time_spent, 1), date_str)
         )
 
-        # Գտնում ենք տեղը
         row = execute_query(
             '''SELECT COUNT(*) + 1 AS pos FROM leaderboard
                WHERE score > ? OR (score = ? AND time < ?)''',
