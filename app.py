@@ -5,7 +5,6 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 
 try:
     from google import genai
-    from google.genai import types as genai_types
     HAS_GENAI = True
 except ImportError:
     HAS_GENAI = False
@@ -1128,7 +1127,7 @@ def chat():
                 continue
 
         if response is None:
-            return jsonify({'error': f'Մոդելները ձախողվեցին'}), 500
+            return jsonify({'error': f'Մոդելները ձախողվեցին: {last_error}'}), 500
 
         reply = (response.text or '').strip() or 'Չհասկացա, փորձի՛ր նորից։'
         return jsonify({'reply': reply})
