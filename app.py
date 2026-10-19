@@ -442,11 +442,8 @@ TRANSLATIONS = {
 
     'ru': {
         'nav_home': 'Главная', 'nav_threats': 'Угрозы', 'nav_hackers': 'Хакеры',
-<<<<<<< HEAD
         'nav_phishing': 'Фишинг', 'nav_cases': 'Реальные Кейсы', 'nav_defense': 'Защита',
-=======
         'nav_phishing': 'Фишинг', 'nav_cases': 'Реальные примеры', 'nav_defense': 'Защита',
->>>>>>> 9b8cf083547f30839dad3de5e537c7c2d901fc0b
         'nav_quiz': 'Тест', 'nav_leaderboard': 'Рейтинг',
         'nav_theme': 'Тема', 'nav_sound_on': 'Звук включен', 'nav_sound_off': 'Звук выключен',
         'footer_about': 'Проект, посвященный кибербезопасности, фишингу и миру хакеров.',
