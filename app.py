@@ -65,7 +65,7 @@ print(f"📁 Exists: {os.path.exists(SQLITE_PATH)}")
 TRANSLATIONS = {
     'hy': {
         'nav_home': 'Գլխավոր', 'nav_threats': 'Սպառնալիքներ', 'nav_hackers': 'Հաքերներ',
-        'nav_phishing': 'Ֆիշինգ', 'nav_cases': 'Քեյսեր', 'nav_defense': 'Պաշտպանություն',
+        'nav_phishing': 'Ֆիշինգ', 'nav_cases': 'Իրական Դեպքեր', 'nav_defense': 'Պաշտպանություն',
         'nav_quiz': 'Թեստ', 'nav_leaderboard': 'Առաջատարների Աղյուսակ',
         'nav_theme': 'Թեմա', 'nav_sound_on': 'Ձայնը միացված է', 'nav_sound_off': 'Ձայնն անջատված է',
         'footer_about': 'Նախագիծ՝ նվիրված կիբեռանվտանգությանը, ֆիշինգին և հաքերների աշխարհին։',
@@ -254,7 +254,7 @@ TRANSLATIONS = {
 
     'en': {
         'nav_home': 'Home', 'nav_threats': 'Threats', 'nav_hackers': 'Hackers',
-        'nav_phishing': 'Phishing', 'nav_cases': 'Cases', 'nav_defense': 'Defense',
+        'nav_phishing': 'Phishing', 'nav_cases': 'Case Studies', 'nav_defense': 'Defense',
         'nav_quiz': 'Quiz', 'nav_leaderboard': 'Leaderboard',
         'nav_theme': 'Theme', 'nav_sound_on': 'Sound On', 'nav_sound_off': 'Sound Off',
         'footer_about': 'A project dedicated to cybersecurity, phishing and the world of hackers.',
@@ -443,7 +443,7 @@ TRANSLATIONS = {
 
     'ru': {
         'nav_home': 'Главная', 'nav_threats': 'Угрозы', 'nav_hackers': 'Хакеры',
-        'nav_phishing': 'Фишинг', 'nav_cases': 'Кейсы', 'nav_defense': 'Защита',
+        'nav_phishing': 'Фишинг', 'nav_cases': 'Реальные примеры', 'nav_defense': 'Защита',
         'nav_quiz': 'Тест', 'nav_leaderboard': 'Рейтинг',
         'nav_theme': 'Тема', 'nav_sound_on': 'Звук включен', 'nav_sound_off': 'Звук выключен',
         'footer_about': 'Проект, посвященный кибербезопасности, фишингу и миру хакеров.',
