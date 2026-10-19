@@ -1031,7 +1031,7 @@ def cases():
             "description": c["description"].get(lang, c["description"]["hy"])
         })
 
-    return render_template('cases.html', title="Իրական Քեյսեր", cyber_cases=translated_cases)
+    return render_template('cases.html', title="Իրական Դեպքեր", cyber_cases=translated_cases)
 
 @app.route('/defense')
 def defense():
