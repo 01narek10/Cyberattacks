@@ -1073,10 +1073,11 @@ def chat():
     try:
         client = genai.Client(api_key=GEMINI_API_KEY)
 
+        # ✅ 1. Կրճատված պատմություն (միայն վերջին 3 հաղորդագրությունը)
         prompt_lines = []
-        for msg in messages[-6:]:
+        for msg in messages[-3:]:
             role = msg.get('role', 'user')
-            text = (msg.get('text') or '').strip()[:500]
+            text = (msg.get('text') or '').strip()[:300]
             if text:
                 prompt_lines.append(f"{role.capitalize()}: {text}")
 
@@ -1084,7 +1085,14 @@ def chat():
             return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
         current_lang = session.get('lang', 'hy')
-        system_prompt = AI_SYSTEM_PROMPTS.get(current_lang, AI_SYSTEM_PROMPTS['hy'])
+
+        # ✅ 2. ՇԱՏ ԿՐՃԱՏ system prompt
+        short_prompts = {
+            'hy': "Դու կիբեռանվտանգության օգնական ես։ Պատասխանիր Հայերեն, կարճ՝ 2-3 նախադասությամբ։",
+            'en': "You are a cybersecurity assistant. Respond in English briefly, 2-3 sentences.",
+            'ru': "Ты помощник по кибербезопасности. Отвечай на русском кратко, 2-3 предложения."
+        }
+        system_prompt = short_prompts.get(current_lang, short_prompts['hy'])
 
         full_prompt = (
             system_prompt + "\n\n" +
@@ -1092,18 +1100,39 @@ def chat():
             "\n\nAssistant:"
         )
 
-        # ✅ Հենց այս պարզ տարբերակն էր աշխատում
-        response = client.models.generate_content(
-            model='gemini-3.8-flash',
-            contents=full_prompt,
-        )
+        # ✅ 3. ԱՄԵՆԱԱՐԱԳ մոդելները (lite-ները ամենաարագն են)
+        MODELS = [
+            'gemini-2.5-flash-lite',
+            'gemini-flash-lite-latest',
+            'gemini-2.5-flash',
+            'gemini-3.8-flash',
+        ]
 
-        reply = (response.text or '').strip() or 'Չհասկացա, փորձի՛ր նորից։'
-        return jsonify({'reply': reply})
+        response = None
+        for model_name in MODELS:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=full_prompt,
+                    config={
+                        'temperature': 0.3,
+                        'max_output_tokens': 200,
+                    }
+                )
+                print(f"✅ {model_name} աշխատեց")
+                break
+            except Exception as e:
+                print(f"❌ {model_name}: {str(e)[:100]}")
+                continue
+
+        if not response or not response.text:
+            return jsonify({'error': 'AI-ն չպատասխանեց'}), 500
+
+        return jsonify({'reply': response.text.strip()})
 
     except Exception as e:
         print(f"💥 AI error: {e}")
-        return jsonify({'error': f'AI սխալ: {str(e)}'}), 500
+        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
 @app.route('/api/questions/<difficulty>')
