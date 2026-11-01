@@ -1070,11 +1070,12 @@ def chat():
         return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
     try:
-        # ✅ 1. Կրճատում ենք պատմությունը (միայն վերջին 4-ը)
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
         prompt_lines = []
-        for msg in messages[-4:]:
+        for msg in messages[-6:]:
             role = msg.get('role', 'user')
-            text = (msg.get('text') or '').strip()[:500] 
+            text = (msg.get('text') or '').strip()[:500]
             if text:
                 prompt_lines.append(f"{role.capitalize()}: {text}")
 
@@ -1090,10 +1091,7 @@ def chat():
             "\n\nAssistant:"
         )
 
-        # ✅ 2. Առանց ավելորդ timeout-ի, ինչպես որ աշխատում էր
-        client = genai.Client(api_key=GEMINI_API_KEY)
-
-        # ✅ 3. Վերադարձնում ենք 3.8-flash-ը
+        # ✅ Հենց այս պարզ տարբերակն էր աշխատում
         response = client.models.generate_content(
             model='gemini-3.8-flash',
             contents=full_prompt,
