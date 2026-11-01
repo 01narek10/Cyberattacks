@@ -1070,7 +1070,7 @@ def chat():
         return jsonify({'error': 'Հաղորդագրություն չկա'}), 400
 
     try:
-        # ✅ Կրճատենք պատմությունը (միայն վերջին 4 հաղորդագրությունը)
+        # ✅ 1. Կրճատում ենք պատմությունը (միայն վերջին 4-ը)
         prompt_lines = []
         for msg in messages[-4:]:
             role = msg.get('role', 'user')
@@ -1090,45 +1090,21 @@ def chat():
             "\n\nAssistant:"
         )
 
-        # ✅ Սահմանափակենք պատասխանի ժամանակը 10 վայրկյանով
-        client = genai.Client(
-            api_key=GEMINI_API_KEY,
-            http_options={'timeout': 10.0} 
+        # ✅ 2. Առանց ավելորդ timeout-ի, ինչպես որ աշխատում էր
+        client = genai.Client(api_key=GEMINI_API_KEY)
+
+        # ✅ 3. Վերադարձնում ենք 3.8-flash-ը
+        response = client.models.generate_content(
+            model='gemini-3.8-flash',
+            contents=full_prompt,
         )
-
-        # ✅ Ամենակայուն և արագ մոդելները
-        MODEL_LIST = [
-            'gemini-2.5-flash',
-            'gemini-1.5-flash',
-            'gemini-flash-latest'
-        ]
-
-        response = None
-        last_error = None
-
-        for model_name in MODEL_LIST:
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=full_prompt,
-                    config={'max_output_tokens': 200} # Կարճ պատասխան = արագ պատասխան
-                )
-                print(f"✅ {model_name} աշխատեց")
-                break
-            except Exception as e:
-                last_error = str(e)[:100]
-                print(f"❌ {model_name} սխալ: {last_error}")
-                continue
-
-        if response is None:
-            return jsonify({'error': f'Չհաջողվեց միանալ AI-ին: {last_error}'}), 500
 
         reply = (response.text or '').strip() or 'Չհասկացա, փորձի՛ր նորից։'
         return jsonify({'reply': reply})
 
     except Exception as e:
         print(f"💥 AI error: {e}")
-        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
+        return jsonify({'error': f'AI սխալ: {str(e)}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
 @app.route('/api/questions/<difficulty>')
