@@ -1109,30 +1109,25 @@ def chat():
         ]
 
         response = None
+        last_error = ""
+        
         for model_name in MODELS:
             try:
                 response = client.models.generate_content(
                     model=model_name,
                     contents=full_prompt,
-                    config={
-                        'temperature': 0.3,
-                        'max_output_tokens': 200,
-                    }
                 )
-                print(f"✅ {model_name} աշխատեց")
-                break
+                if response and response.text:
+                    print(f"✅ {model_name} աշխատեց")
+                    break
             except Exception as e:
-                print(f"❌ {model_name}: {str(e)[:100]}")
+                last_error = str(e)
+                print(f"❌ {model_name}: {last_error}")
                 continue
 
         if not response or not response.text:
-            return jsonify({'error': 'AI-ն չպատասխանեց'}), 500
-
-        return jsonify({'reply': response.text.strip()})
-
-    except Exception as e:
-        print(f"💥 AI error: {e}")
-        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
+            # ✅ Այս տողը կցույց տա իրական սխալը չաթում
+            return jsonify({'error': f'AI սխալ: {last_error[:150]}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
 @app.route('/api/questions/<difficulty>')
