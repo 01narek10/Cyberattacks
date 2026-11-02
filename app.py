@@ -1100,7 +1100,7 @@ def chat():
             "\n\nAssistant:"
         )
 
-        # ✅ 3. ԱՄԵՆԱԱՐԱԳ մոդելները (lite-ները ամենաարագն են)
+        # ✅ 3. ԱՄԵՆԱԱՐԱԳ մոդելները
         MODELS = [
             'gemini-2.5-flash-lite',
             'gemini-flash-lite-latest',
@@ -1125,9 +1125,16 @@ def chat():
                 print(f"❌ {model_name}: {last_error}")
                 continue
 
+        # ✅ 4. Ստուգում ենք պատասխանը
         if not response or not response.text:
-            # ✅ Այս տողը կցույց տա իրական սխալը չաթում
-            return jsonify({'error': f'AI սխալ: {last_error[:150]}'}), 500
+            return jsonify({'error': f'AI չպատասխանեց: {last_error[:100]}'}), 500
+
+        # ✅ 5. Վերադարձնում ենք հաջող պատասխանը (ՍԱ ԲԱՑԱԿԱՅՈՒՄ ԷՐ)
+        return jsonify({'reply': response.text.strip()})
+
+    except Exception as e:
+        print(f"💥 AI error: {e}")
+        return jsonify({'error': f'AI սխալ: {str(e)[:100]}'}), 500
 
 # ============ API — ՀԱՐՑԵՐ ============
 @app.route('/api/questions/<difficulty>')
